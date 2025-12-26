@@ -1,176 +1,131 @@
 /* =========================================================
-   Mobile Template Skin - تصميم حديث متكامل
+   Mobile Template Skin - تصميم بسيط وعملي
    ========================================================= */
 
-@media (max-width: 992px){
+@media (max-width: 992px) {
 
-  :root{
-    --gold: #FFD700; /* ذهبي */
-    --gold-light: #FFF8DC;
-    --gold-dark: #DAA520;
-    --primary: #2C3E50; /* أزرق داكن أنيق */
-    --primary-light: #34495E;
-    --primary-dark: #1C2833;
-    --accent: #E67E22; /* برتقالي دافئ */
-    --accent-light: #F39C12;
-    --accent-dark: #D35400;
-    --bg-color: #F8F9FA; /* خلفية فاتحة */
+  :root {
+    --primary: #2C5282; /* أزرق أنيق */
+    --primary-light: #4299E1;
+    --primary-dark: #1A365D;
+    --accent: #38B2AC; /* تركواز */
+    --bg-color: #F7FAFC; /* رمادي فاتح جداً */
     --card-bg: #FFFFFF;
-    --text-primary: #2C3E50;
-    --text-secondary: #7F8C8D;
-    --text-muted: #95A5A6;
-    --success: #27AE60;
-    --warning: #F39C12;
-    --danger: #E74C3C;
-    --shadow: 0 10px 30px rgba(0,0,0,0.08);
-    --shadow-gold: 0 8px 25px rgba(255, 215, 0, 0.15);
-    --radius: 18px;
+    --text-primary: #2D3748;
+    --text-secondary: #4A5568;
+    --text-muted: #718096;
+    --success: #38A169;
+    --warning: #D69E2E;
+    --danger: #E53E3E;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --radius: 12px;
   }
 
-  body{
+  body {
     background: var(--bg-color) !important;
-    padding-top: 132px !important;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+    padding-top: 120px !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   }
 
-  /* ==================== Header مع ظل ذهبي ==================== */
-  header{
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
-    box-shadow: var(--shadow-gold) !important;
-    border-bottom: 2px solid var(--gold) !important;
+  /* ==================== Header بسيط ==================== */
+  header {
+    background: var(--card-bg) !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    border-bottom: 1px solid #E2E8F0 !important;
   }
-  
-  .header-container{
+
+  .header-container {
     padding: 0.8rem 1rem !important;
     max-width: 100% !important;
   }
-  
-  .logo i{ 
-    color: var(--gold) !important; 
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3) !important;
-  }
-  
-  .logo h1{
-    font-weight: 700 !important;
-    font-size: 1.5rem !important;
-    letter-spacing: .5px !important;
-    color: white !important;
+
+  .logo h1 {
+    font-weight: 600 !important;
+    font-size: 1.3rem !important;
+    color: var(--text-primary) !important;
   }
 
-  /* ==================== زر القائمة الجانبية (ثلاث نقاط) ==================== */
+  /* ==================== القائمة البسيطة ==================== */
   #mobileToggle {
     position: fixed !important;
-    top: 1rem !important;
+    top: 0.8rem !important;
     right: 1rem !important;
     z-index: 1002 !important;
-    background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255, 215, 0, 0.3) !important;
-    border-radius: 50% !important;
-    width: 44px !important;
-    height: 44px !important;
+    background: transparent !important;
+    border: none !important;
+    width: 40px !important;
+    height: 40px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
-    transition: all 0.3s ease !important;
-  }
-
-  #mobileToggle:hover {
-    background: rgba(255, 255, 255, 0.2) !important;
-    transform: scale(1.1) !important;
   }
 
   #mobileToggle i {
-    color: var(--gold) !important;
-    font-size: 1.3rem !important;
+    color: var(--text-primary) !important;
+    font-size: 1.2rem !important;
   }
 
-  /* ==================== القائمة الجانبية (Drawer) ==================== */
+  /* القائمة البسيطة بدون أيقونات */
   #navMenu {
     position: fixed !important;
     top: 0 !important;
-    right: -300px !important;
+    right: -280px !important;
     width: 280px !important;
     height: 100vh !important;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
-    box-shadow: -5px 0 30px rgba(0,0,0,0.2) !important;
+    background: var(--card-bg) !important;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1) !important;
     z-index: 1001 !important;
-    padding: 5rem 1.5rem 2rem !important;
-    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    padding: 4rem 0 2rem !important;
+    transition: right 0.3s ease !important;
     overflow-y: auto !important;
-    border-left: 2px solid var(--gold) !important;
+    border-left: 1px solid #E2E8F0 !important;
   }
 
   #navMenu.active {
     right: 0 !important;
   }
 
-  #navMenu::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 4px !important;
-    background: linear-gradient(90deg, var(--gold), var(--accent)) !important;
-  }
-
   #navMenu .nav-link {
-    color: rgba(255, 255, 255, 0.9) !important;
-    padding: 1rem !important;
-    margin: 0.5rem 0 !important;
-    border-radius: var(--radius) !important;
-    text-align: center !important;
-    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    padding: 1rem 1.5rem !important;
+    margin: 0 !important;
+    text-align: right !important;
+    font-weight: 500 !important;
     font-size: 1rem !important;
-    transition: all 0.3s ease !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 10px !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 215, 0, 0.1) !important;
+    display: block !important;
+    border-bottom: 1px solid #EDF2F7 !important;
+    transition: all 0.2s ease !important;
   }
 
   #navMenu .nav-link:hover {
-    background: rgba(255, 215, 0, 0.15) !important;
-    transform: translateX(-5px) !important;
+    background: #F7FAFC !important;
   }
 
   #navMenu .nav-link.active {
-    background: linear-gradient(135deg, var(--gold), var(--accent)) !important;
-    color: white !important;
-    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3) !important;
+    color: var(--primary) !important;
+    background: #EBF8FF !important;
+    border-right: 3px solid var(--primary) !important;
   }
 
-  #announcement-bar{ 
-    top: 78px !important; 
-    background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
-    color: white !important;
-    font-weight: 600 !important;
-  }
-
-  .store-info-header .contact-pill{ display:none !important; }
-
-  /* ==================== تصنيفات مع إمكانية السحب ==================== */
+  /* ==================== التصنيفات البسيطة ==================== */
   .category-nav-container {
     position: fixed !important;
-    top: 78px !important;
+    top: 60px !important;
     left: 0 !important;
     right: 0 !important;
-    background: var(--primary) !important;
+    background: var(--card-bg) !important;
     z-index: 998 !important;
     padding: 0.5rem 0 !important;
     overflow: hidden !important;
-    border-bottom: 1px solid rgba(255, 215, 0, 0.2) !important;
+    border-bottom: 1px solid #E2E8F0 !important;
   }
 
-  .category-nav{
-    display:flex !important;
+  .category-nav {
+    display: flex !important;
     flex-wrap: nowrap !important;
     justify-content: flex-start !important;
-    gap: 0.8rem !important;
+    gap: 0.5rem !important;
     padding: 0 1rem !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;
@@ -182,412 +137,327 @@
     display: none !important;
   }
 
-  /* مؤشر السحب */
-  .category-nav::after {
-    content: '← →' !important;
-    position: absolute !important;
-    right: 10px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    color: rgba(255, 215, 0, 0.5) !important;
-    font-size: 0.8rem !important;
-    pointer-events: none !important;
-  }
-
-  .cat-btn{
-    background: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 215, 0, 0.2) !important;
-    border-radius: 50px !important;
-    padding: 0.6rem 1.2rem !important;
-    color: rgba(255, 255, 255, 0.9) !important;
-    font-weight: 600 !important;
+  .cat-btn {
+    background: #F7FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 20px !important;
+    padding: 0.5rem 1rem !important;
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
     font-size: 0.9rem !important;
     white-space: nowrap !important;
-    transition: all 0.3s ease !important;
+    transition: all 0.2s ease !important;
     flex-shrink: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-    backdrop-filter: blur(5px) !important;
   }
-  
-  .cat-btn i{
-    color: var(--gold) !important;
+
+  .cat-btn.active {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: white !important;
+    font-weight: 600 !important;
+  }
+
+  #announcement-bar {
+    top: 60px !important;
+    background: var(--primary) !important;
+    color: white !important;
     font-size: 0.9rem !important;
   }
-  
-  .cat-btn:hover{ 
-    transform: translateY(-2px) !important; 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
-  }
-  
-  .cat-btn.active{ 
-    background: linear-gradient(135deg, var(--gold), var(--accent)) !important;
-    color: white !important;
-    border-color: transparent !important;
-    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3) !important;
+
+  .main-content {
+    padding: 0.5rem 0 !important;
   }
 
-  /* لو شريط الإعلان ظاهر فعليًا، انزل التصنيفات تحته */
-  #announcement-bar:not([style*="display:none"]) ~ .main-content .category-nav-container{
-    top: 122px !important;
+  #home-page .container {
+    padding-top: 50px !important;
   }
 
-  .main-content{ 
-    padding: 1rem 0 !important; 
-  }
-  
-  #home-page .container{ 
-    padding-top: 58px !important; 
-  }
-
-  /* ==================== كروت المنتجات الذهبية ==================== */
-  .products-grid{
-    display:grid !important;
+  /* ==================== كروت المنتجات المحسنة ==================== */
+  .products-grid {
+    display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 1rem !important;
-    padding: 1rem !important;
-    margin-bottom: 2rem !important;
+    gap: 0.75rem !important;
+    padding: 0.75rem !important;
+    margin-bottom: 1.5rem !important;
   }
 
-  .product-card{
-    background: linear-gradient(135deg, var(--card-bg), #f8f9fa) !important;
+  .product-card {
+    background: var(--card-bg) !important;
     border-radius: var(--radius) !important;
     overflow: hidden !important;
-    box-shadow: var(--shadow-gold) !important;
-    border: 2px solid transparent !important;
+    box-shadow: var(--shadow) !important;
     position: relative !important;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-    height: 320px !important; /* ارتفاع مناسب */
+    transition: all 0.2s ease !important;
     display: flex !important;
     flex-direction: column !important;
-  }
-
-  .product-card::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    border-radius: var(--radius) !important;
-    background: linear-gradient(135deg, 
-      transparent 0%, 
-      rgba(255, 215, 0, 0.05) 50%, 
-      transparent 100%) !important;
-    z-index: 1 !important;
-    pointer-events: none !important;
+    height: 260px !important; /* ارتفاع معتدل */
   }
 
   .product-card:hover {
-    transform: translateY(-8px) scale(1.02) !important;
-    box-shadow: 0 15px 40px rgba(255, 215, 0, 0.25) !important;
-    border-color: var(--gold) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+    transform: translateY(-2px) !important;
   }
 
-  .product-image-container{
-    height: 160px !important; /* ارتفاع معتدل */
-    background: linear-gradient(135deg, #f0f0f0, #e0e0e0) !important;
+  /* حاوية الصورة بدون مساحة فارغة */
+  .product-image-container {
+    height: 140px !important; /* تقليل الارتفاع */
+    background: #F1F5F9 !important;
     position: relative !important;
     overflow: hidden !important;
     flex-shrink: 0 !important;
   }
-  
-  .product-image{
-    width:100% !important;
-    height:100% !important;
+
+  .product-image {
+    width: 100% !important;
+    height: 100% !important;
     object-fit: cover !important;
-    transition: transform 0.5s ease !important;
-    display:block !important;
+    display: block !important;
   }
 
-  .product-card:hover .product-image {
-    transform: scale(1.05) !important;
-  }
-
-  .product-badges{
+  /* البادجات صغيرة ومركزة */
+  .product-badges {
     position: absolute !important;
-    top: .8rem !important;
-    right: .8rem !important;
+    top: 0.5rem !important;
+    left: 0.5rem !important;
     display: flex !important;
     flex-direction: column !important;
-    align-items: flex-end !important;
-    gap: .5rem !important;
+    gap: 0.25rem !important;
     z-index: 2 !important;
   }
-  
-  .discount-badge, .bundle-badge, .inactive-badge{
-    font-size: .75rem !important;
-    padding: .4rem .8rem !important;
-    border-radius: 20px !important;
-    font-weight: 800 !important;
+
+  .discount-badge,
+  .bundle-badge,
+  .inactive-badge {
+    font-size: 0.7rem !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 4px !important;
+    font-weight: 700 !important;
     text-align: center !important;
-    backdrop-filter: blur(5px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1) !important;
-  }
-  
-  .discount-badge{
-    background: linear-gradient(135deg, var(--danger), #c0392b) !important;
+    background: rgba(0, 0, 0, 0.7) !important;
     color: white !important;
-  }
-  
-  .bundle-badge{
-    background: linear-gradient(135deg, var(--success), #27ae60) !important;
-    color: white !important;
+    backdrop-filter: blur(4px) !important;
+    border: none !important;
   }
 
-  .inactive-badge{
-    background: linear-gradient(135deg, var(--text-muted), #95a5a6) !important;
-    color: white !important;
+  .discount-badge {
+    background: rgba(220, 38, 38, 0.9) !important;
   }
 
-  .product-info{
-    padding: 1rem !important;
+  .bundle-badge {
+    background: rgba(56, 178, 172, 0.9) !important;
+  }
+
+  /* معلومات المنتج - بدون مسافات فارغة */
+  .product-info {
+    padding: 0.75rem !important;
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
-    position: relative !important;
-    z-index: 2 !important;
+    gap: 0.25rem !important; /* تقليل الجاب */
   }
 
-  .product-title{
-    font-size: 1rem !important;
-    font-weight: 700 !important;
+  .product-title {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
     color: var(--text-primary) !important;
-    line-height: 1.4 !important;
-    margin: 0 0 0.5rem 0 !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
     overflow: hidden !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     text-overflow: ellipsis !important;
+    min-height: 2.6em !important;
   }
 
   /* إزالة العناصر غير الضرورية */
   .product-desc,
   .product-size,
   .bundle-info,
-  .product-title .desc-toggle{
-    display:none !important;
+  .product-title .desc-toggle,
+  .product-title::after {
+    display: none !important;
   }
 
-  .price-container{
-    display:flex !important;
+  /* السعر - مضغوط */
+  .price-container {
+    display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    gap: 0.5rem !important;
     margin-top: auto !important;
-  }
-  
-  .price-wrapper{
-    display:flex !important;
-    align-items: baseline !important;
-    gap: 0.5rem !important;
-    flex-wrap: wrap !important;
-  }
-  
-  .price-new{
-    color: var(--primary-dark) !important;
-    font-weight: 900 !important;
-    font-size: 1.2rem !important;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-  }
-  
-  .price-new.discount{ 
-    color: var(--success) !important;
-    position: relative !important;
+    padding-top: 0.5rem !important;
+    border-top: 1px solid #EDF2F7 !important;
   }
 
-  .price-new.discount::after {
-    content: '' !important;
-    position: absolute !important;
-    bottom: -2px !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 2px !important;
-    background: linear-gradient(90deg, var(--success), transparent) !important;
+  .price-wrapper {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 0.5rem !important;
+    flex-wrap: nowrap !important;
   }
-  
-  .price-old{
+
+  .price-new {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+  }
+
+  .price-new.discount {
+    color: var(--danger) !important;
+  }
+
+  .price-old {
     color: var(--text-muted) !important;
-    font-weight: 600 !important;
-    font-size: .9rem !important;
+    font-weight: 400 !important;
+    font-size: 0.8rem !important;
     text-decoration: line-through !important;
   }
 
-  /* ==================== زر الإضافة الذهبي ==================== */
-  .add-btn{
+  /* ==================== زر الإضافة الشفاف فوق الصورة ==================== */
+  .add-btn {
     position: absolute !important;
     bottom: 0 !important;
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    height: 40px !important;
+    height: 32px !important;
     padding: 0 !important;
     border-radius: 0 !important;
-    font-size: .9rem !important;
-    font-weight: 700 !important;
-    background: linear-gradient(135deg, 
-      rgba(255, 215, 0, 0.9), 
-      rgba(230, 126, 34, 0.9)) !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
     color: white !important;
     border: none !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
-    backdrop-filter: blur(10px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(8px) !important;
     z-index: 3 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 8px !important;
-    transition: all 0.3s ease !important;
+    gap: 0.5rem !important;
+    transition: all 0.2s ease !important;
     cursor: pointer !important;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
-  }
-  
-  .add-btn:hover{ 
-    background: linear-gradient(135deg, 
-      rgba(255, 215, 0, 1), 
-      rgba(230, 126, 34, 1)) !important;
-    height: 44px !important;
-    box-shadow: 0 -5px 20px rgba(255, 215, 0, 0.4) !important;
   }
 
-  .add-btn:disabled{
-    background: linear-gradient(135deg, 
-      rgba(149, 165, 166, 0.7), 
-      rgba(127, 140, 141, 0.7)) !important;
+  .add-btn:hover {
+    background: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .add-btn:disabled {
+    background: rgba(113, 128, 150, 0.6) !important;
     cursor: not-allowed !important;
   }
 
   .add-btn i {
-    font-size: 1rem !important;
-    transition: transform 0.3s ease !important;
+    font-size: 0.9rem !important;
   }
 
-  .add-btn:hover i {
-    transform: scale(1.2) !important;
+  /* زر الإضافة في حاوية السعر (للشاشات الكبيرة) */
+  .price-container .add-btn {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 6px !important;
+    background: var(--primary) !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    font-size: 0.8rem !important;
   }
 
   /* ==================== تحسينات متجاوبة ==================== */
-  @media (min-width: 576px) {
-    .products-grid{
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 1.2rem !important;
-      padding: 1.2rem !important;
+  @media (min-width: 400px) {
+    .products-grid {
+      gap: 1rem !important;
+      padding: 1rem !important;
     }
-    
-    .product-card{
-      height: 340px !important;
+
+    .product-card {
+      height: 280px !important;
     }
-    
-    .product-image-container{
-      height: 170px !important;
+
+    .product-image-container {
+      height: 150px !important;
     }
   }
 
-  @media (min-width: 768px) and (max-width: 992px){
-    .products-grid{
+  @media (min-width: 768px) and (max-width: 992px) {
+    .products-grid {
       grid-template-columns: repeat(3, 1fr) !important;
-      gap: 1.5rem !important;
-      padding: 1.5rem !important;
+      gap: 1rem !important;
+      padding: 1rem !important;
     }
-    
-    .product-card{
-      height: 350px !important;
-    }
-    
-    .product-image-container{
-      height: 180px !important;
-    }
-    
-    .product-title{
-      font-size: 1.05rem !important;
-    }
-    
-    .price-new{
-      font-size: 1.3rem !important;
-    }
-  }
 
-  @media (max-width: 360px){
-    .products-grid{ 
-      gap: 0.8rem !important;
-      padding: 0.8rem !important;
-    }
-    
-    .product-card{
+    .product-card {
       height: 300px !important;
     }
-    
-    .product-image-container{ 
-      height: 140px !important; 
+
+    .product-image-container {
+      height: 160px !important;
     }
-    
-    .product-info{
-      padding: 0.8rem !important;
-    }
-    
-    .product-title{
+
+    .product-title {
       font-size: 0.95rem !important;
     }
-    
-    .price-new{
+
+    .price-new {
       font-size: 1.1rem !important;
     }
-    
-    .price-old{
+  }
+
+  @media (max-width: 360px) {
+    .products-grid {
+      gap: 0.5rem !important;
+      padding: 0.5rem !important;
+    }
+
+    .product-card {
+      height: 240px !important;
+    }
+
+    .product-image-container {
+      height: 120px !important;
+    }
+
+    .product-info {
+      padding: 0.5rem !important;
+    }
+
+    .product-title {
       font-size: 0.85rem !important;
     }
-    
-    .add-btn{
-      height: 36px !important;
-      font-size: .85rem !important;
+
+    .price-new {
+      font-size: 0.95rem !important;
+    }
+
+    .price-old {
+      font-size: 0.75rem !important;
+    }
+
+    .add-btn {
+      height: 28px !important;
+      font-size: 0.75rem !important;
     }
   }
 
   /* ==================== تحسينات إضافية ==================== */
   .cart-badge {
-    background: linear-gradient(135deg, var(--gold), var(--accent)) !important;
-    box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3) !important;
+    background: var(--primary) !important;
+    color: white !important;
   }
 
-  .notification {
-    border-radius: var(--radius) !important;
-    border: 1px solid rgba(255, 215, 0, 0.3) !important;
-  }
-
-  /* تأثير التحميل */
-  @keyframes shimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
-  }
-
-  .product-card.loading::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.8) 50%,
-      rgba(255, 255, 255, 0) 100%
-    ) !important;
+  /* تأثير التحميل البسيط */
+  .product-image-container:empty {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%) !important;
     background-size: 200% 100% !important;
-    animation: shimmer 1.5s infinite !important;
-    z-index: 1 !important;
+    animation: loading 1.5s infinite !important;
   }
 
-  /* زر العودة للأعلى */
-  #scrollToTop {
-    background: linear-gradient(135deg, var(--gold), var(--accent)) !important;
-    border: 2px solid white !important;
-    box-shadow: var(--shadow-gold) !important;
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
 }
 
-/* ==================== JavaScript إضافي لتحسين UX ==================== */
+/* ==================== تحسينات JavaScript ==================== */
