@@ -1446,5 +1446,120 @@ function escapeHtml(s){
 function escapeAttr(s){
   return escapeHtml(s).replaceAll('"','&quot;');
 }
+// في نهاية ملف app.js أضف هذا الكود:
 
+/* ========================================
+   تحسينات UX للجوال
+   ======================================== */
+
+// 1. إضافة تأثير السحب للتصنيفات
+function initSwipeCategories() {
+  const categoryNav = document.querySelector('.category-nav');
+  if (!categoryNav) return;
+
+  let isDragging = false;
+  let startX = 0;
+  let scrollLeft = 0;
+
+  // للماوس
+  categoryNav.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.pageX - categoryNav.offsetLeft;
+    scrollLeft = categoryNav.scrollLeft;
+    categoryNav.style.cursor = 'grabbing';
+    categoryNav.style.userSelect = 'none';
+  });
+
+  categoryNav.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - categoryNav.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    categoryNav.scrollLeft = scrollLeft - walk;
+  });
+
+  ['mouseup', 'mouseleave'].forEach(evt => {
+    categoryNav.addEventListener(evt, () => {
+      isDragging = false;
+      categoryNav.style.cursor = 'grab';
+      categoryNav.style.userSelect = 'auto';
+    });
+  });
+
+  // للمس
+  categoryNav.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].pageX;
+    scrollLeft = categoryNav.scrollLeft;
+  });
+
+  categoryNav.addEventListener('touchmove', (e) => {
+    const x = e.touches[0].pageX;
+    const walk = (x - startX) * 1.5;
+    categoryNav.scrollLeft = scrollLeft - walk;
+  });
+}
+
+// 2. تحسين القائمة الجانبية
+function initMobileMenu() {
+  const mobileToggle = document.getElementById('mobileToggle');
+  const navMenu = document.getElementById('navMenu');
+  
+  if (!mobileToggle || !navMenu) return;
+
+  mobileToggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    navMenu.classList.toggle('active');
+    this.innerHTML = navMenu.classList.contains('active') 
+      ? '<i class="fas fa-times"></i>' 
+      : '<i class="fas fa-bars"></i>';
+  });
+
+  // إغلاق القائمة عند النقر خارجها
+  document.addEventListener('click', (e) => {
+    if (navMenu.classList.contains('active') && 
+        !navMenu.contains(e.target) && 
+        !mobileToggle.contains(e.target)) {
+      navMenu.classList.remove('active');
+      mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    }
+  });
+
+  // إغلاق القائمة عند النقر على رابط
+  document.querySelectorAll('#navMenu .nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      navMenu.classList.remove('active');
+      mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    });
+  });
+}
+
+// 3. تحسين تحميل الصور
+function lazyLoadImages() {
+  const images = document.querySelectorAll('.product-image');
+  
+  const imageObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+        }
+        imageObserver.unobserve(img);
+      }
+    });
+  }, {
+    rootMargin: '100px'
+  });
+
+  images.forEach(img => imageObserver.observe(img));
+}
+
+// تهيئة كل شيء عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(() => {
+    initSwipeCategories();
+    initMobileMenu();
+    lazyLoadImages();
+  }, 500);
+});
 
