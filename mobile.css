@@ -1,39 +1,111 @@
 @media (max-width: 992px) {
-  :root {
-    --primary-green: #689f38;
-    --bg-gray: #e0e0e0;
-    --card-radius: 20px;
-  }
+    /* 1. تعديل الشبكة لتصبح عمودين فقط مثل الصورة */
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important; /* عمودين فقط */
+        gap: 12px;
+        padding: 12px;
+        background-color: #f0f0f0; /* لون الخلفية الرمادي الفاتح */
+    }
 
-  body {
-    background-color: var(--bg-gray) !important;
-    margin: 0 !important;
-  }
+    /* 2. ضبط أبعاد حاوية الصورة لتكون مستطيلة بزوايا دائرية */
+    .product-image-container {
+        height: 180px; /* طول ثابت يتناسب مع الصورة */
+        border-radius: 15px 15px 0 0;
+        position: relative;
+        overflow: hidden;
+    }
 
-  .container {
-    max-width: 420px !important;
-    margin: 0 auto !important;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
+    .product-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-  /* Header: لون أخضر وثابت */
-  header {
-    background: var(--primary-green) !important;
-    height: 64px !important;
-  }
+    /* 3. ضبط معلومات المنتج (الاسم، السعر، الزر) */
+    .product-info {
+        padding: 10px;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
 
-  .header-container {
-    padding: 0.6rem 1rem !important;
-    height: 64px !important;
-  }
+    /* سطر العنوان والنقاط الثلاث */
+    .product-title {
+        display: flex !important;
+        flex-direction: row !important; /* جعل الاسم والنقاط بجانب بعض */
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.95rem;
+        font-weight: bold;
+        color: #333;
+    }
 
-  /* المنتجات: Grid 2 أعمدة ثابت */
-  .products-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
-    padding: 12px 0 !important;
+    /* 4. زر "إضافة" بدلاً من النجوم */
+    .price-wrapper {
+        display: flex;
+        flex-direction: row !important; /* جعل الزر والسعر بجانب بعض */
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .add-btn {
+        background-color: transparent;
+        color: #4CAF50; /* لون أخضر مثل الصورة */
+        border: 1.5px solid #4CAF50;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: bold;
+        order: 1; /* يوضع على اليسار */
+    }
+    
+    /* إذا أردت الزر خلفية ملونة كالتصميم المعتاد */
+    /* .add-btn { background: #4CAF50; color: white; } */
+
+    .price-new {
+        color: #4CAF50;
+        font-weight: 800;
+        font-size: 1rem;
+        order: 2; /* السعر على اليمين */
+    }
+
+    /* إخفاء العناصر غير المطلوبة */
+    .product-stars, .product-desc, .product-size, .bundle-info {
+        display: none !important;
+    }
+
+    /* 5. تنسيق الهيدر الأخضر والتبويبات (Groups) */
+    .app-header {
+        background-color: #4CAF50 !important;
+        color: white;
+    }
+
+    .category-nav {
+        background-color: #4CAF50;
+        border-bottom: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .category-link {
+        color: rgba(255,255,255,0.8);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        padding: 10px 15px;
+    }
+
+    .category-link.active {
+        color: white;
+        border-bottom: 3px solid white;
+    }
+}
+
+/* إلغاء التقسيم الثلاثي في الشاشات الأصغر لتوحيد الشكل */
+@media (max-width: 768px), (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
   }
 
   /* كرت المنتج */
