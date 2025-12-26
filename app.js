@@ -1270,6 +1270,169 @@ function showAlert(message, type='success'){
 }
 
 /* ========================================
+   ✨ تحسينات UX متقدمة
+   ======================================== */
+
+// 1. سوإيب للتصنيفات
+function initCategorySwipe() {
+  const categoryNav = document.querySelector('.category-nav');
+  if (!categoryNav) return;
+
+  let startX = 0;
+  let scrollLeft = 0;
+  let isDragging = false;
+
+  categoryNav.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.pageX - categoryNav.offsetLeft;
+    scrollLeft = categoryNav.scrollLeft;
+    categoryNav.style.cursor = 'grabbing';
+    categoryNav.style.userSelect = 'none';
+  });
+
+  categoryNav.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - categoryNav.offsetLeft;
+    const walk = (x - startX) * 2;
+    categoryNav.scrollLeft = scrollLeft - walk;
+  });
+
+  ['mouseup', 'mouseleave'].forEach(evt => {
+    categoryNav.addEventListener(evt, () => {
+      isDragging = false;
+      categoryNav.style.cursor = 'grab';
+      categoryNav.style.userSelect = 'auto';
+    });
+  });
+
+  // للموبايل (لمس)
+  categoryNav.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].pageX;
+    scrollLeft = categoryNav.scrollLeft;
+  });
+
+  categoryNav.addEventListener('touchmove', (e) => {
+    const x = e.touches[0].pageX;
+    const walk = (x - startX) * 2;
+    categoryNav.scrollLeft = scrollLeft - walk;
+  });
+}
+
+// 2. تحميل صور أفضل
+function enhanceProductImages() {
+  const images = document.querySelectorAll('.product-image');
+  images.forEach(img => {
+    // إضافة تأثير تحميل
+    if (!img.complete) {
+      img.style.opacity = '0';
+      img.addEventListener('load', () => {
+        img.style.transition = 'opacity 0.5s ease';
+        img.style.opacity = '1';
+      });
+    }
+  });
+}
+
+// 3. تأثيرات تفاعلية للكروت
+function addProductCardEffects() {
+  const cards = document.querySelectorAll('.product-card');
+  cards.forEach(card => {
+    card.addEventListener('touchstart', () => {
+      card.style.transform = 'scale(0.98)';
+    });
+    
+    card.addEventListener('touchend', () => {
+      card.style.transform = '';
+    });
+  });
+}
+
+// 4. إضافة زر العودة للأعلى
+function addScrollToTop() {
+  const btn = document.createElement('button');
+  btn.id = 'scrollToTop';
+  btn.innerHTML = '<i class="fas fa-chevron-up"></i>';
+  btn.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--accent));
+    color: white;
+    border: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+  `;
+  
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  
+  document.body.appendChild(btn);
+  
+  window.addEventListener('scroll', () => {
+    btn.style.display = window.scrollY > 500 ? 'flex' : 'none';
+  });
+}
+
+// 5. تحديث القائمة الجانبية في app.js
+function initNavigation(){
+  // ... الكود الأصلي ...
+  
+  // تحديث زر الموبايل
+  const mobileToggle = document.getElementById('mobileToggle');
+  if (mobileToggle) {
+    mobileToggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      document.getElementById('navMenu').classList.toggle('active');
+      this.innerHTML = document.getElementById('navMenu').classList.contains('active')
+        ? '<i class="fas fa-times"></i>'
+        : '<i class="fas fa-ellipsis-v"></i>';
+    });
+  }
+  
+  // إغلاق القائمة عند النقر خارجها
+  document.addEventListener('click', (e) => {
+    const navMenu = document.getElementById('navMenu');
+    if (navMenu && navMenu.classList.contains('active') && 
+        !navMenu.contains(e.target) && 
+        !mobileToggle.contains(e.target)) {
+      navMenu.classList.remove('active');
+      mobileToggle.innerHTML = '<i class="fas fa-ellipsis-v"></i>';
+    }
+  });
+}
+
+// تهيئة كل التحسينات عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    initCategorySwipe();
+    enhanceProductImages();
+    addProductCardEffects();
+    addScrollToTop();
+  }, 1000);
+});
+
+// تحديث عند تغيير الصفحة
+window.addEventListener('load', () => {
+  enhanceProductImages();
+});
+
+// تحديث عند تغيير الحجم
+window.addEventListener('resize', () => {
+  enhanceProductImages();
+});
+
+/* ========================================
    🧼 Escape helpers
    ======================================== */
 function escapeHtml(s){
@@ -1283,4 +1446,5 @@ function escapeHtml(s){
 function escapeAttr(s){
   return escapeHtml(s).replaceAll('"','&quot;');
 }
+
 
