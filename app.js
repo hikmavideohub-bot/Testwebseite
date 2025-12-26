@@ -7,9 +7,6 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxmTLI6-1V7tELp7uvkDnCA
 const urlParams = new URLSearchParams(window.location.search);
 const STORE_ID = (urlParams.get('storeId') || urlParams.get('store_id') || '').trim();
 
-function getCdnBundleUrl(){
-  return `https://raw.githubusercontent.com/hikmavideohub-bot/Testwebseite/main/data/${STORE_ID}.json`;
-}
 
 /* ========================================
    📦 Data Source (CDN JSON + fallback)
@@ -55,11 +52,16 @@ async function loadPublicBundleFromCDN(){
         return null; // treat as stale
       }
     }
+
+    console.log('CDN bundle loaded ✅', json);
     return json;
+
   }catch(e){
+    console.warn('CDN bundle failed ⚠️', e);
     return null;
   }
 }
+
 
 // Step 3: hydrate UI من بيانات جاهزة
 function applyBundle(bundle){
@@ -165,11 +167,6 @@ function stableStringify(x){
   try { return JSON.stringify(x); } catch { return ''; }
 }
 
-async function fetchJson(url){
-  const res = await fetch(url, { cache: 'no-store', headers: { 'Accept': 'application/json' } });
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  return res.json();
-}
 
 function applyPublicBundle(bundle){
   if (!bundle || typeof bundle !== 'object') throw new Error('Empty/invalid bundle');
