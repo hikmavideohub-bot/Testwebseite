@@ -2,7 +2,104 @@
    ⚙️ مركز التحكم
    ======================================== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbxmTLI6-1V7tELp7uvkDnCAMDCp6M5ZPsl4lZFL6KmaBRH9Hc9dqQdsgRDs0deca4RV6w/exec';
-const STORE_ID = 'a083e1e2'; // غيّر هذا فقط لربط متجر آخر
+
+// storeId aus URL: ?storeId=... oder ?store_id=...
+const urlParams = new URLSearchParams(window.location.search);
+const STORE_ID = (urlParams.get('storeId') || urlParams.get('store_id') || '').trim();
+
+function getCdnBundleUrl(){
+  return `https://raw.githubusercontent.com/hikmavideohub-bot/Testwebseite/main/data/${STORE_ID}.json`;
+}
+
+/* ========================================
+   📦 Data Source (CDN JSON + fallback)
+   ======================================== */
+// ✅ ضع ملفات JSON الجاهزة هنا (مثال: /data/<storeId>.json)
+const CDN_DATA_BASE = './data'; // غيّره إلى رابط CDN إذا عندك (مثال: https://cdn.example.com/data)
+
+// إذا ملف الـ CDN قديم جداً (اختياري)، نرجع للـ API
+const CDN_BUNDLE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 Tage
+
+function getCdnBundleUrl(){
+  return `${CDN_DATA_BASE}/${encodeURIComponent(STORE_ID)}.json`;
+}
+
+async function fetchJson(url, opts = {}){
+  const res = await fetch(url, {
+    cache: 'no-store',
+    ...opts,
+    headers: { 'Accept': 'application/json', ...(opts.headers || {}) }
+  });
+
+  if (!res.ok) return { ok: false, status: res.status, json: null };
+
+  try{
+    return { ok: true, status: res.status, json: await res.json() };
+  }catch{
+    return { ok: false, status: res.status, json: null };
+  }
+}
+
+
+// Step 1: اقرأ JSON من CDN
+async function loadPublicBundleFromCDN(){
+  try{
+    const { ok, json } = await fetchJson(getCdnBundleUrl());
+    if (!ok || !json) return null;
+
+    // optional staleness check based on meta.generatedAt
+    const gen = json?.meta?.generatedAt || json?.meta?.generated_at || json?.generatedAt || null;
+    if (gen){
+      const t = Date.parse(gen);
+      if (!Number.isNaN(t) && (Date.now() - t) > CDN_BUNDLE_MAX_AGE_MS){
+        return null; // treat as stale
+      }
+    }
+    return json;
+  }catch(e){
+    return null;
+  }
+}
+
+// Step 3: hydrate UI من بيانات جاهزة
+function applyBundle(bundle){
+  const active = (bundle.websiteActive ?? bundle.website_active);
+  if (active === false){
+    applyStoreInactiveUI();
+    return false;
+  }
+  restoreStoreUIIfNeeded();
+
+  STORE_DATA = bundle.storeConfig || bundle.store || bundle.storeData || bundle.data || {};
+  // currency ممكن تأتي داخل storeConfig أو top-level
+  if (bundle.currency && !STORE_DATA.currency) STORE_DATA.currency = bundle.currency;
+
+  applyStoreConfig();
+
+  const msg = (bundle.customerMessage ?? bundle.message ?? '').toString().trim();
+  if (msg) applyCustomerMessage(msg);
+
+  categoriesData = Array.isArray(bundle.categories) ? bundle.categories : [];
+  productsData   = Array.isArray(bundle.products) ? bundle.products : [];
+
+  const loading = document.getElementById('loading');
+  if (loading) loading.style.display = 'none';
+
+  renderCategories(productsData);
+  renderAllProducts(productsData);
+  renderOfferProducts();
+  return true;
+}
+
+// مكان واحد لتشغيل تحسينات UX (بدون تكرار listeners)
+function initUXEnhancements(){
+  try{ initSwipeCategories(); }catch(e){}
+  try{ enhanceProductImages(); }catch(e){}
+  try{ addProductCardEffects(); }catch(e){}
+  try{ addScrollToTop(); }catch(e){}
+  try{ lazyLoadImages(); }catch(e){}
+}
+
 
 /* ========================================
    🧠 Cache (LocalStorage) - TTL
@@ -67,6 +164,58 @@ const __fetchLocks = new Map();
 function stableStringify(x){
   try { return JSON.stringify(x); } catch { return ''; }
 }
+
+async function fetchJson(url){
+  const res = await fetch(url, { cache: 'no-store', headers: { 'Accept': 'application/json' } });
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+  return res.json();
+}
+
+function applyPublicBundle(bundle){
+  if (!bundle || typeof bundle !== 'object') throw new Error('Empty/invalid bundle');
+
+  // ---- 1) Website Active (optional, aber gut)
+  const activeFlag = bundle.websiteActive ?? bundle.website_active;
+  if (activeFlag === false){
+    applyStoreInactiveUI();
+    return;
+  } else {
+    restoreStoreUIIfNeeded();
+  }
+
+  // ---- 2) Store config
+  // Erwartet: bundle.storeConfig (empfohlen)
+  // Fallbacks für andere Keys, falls du sie anders nennst
+  STORE_DATA = bundle.storeConfig || bundle.store_config || bundle.data?.storeConfig || {};
+
+  // Currency: in deinem Code wird CURRENCY später benutzt
+  CURRENCY = (STORE_DATA.currency || bundle.currency || '€').toString().trim() || '€';
+
+  // UI anwenden (Header/Footer/About/Contact etc.)
+  applyStoreConfig();
+
+  // ---- 3) Customer message
+  const msg = (bundle.customerMessage || bundle.customer_message || '').toString().trim();
+  if (msg) applyCustomerMessage(msg);
+
+  // ---- 4) Categories
+  categoriesData = Array.isArray(bundle.categories) ? bundle.categories : [];
+
+  // ---- 5) Products
+  productsData = Array.isArray(bundle.products) ? bundle.products : [];
+
+  // ---- 6) Render
+  const loading = document.getElementById('loading');
+  if (loading) loading.style.display = 'none';
+
+  renderCategories(productsData);
+  renderAllProducts(productsData);
+  renderOfferProducts();
+
+  // Optional: Angebote-Page korrekt initialisieren, falls user direkt dort landet
+  if (currentPage === 'offers') renderOfferProducts();
+}
+
 
 async function fetchWithCache(key, fetcher, onFresh, ttlMs){
   const cached = cacheGet(key, ttlMs);
@@ -137,7 +286,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         <div style="max-width:720px;margin:0 auto;background:#fff;border-radius:16px;padding:16px;border:1px solid rgba(16,24,40,.08);box-shadow:var(--shadow)">
           ⚠️ ضع STORE_ID داخل الكود ثم أعد تحميل الصفحة
         </div>`;
-    } else alert("⚠️ ضع STORE_ID داخل الكود ثم أعد تحميل الصفحة");
+    } else {
+      alert("⚠️ ضع STORE_ID داخل الكود ثم أعد تحميل الصفحة");
+    }
     return;
   }
 
@@ -145,24 +296,33 @@ window.addEventListener('DOMContentLoaded', async () => {
   updateCartCount();
   initNavigation();
 
-  // ✅ website_active (cache)
+  // ✅ Public: حاول تحميل بيانات جاهزة من CDN أولاً (Step 1 + 3)
+  const bundle = await loadPublicBundleFromCDN();
+
+if (bundle) {
+  const ok = applyBundle(bundle);
+  if (!ok) return;
+
+  initOfferTimer();
+  showPage(currentPage);
+  initUXEnhancements();
+  return; // <- wichtig: API-Fallback verhindern
+}
+
+
+  // ✅ Fallback: API (Apps Script) فقط إذا لم يوجد ملف JSON أو كان غير صالح
   const active = await loadWebsiteStatus();
   if (!active) return;
 
-  // ✅ store config (cache)
   await loadStoreConfig();
-
-  // ✅ رسالة العملاء A3 (cache)
   await loadCustomerMessage();
-
-  // ✅ التصنيفات (cache)
   await loadCategories();
-
-  // ✅ المنتجات (cache)
   await fetchProducts();
 
   initOfferTimer();
   showPage(currentPage);
+
+  initUXEnhancements();
 });
 
 /* ========================================
@@ -871,34 +1031,81 @@ function toggleInactive(){
    🗺️ التنقل
    ======================================== */
 function initNavigation(){
-  document.querySelectorAll('.nav-link').forEach(link => {
+  // prevent double-binding (helps if initNavigation is called مرة ثانية)
+  if (document.body && document.body.dataset && document.body.dataset.navInit === '1') return;
+  if (document.body && document.body.dataset) document.body.dataset.navInit = '1';
+
+  const navMenu = document.getElementById('navMenu');
+  const mobileToggle = document.getElementById('mobileToggle');
+
+  const setToggleIcon = (open) => {
+    if (!mobileToggle) return;
+    mobileToggle.innerHTML = open ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+  };
+
+  const openMenu = () => {
+    if (!navMenu) return;
+    navMenu.classList.add('active');
+    setToggleIcon(true);
+  };
+
+  const closeMenu = () => {
+    if (!navMenu) return;
+    navMenu.classList.remove('active');
+    setToggleIcon(false);
+  };
+
+  const toggleMenu = () => {
+    if (!navMenu) return;
+    const open = navMenu.classList.toggle('active');
+    setToggleIcon(open);
+  };
+
+  // ✅ Nav links (Header)
+  document.querySelectorAll('.nav-link[data-page]').forEach(link => {
     link.addEventListener('click', function(e){
       e.preventDefault();
       const page = this.getAttribute('data-page');
+      if (!page) return;
       navigateToPage(page);
+      closeMenu(); // mobile: close after navigation
     });
   });
 
+  // ✅ Footer links
   document.querySelectorAll('footer a[data-page]').forEach(link => {
     link.addEventListener('click', function(e){
       e.preventDefault();
       const page = this.getAttribute('data-page');
+      if (!page) return;
       navigateToPage(page);
+      closeMenu();
     });
   });
 
-  document.getElementById('mobileToggle').addEventListener('click', function(){
-    document.getElementById('navMenu').classList.toggle('active');
-    this.innerHTML = document.getElementById('navMenu').classList.contains('active')
-      ? '<i class="fas fa-times"></i>'
-      : '<i class="fas fa-bars"></i>';
+  // ✅ Mobile toggle
+  if (mobileToggle){
+    mobileToggle.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      toggleMenu();
+    });
+    setToggleIcon(navMenu?.classList.contains('active'));
+  }
+
+  // ✅ Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!navMenu || !mobileToggle) return;
+    if (!navMenu.classList.contains('active')) return;
+
+    const clickedInsideMenu = navMenu.contains(e.target);
+    const clickedToggle = mobileToggle.contains(e.target);
+    if (!clickedInsideMenu && !clickedToggle) closeMenu();
   });
 
-  document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', function(){
-      document.getElementById('navMenu').classList.remove('active');
-      document.getElementById('mobileToggle').innerHTML = '<i class="fas fa-bars"></i>';
-    });
+  // ✅ Close on ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
   });
 }
 
@@ -1200,16 +1407,21 @@ function setupSocialLinks(){
 /* ========================================
    ⏳ عداد العروض (UI فقط)
    ======================================== */
+let offerTimerIntervalId = null;
+
 function initOfferTimer(){
+  if (offerTimerIntervalId) clearInterval(offerTimerIntervalId);
+
   const endDate = new Date();
   endDate.setDate(endDate.getDate() + 7);
 
   function updateTimer(){
-    const now = new Date().getTime();
-    const distance = endDate - now;
+    const now = Date.now();
+    const distance = endDate.getTime() - now;
 
     if (distance < 0){
-      document.querySelector('.timer').innerHTML = '<div>انتهت العروض</div>';
+      const t = document.querySelector('.timer');
+      if (t) t.innerHTML = '<div>انتهت العروض</div>';
       return;
     }
 
@@ -1218,15 +1430,16 @@ function initOfferTimer(){
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    document.getElementById('days').textContent = String(days).padStart(2,'0');
-    document.getElementById('hours').textContent = String(hours).padStart(2,'0');
-    document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
-    document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+    const d = document.getElementById('days'); if (d) d.textContent = String(days).padStart(2,'0');
+    const h = document.getElementById('hours'); if (h) h.textContent = String(hours).padStart(2,'0');
+    const m = document.getElementById('minutes'); if (m) m.textContent = String(minutes).padStart(2,'0');
+    const s = document.getElementById('seconds'); if (s) s.textContent = String(seconds).padStart(2,'0');
   }
 
   updateTimer();
-  setInterval(updateTimer, 1000);
+  offerTimerIntervalId = setInterval(updateTimer, 1000);
 }
+
 
 /* ========================================
    🔔 Alerts
@@ -1384,53 +1597,7 @@ function addScrollToTop() {
   });
 }
 
-// 5. تحديث القائمة الجانبية في app.js
-function initNavigation(){
-  // ... الكود الأصلي ...
-  
-  // تحديث زر الموبايل
-  const mobileToggle = document.getElementById('mobileToggle');
-  if (mobileToggle) {
-    mobileToggle.addEventListener('click', function(e){
-      e.stopPropagation();
-      document.getElementById('navMenu').classList.toggle('active');
-      this.innerHTML = document.getElementById('navMenu').classList.contains('active')
-        ? '<i class="fas fa-times"></i>'
-        : '<i class="fas fa-ellipsis-v"></i>';
-    });
-  }
-  
-  // إغلاق القائمة عند النقر خارجها
-  document.addEventListener('click', (e) => {
-    const navMenu = document.getElementById('navMenu');
-    if (navMenu && navMenu.classList.contains('active') && 
-        !navMenu.contains(e.target) && 
-        !mobileToggle.contains(e.target)) {
-      navMenu.classList.remove('active');
-      mobileToggle.innerHTML = '<i class="fas fa-ellipsis-v"></i>';
-    }
-  });
-}
 
-// تهيئة كل التحسينات عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    initCategorySwipe();
-    enhanceProductImages();
-    addProductCardEffects();
-    addScrollToTop();
-  }, 1000);
-});
-
-// تحديث عند تغيير الصفحة
-window.addEventListener('load', () => {
-  enhanceProductImages();
-});
-
-// تحديث عند تغيير الحجم
-window.addEventListener('resize', () => {
-  enhanceProductImages();
-});
 
 /* ========================================
    🧼 Escape helpers
@@ -1554,12 +1721,4 @@ function lazyLoadImages() {
   images.forEach(img => imageObserver.observe(img));
 }
 
-// تهيئة كل شيء عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(() => {
-    initSwipeCategories();
-    initMobileMenu();
-    lazyLoadImages();
-  }, 500);
-});
 
