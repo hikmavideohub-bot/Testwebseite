@@ -125,6 +125,7 @@
   .product-image-container{
     height: 160px !important;
     background: #f2f2f2 !important;
+    position: relative !important;
   }
   .product-image{
     width:100% !important;
@@ -138,39 +139,51 @@
     top: .6rem !important;
     right: .6rem !important;
     gap: .35rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
   }
   .discount-badge, .bundle-badge, .inactive-badge{
     font-size: .75rem !important;
     padding: .25rem .5rem !important;
     border-radius: 10px !important;
+    font-weight: 800 !important;
+    min-width: 40px !important;
+    text-align: center !important;
+  }
+  .discount-badge{
+    background: linear-gradient(135deg, #ff6b6b, #ff4757) !important;
+    color: white !important;
+  }
+  .bundle-badge{
+    background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
+    color: white !important;
   }
 
   .product-info{
     padding: 12px !important;
     gap: 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .product-title{
-    font-size: .98rem !important;
-    font-weight: 800 !important;
+    font-size: .95rem !important;
+    font-weight: 700 !important;
     color: #333 !important;
     line-height: 1.2 !important;
     margin: 0 !important;
-
-    display:flex !important;
-    align-items:center !important;
-    justify-content: space-between !important;
+    padding: 0 !important;
 
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
+    display: block !important;
   }
+
+  /* إزالة زر ⋮ */
   .product-title::after{
-    content:"⋮";
-    color:#999;
-    font-weight: 700;
-    margin-inline-start: 10px;
-    flex: 0 0 auto;
+    display: none !important;
   }
 
   .product-desc,
@@ -183,58 +196,133 @@
   .price-container{
     display:flex !important;
     justify-content: space-between !important;
-    align-items: center !important;
-    gap: 10px !important;
-    margin-top: 6px !important;
+    align-items: flex-end !important;
+    gap: 6px !important;
+    margin-top: 8px !important;
   }
   .price-wrapper{
     display:flex !important;
     align-items: baseline !important;
-    gap: 10px !important;
+    gap: 6px !important;
     flex-wrap: nowrap !important;
+    flex: 1 !important;
   }
   .price-new{
     color: var(--mobile-green) !important;
     font-weight: 900 !important;
-    font-size: 1.05rem !important;
+    font-size: 1.1rem !important;
   }
-  .price-new.discount{ color: #2e7d32 !important; }
+  .price-new.discount{ 
+    color: #2e7d32 !important;
+    font-weight: 900 !important;
+  }
+  .price-new.bundle{
+    color: #4ecdc4 !important;
+    font-weight: 900 !important;
+  }
   .price-old{
     color: #8a8a8a !important;
     font-weight: 700 !important;
-    font-size: .9rem !important;
+    font-size: .85rem !important;
     text-decoration: line-through !important;
   }
 
-  /* زر الإضافة: Overlay فوق الصورة */
+  /* زر الإضافة الجديد: في أسفل الصورة كشريط */
   .add-btn{
     position: absolute !important;
-    top: 10px !important;
-    inset-inline-start: 10px !important;
-    width: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 36px !important;
 
-    padding: 6px 12px !important;
-    border-radius: 12px !important;
-    font-size: .85rem !important;
+    padding: 0 !important;
+    border-radius: 0 0 var(--mobile-card-radius) var(--mobile-card-radius) !important;
+    font-size: .9rem !important;
     font-weight: 800 !important;
 
-    background: rgba(0,0,0,.30) !important;
-    color:#fff !important;
-    border: 1px solid rgba(255,255,255,.35) !important;
+    background: rgba(0, 0, 0, 0.15) !important;
+    color: #fff !important;
+    border: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
     box-shadow: none !important;
 
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px) !important;
     z-index: 5 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
   }
-  .add-btn:hover{ transform:none !important; background: rgba(0,0,0,.40) !important; }
+  
+  .add-btn:hover{ 
+    background: rgba(0, 0, 0, 0.25) !important; 
+    transform: none !important;
+  }
+
+  .add-btn:disabled{
+    background: rgba(0, 0, 0, 0.1) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
 
   /* لضمان عدم أخذ مساحة ضمن price-container */
   .price-container .add-btn{
-    position: absolute !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 8px 16px !important;
+    border-radius: 12px !important;
+    background: var(--mobile-green) !important;
+    backdrop-filter: none !important;
+    border: none !important;
   }
 
+  /* تحسين شكل بطاقة المنتج */
+  .product-card {
+    transition: transform 0.2s ease !important;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-4px) !important;
+  }
+
+  /* تحسين العرض على الشاشات الصغيرة */
   @media (max-width: 360px){
-    .products-grid{ gap: 10px !important; }
-    .product-image-container{ height: 150px !important; }
+    .products-grid{ 
+      gap: 8px !important;
+      padding: 8px !important;
+    }
+    .product-image-container{ 
+      height: 140px !important; 
+    }
+    .product-info{
+      padding: 10px !important;
+    }
+    .product-title{
+      font-size: .9rem !important;
+    }
+    .price-new{
+      font-size: 1rem !important;
+    }
+    .price-old{
+      font-size: .8rem !important;
+    }
+    .add-btn{
+      height: 32px !important;
+      font-size: .85rem !important;
+    }
+  }
+
+  /* تحسين على الشاشات المتوسطة */
+  @media (min-width: 768px) and (max-width: 992px){
+    .products-grid{
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 16px !important;
+      padding: 16px !important;
+    }
+    .product-image-container{
+      height: 180px !important;
+    }
   }
 }
