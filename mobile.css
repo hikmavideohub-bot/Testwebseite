@@ -1,0 +1,240 @@
+/* =========================================================
+   Mobile Template Skin (GitHub Pages) — Product Grid like الصورة
+   - بدون تغيير app.js
+   - Header أخضر + Tabs للتصنيفات + Grid 2 أعمدة + زر أضف Overlay
+   ========================================================= */
+
+@media (max-width: 992px){
+
+  :root{
+    --mobile-green: #689f38;
+    --mobile-bg: #e0e0e0;
+    --mobile-card-radius: 20px;
+  }
+
+  body{
+    background: var(--mobile-bg) !important;
+    padding-top: 132px !important;
+  }
+
+  header{
+    background: var(--mobile-green) !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,.12) !important;
+  }
+  .header-container{
+    padding: 0.9rem 1rem !important;
+    max-width: 100% !important;
+  }
+  .logo i{ color: #fff !important; filter:none !important; }
+  .logo h1{
+    font-weight: 500 !important;
+    font-size: 1.4rem !important;
+    letter-spacing: .2px !important;
+  }
+
+  #announcement-bar{ top: 78px !important; }
+
+  .store-info-header .contact-pill{ display:none !important; }
+
+  .category-nav{
+    display:flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    gap: 1.25rem !important;
+
+    position: fixed !important;
+    top: 78px !important;
+    right: 0 !important;
+    left: 0 !important;
+    z-index: 998 !important;
+
+    background: var(--mobile-green) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+
+    margin: 0 !important;
+    padding: 0 .9rem !important;
+
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* لو شريط الإعلان ظاهر فعليًا، انزل التصنيفات تحته */
+  #announcement-bar:not([style*="display:none"]) ~ .main-content .category-nav{
+    top: 122px !important;
+  }
+
+  .cat-btn{
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0.95rem .2rem !important;
+    border-radius: 0 !important;
+
+    color: rgba(255,255,255,.78) !important;
+    font-weight: 900 !important;
+    letter-spacing: .06em !important;
+
+    position: relative !important;
+    white-space: nowrap !important;
+
+    display:flex !important;
+    align-items:center !important;
+    gap: .45rem !important;
+  }
+  .cat-btn i{
+    opacity: .9 !important;
+    color: rgba(255,255,255,.9) !important;
+  }
+  .cat-btn:hover{ transform:none !important; background: transparent !important; }
+  .cat-btn.active{ color: #fff !important; }
+  .cat-btn.active::after{
+    content:"";
+    position:absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .main-content{ padding: 1rem 0 !important; }
+  #home-page .container{ padding-top: 58px !important; }
+
+  .products-grid{
+    display:grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    padding: 12px !important;
+    margin-bottom: 1.6rem !important;
+  }
+
+  .product-card{
+    background: #fff !important;
+    border-radius: var(--mobile-card-radius) !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08) !important;
+    border: none !important;
+    transform: none !important;
+    position: relative !important;
+  }
+
+  .product-image-container{
+    height: 160px !important;
+    background: #f2f2f2 !important;
+  }
+  .product-image{
+    width:100% !important;
+    height:100% !important;
+    object-fit: cover !important;
+    transform:none !important;
+    display:block !important;
+  }
+
+  .product-badges{
+    top: .6rem !important;
+    right: .6rem !important;
+    gap: .35rem !important;
+  }
+  .discount-badge, .bundle-badge, .inactive-badge{
+    font-size: .75rem !important;
+    padding: .25rem .5rem !important;
+    border-radius: 10px !important;
+  }
+
+  .product-info{
+    padding: 12px !important;
+    gap: 8px !important;
+  }
+
+  .product-title{
+    font-size: .98rem !important;
+    font-weight: 800 !important;
+    color: #333 !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content: space-between !important;
+
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .product-title::after{
+    content:"⋮";
+    color:#999;
+    font-weight: 700;
+    margin-inline-start: 10px;
+    flex: 0 0 auto;
+  }
+
+  .product-desc,
+  .product-size,
+  .bundle-info,
+  .product-title .desc-toggle{
+    display:none !important;
+  }
+
+  .price-container{
+    display:flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-top: 6px !important;
+  }
+  .price-wrapper{
+    display:flex !important;
+    align-items: baseline !important;
+    gap: 10px !important;
+    flex-wrap: nowrap !important;
+  }
+  .price-new{
+    color: var(--mobile-green) !important;
+    font-weight: 900 !important;
+    font-size: 1.05rem !important;
+  }
+  .price-new.discount{ color: #2e7d32 !important; }
+  .price-old{
+    color: #8a8a8a !important;
+    font-weight: 700 !important;
+    font-size: .9rem !important;
+    text-decoration: line-through !important;
+  }
+
+  /* زر الإضافة: Overlay فوق الصورة */
+  .add-btn{
+    position: absolute !important;
+    top: 10px !important;
+    inset-inline-start: 10px !important;
+    width: auto !important;
+
+    padding: 6px 12px !important;
+    border-radius: 12px !important;
+    font-size: .85rem !important;
+    font-weight: 800 !important;
+
+    background: rgba(0,0,0,.30) !important;
+    color:#fff !important;
+    border: 1px solid rgba(255,255,255,.35) !important;
+    box-shadow: none !important;
+
+    backdrop-filter: blur(6px);
+    z-index: 5 !important;
+  }
+  .add-btn:hover{ transform:none !important; background: rgba(0,0,0,.40) !important; }
+
+  /* لضمان عدم أخذ مساحة ضمن price-container */
+  .price-container .add-btn{
+    position: absolute !important;
+  }
+
+  @media (max-width: 360px){
+    .products-grid{ gap: 10px !important; }
+    .product-image-container{ height: 150px !important; }
+  }
+}
