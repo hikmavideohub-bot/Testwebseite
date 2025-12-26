@@ -1,40 +1,186 @@
-@media (min-width: 768px) {
-      .modal-content{
-        min-height: auto;
-        max-height: 90vh;
-        margin: 2rem auto;
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-      }
-    }
+@media (max-width: 992px) {
+  :root {
+    --primary-green: #689f38;
+    --bg-gray: #e0e0e0;
+    --card-radius: 20px;
+  }
 
-@media (max-width: 992px){
-      .nav-menu{
-        position:fixed;
-        top: 78px;
-        right: -110%;
-        width: min(360px, 86vw);
-        height: calc(100vh - 78px);
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        flex-direction:column;
-        align-items:flex-start;
-        padding: 1.6rem;
-        transition: right .28s ease;
-        z-index: 999;
-        box-shadow: var(--shadow-lg);
-        gap: 1.15rem;
-      }
-      .nav-menu.active{right:0}
-      .mobile-toggle{display:block}
-      body{padding-top: 148px;}
-      #announcement-bar{top: 96px;}
-      .category-nav{top: 162px;}
-      .contact-pill{display:none;} /* cleaner on mobile */
-      
-      /* Mobile-specific product grid - KACHELSTIL (QUADRATISCH) */
-      .products-grid{
-        grid-template-columns: repeat(3, 1fr); /* 3 products per row */
-        gap: 0.7rem; /* Smaller gap */
+  body {
+    background-color: var(--bg-gray) !important;
+    margin: 0 !important;
+  }
+
+  .container {
+    max-width: 420px !important;
+    margin: 0 auto !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Header: لون أخضر وثابت */
+  header {
+    background: var(--primary-green) !important;
+    height: 64px !important;
+  }
+
+  .header-container {
+    padding: 0.6rem 1rem !important;
+    height: 64px !important;
+  }
+
+  /* المنتجات: Grid 2 أعمدة ثابت */
+  .products-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    padding: 12px 0 !important;
+  }
+
+  /* كرت المنتج */
+  .product-card {
+    background: #fff !important;
+    border-radius: var(--card-radius) !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* منطقة الصورة: ثابتة */
+  .product-image-container {
+    height: 160px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #f5f5f5 !important;
+  }
+
+  .product-image-container img {
+    max-height: 100% !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  /* محتوى الكرت: ثابت ومختصر */
+  .product-info {
+    padding: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    min-height: 110px !important;
+  }
+
+  /* اخفاء الوصف/تفاصيل تسبب طول */
+  .product-desc,
+  .bundle-badge,
+  .bundle-info,
+  .product-size {
+    display: none !important;
+  }
+
+  /* العنوان */
+  .product-title {
+    font-weight: 700 !important;
+    color: #333 !important;
+    font-size: 0.95rem !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+    min-height: 2.4em !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orrient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  /* إزالة أي تقييم/نجوم */
+  .stars, .rating, .product-rating, .rating-stars {
+    display: none !important;
+  }
+
+  /* صف السعر + زر الإضافة */
+  .price-container {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-height: 40px !important;
+  }
+
+  /* السعر */
+  .price-wrapper {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+  }
+
+  /* الوضع الافتراضي: أظهر السعر قبل الخصم فقط */
+  .price-old {
+    color: var(--primary-green) !important;
+    font-weight: 800 !important;
+    font-size: 0.95rem !important;
+    text-decoration: none !important;
+  }
+
+  /* أخفِ سعر الخصم افتراضيًا */
+  .price-new.discount {
+    display: none !important;
+  }
+
+  /* عند التفعيل من JS */
+  .price-wrapper.show-discount .price-old {
+    color: #9e9e9e !important;
+    text-decoration: line-through !important;
+    font-weight: 600 !important;
+  }
+  
+  .price-wrapper.show-discount .price-new.discount {
+    display: inline !important;
+    color: #d32f2f !important;
+    font-weight: 900 !important;
+    font-size: 0.95rem !important;
+  }
+
+  /* زر الإضافة */
+  .add-btn {
+    background-color: var(--primary-green) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 6px 12px !important;
+    border-radius: 12px !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    min-width: 64px !important;
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+  }
+
+  /* أيقونة داخل الزر */
+  .add-btn i {
+    margin-left: 6px !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* تحسينات إضافية */
+  .product-badges {
+    top: 8px !important;
+    right: 8px !important;
+  }
+
+  .discount-badge,
+  .bundle-badge,
+  .inactive-badge {
+    font-size: 0.7rem !important;
+    padding: 3px 6px !important;
+    border-radius: 6px !important;
+  }
+}        gap: 0.7rem; /* Smaller gap */
       }
       
       /* SQUARE product images for mobile - KACHELSTIL */
