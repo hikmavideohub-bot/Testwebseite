@@ -1438,20 +1438,20 @@ window.addEventListener('DOMContentLoaded', async () => {
   initCartModalClose();
 
   // CDN first
-  const bundle = await loadPublicBundleFromCDN();
-  if (bundle){
-    try{
-      const ok = applyBundle(bundle);
-      if (!ok) throw new Error('applyBundle returned false');
+  // const bundle = await loadPublicBundleFromCDN();
+  // if (bundle){
+  //  try{
+   //   const ok = applyBundle(bundle);
+    //  if (!ok) throw new Error('applyBundle returned false');
 
-      initOfferTimer();
-      showPage(currentPage);
-      initUXEnhancements();
-      return;
-    }catch(e){
-      console.error('CDN loaded but apply/render failed -> fallback to API', e);
-    }
-  }
+     // initOfferTimer();
+     // showPage(currentPage);
+      //initUXEnhancements();
+     // return;
+  //  }catch(e){
+   //   console.error('CDN loaded but apply/render failed -> fallback to API', e);
+   // }
+ // }
 
   // API fallback
   const active = await loadWebsiteStatus();
