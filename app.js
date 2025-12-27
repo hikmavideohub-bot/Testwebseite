@@ -12,7 +12,7 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const CDN_BUNDLE_MAX_AGE_MS = 365 * ONE_DAY_MS;
 
 // Cache (LocalStorage)
-const CACHE_PREFIX = 'store_cache_v1';
+const CACHE_PREFIX = 'store_cache_v2';
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Minuten (nur für API/Cache-Objekte)
 
 /* =========================
@@ -185,7 +185,9 @@ async function apiGet(type){
 async function loadWebsiteStatus(){
   try{
     const json = await apiGet('websiteStatus');
-    const active = json.websiteActive ?? json.website_active;
+    const data = json.data ?? json;
+
+    const active = data.websiteActive ?? data.website_active;
     if (active === false){
       applyStoreInactiveUI();
       return false;
@@ -194,24 +196,34 @@ async function loadWebsiteStatus(){
     return true;
   }catch(e){
     console.error('websiteStatus failed', e);
-    // Wenn API down: lieber "inactive UI" anzeigen
     applyStoreInactiveUI();
     return false;
   }
 }
 
+
 async function loadStoreConfig(){
   const cached = cacheGet('storeConfig');
+
+  // kompatibel zum alten Cache: {data:{...}}
   if (cached && typeof cached === 'object'){
-    STORE_DATA = cached;
+    STORE_DATA = cached.data ? cached.data : cached;
     applyStoreConfig();
     return;
   }
+
   const json = await apiGet('storeConfig');
-  STORE_DATA = json.storeConfig || json.store_config || json.data?.storeConfig || {};
+
+  // ✅ kompatibel: {success:true,data:{...}} UND (falls du irgendwann wechselst) top-level
+  const data = json.data ?? json;
+
+  // falls data schon direkt die store-fields enthält: store_name, phone, working_hours, ...
+  STORE_DATA = data.storeConfig || data.store_config || data || {};
+
   cacheSet('storeConfig', STORE_DATA);
   applyStoreConfig();
 }
+
 
 async function loadCustomerMessage(){
   const cached = cacheGet('customerMessage');
@@ -219,11 +231,17 @@ async function loadCustomerMessage(){
     applyCustomerMessage(cached);
     return;
   }
+
   const json = await apiGet('customerMessage');
-  const msg = (json.customerMessage || json.customer_message || '').toString();
+  const data = json.data ?? json;
+
+  // kompatibel zu alt: json.message
+  const msg = (data.message ?? data.customerMessage ?? data.customer_message ?? '').toString().trim();
+
   cacheSet('customerMessage', msg);
   applyCustomerMessage(msg);
 }
+
 
 async function loadCategories(){
   const cached = cacheGet('categories');
@@ -1438,20 +1456,20 @@ window.addEventListener('DOMContentLoaded', async () => {
   initCartModalClose();
 
   // CDN first
-  // const bundle = await loadPublicBundleFromCDN();
-  // if (bundle){
-  //  try{
-   //   const ok = applyBundle(bundle);
-    //  if (!ok) throw new Error('applyBundle returned false');
+  const bundle = await loadPublicBundleFromCDN();
+  if (bundle){
+    try{
+      const ok = applyBundle(bundle);
+      if (!ok) throw new Error('applyBundle returned false');
 
-     // initOfferTimer();
-     // showPage(currentPage);
-      //initUXEnhancements();
-     // return;
-  //  }catch(e){
-   //   console.error('CDN loaded but apply/render failed -> fallback to API', e);
-   // }
- // }
+      initOfferTimer();
+      showPage(currentPage);
+      initUXEnhancements();
+      return;
+    }catch(e){
+      console.error('CDN loaded but apply/render failed -> fallback to API', e);
+    }
+  }
 
   // API fallback
   const active = await loadWebsiteStatus();
