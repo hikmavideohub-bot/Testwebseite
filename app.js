@@ -185,9 +185,9 @@ async function apiGet(type){
 async function loadWebsiteStatus(){
   try{
     const json = await apiGet('websiteStatus');
-    const data = json.data ?? json;
+    const data = json.data || {}; // ✅ DEIN FORMAT
 
-    const active = data.websiteActive ?? data.website_active;
+    const active = data.website_active ?? data.websiteActive;
     if (active === false){
       applyStoreInactiveUI();
       return false;
@@ -202,10 +202,9 @@ async function loadWebsiteStatus(){
 }
 
 
+
 async function loadStoreConfig(){
   const cached = cacheGet('storeConfig');
-
-  // kompatibel zum alten Cache: {data:{...}}
   if (cached && typeof cached === 'object'){
     STORE_DATA = cached.data ? cached.data : cached;
     applyStoreConfig();
@@ -213,16 +212,11 @@ async function loadStoreConfig(){
   }
 
   const json = await apiGet('storeConfig');
-
-  // ✅ kompatibel: {success:true,data:{...}} UND (falls du irgendwann wechselst) top-level
-  const data = json.data ?? json;
-
-  // falls data schon direkt die store-fields enthält: store_name, phone, working_hours, ...
-  STORE_DATA = data.storeConfig || data.store_config || data || {};
-
+  STORE_DATA = json.data || {};   // ✅ DEIN FORMAT
   cacheSet('storeConfig', STORE_DATA);
   applyStoreConfig();
 }
+
 
 
 async function loadCustomerMessage(){
@@ -233,14 +227,14 @@ async function loadCustomerMessage(){
   }
 
   const json = await apiGet('customerMessage');
-  const data = json.data ?? json;
 
-  // kompatibel zu alt: json.message
-  const msg = (data.message ?? data.customerMessage ?? data.customer_message ?? '').toString().trim();
+  // ✅ DEIN FORMAT: message ist Top-Level
+  const msg = (json.message || json.data?.message || '').toString().trim();
 
   cacheSet('customerMessage', msg);
   applyCustomerMessage(msg);
 }
+
 
 
 async function loadCategories(){
@@ -1456,18 +1450,18 @@ window.addEventListener('DOMContentLoaded', async () => {
   initCartModalClose();
 
   // CDN first
-//  const bundle = await loadPublicBundleFromCDN();
-  //if (bundle){
-    //try{
-      //const ok = applyBundle(bundle);
-     // if (!ok) throw new Error('applyBundle returned false');
-
-      //initOfferTimer();
-      //showPage(currentPage);
-      //initUXEnhancements();
-      //return;
-    //}catch(e){
-     // console.error('CDN loaded but apply/render failed -> fallback to API', e);
+  const bundle = await loadPublicBundleFromCDN();
+ // if (bundle){
+ //   try{
+  //    const ok = applyBundle(bundle);
+    //  if (!ok) throw new Error('applyBundle returned false');
+//
+  //    initOfferTimer();
+    //  showPage(currentPage);
+     // initUXEnhancements();
+     // return;
+   // }catch(e){
+   //   console.error('CDN loaded but apply/render failed -> fallback to API', e);
    // }
  // }
 
