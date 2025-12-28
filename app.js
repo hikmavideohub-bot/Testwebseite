@@ -19,7 +19,19 @@ const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Minuten (nur für API/Cache-Objekte)
    STORE_ID from URL
 ========================= */
 const urlParams = new URLSearchParams(window.location.search);
-let STORE_ID = urlParams.get('storeId') || urlParams.get('store_id') || '';
+
+// ✅ 1) slug aus ?slug=... (optional fallback)
+let STORE_SLUG = urlParams.get('slug') || urlParams.get('storeSlug') || urlParams.get('store_slug') || '';
+
+// ✅ 2) slug aus hash: #/s/<slug>
+function getSlugFromHash_(){
+  const h = (window.location.hash || '').trim();     // مثال: "#/s/amwnty-alhlwh"
+  const m = h.match(/^#\/s\/([^/?#]+)/);
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
+if (!STORE_SLUG) STORE_SLUG = getSlugFromHash_();
+
 
 /* =========================
    GLOBAL STATE
@@ -92,7 +104,7 @@ function normalizeImageUrl(rawUrl){
 ========================= */
 
 function cacheKey(key){
-  return `${CACHE_PREFIX}:${STORE_ID}:${key}`;
+  return `${CACHE_PREFIX}:${STORE_SLUG}:${key}`;
 }
 
 function cacheSet(key, value){
@@ -1433,16 +1445,17 @@ window.addEventListener('DOMContentLoaded', async () => {
   const yearEl = $('current-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  if (!STORE_ID){
-    const loadingEl = $('loading');
-    const msg = `⚠️ Bitte URL mit ?storeId=... öffnen (z.B. ?storeId=a083e1e2)`;
-    if (loadingEl){
-      loadingEl.innerHTML = `<div style="max-width:720px;margin:0 auto;background:#fff;border-radius:16px;padding:16px;border:1px solid rgba(16,24,40,.08);box-shadow:var(--shadow)">${msg}</div>`;
-    } else {
-      alert(msg);
-    }
-    return;
+  if (!STORE_SLUG){
+  const loadingEl = $('loading');
+  const msg = `⚠️ Bitte URL mit #/s/<slug> öffnen (z.B. #/s/madina-market)`;
+  if (loadingEl){
+    loadingEl.innerHTML = `<div style="max-width:720px;margin:0 auto;background:#fff;border-radius:16px;padding:16px;border:1px solid rgba(16,24,40,.08);box-shadow:var(--shadow)">${msg}</div>`;
+  } else {
+    alert(msg);
   }
+  return;
+}
+
 
   loadCart();
   updateCartCount();
