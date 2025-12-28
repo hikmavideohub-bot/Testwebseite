@@ -1450,7 +1450,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   initCartModalClose();
 
   // CDN first
-  const bundle = await loadPublicBundleFromCDN();
+  const bundle = null; // CDN disabled – everything comes from Sheets/API
  // if (bundle){
  //   try{
   //    const ok = applyBundle(bundle);
