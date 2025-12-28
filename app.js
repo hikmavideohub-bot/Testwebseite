@@ -2,7 +2,7 @@
    CONFIG
 ========================= */
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbxmTLI6-1V7tELp7uvkDnCAMDCp6M5ZPsl4lZFL6KmaBRH9Hc9dqQdsgRDs0deca4RV6w/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwmgIvz5tDvDZ-OhSAoF3TmzPa6FFWHFIXpWUwtBWn7kmdX20U0sXPV1GkHB1fgbDZ1xQ/exec';
 
 // GitHub Pages: /data/<storeId>.json
 const CDN_DATA_BASE = './data';
