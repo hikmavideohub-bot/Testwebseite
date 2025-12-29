@@ -16,30 +16,33 @@ const CACHE_PREFIX = 'store_cache_v2';
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Minuten (nur für API/Cache-Objekte)
 
 /* =========================
-   STORE_ID from URL
+   STORE SLUG from URL (NO HASH)
 ========================= */
-function getStoreSlugFromHash(){
-  const h = window.location.hash || '';
-  // erwartet: #/s/<slug>
+
+function getStoreSlugFromPathOrFallback() {
+  // 1) Normal: /s/<slug>
+  const parts = window.location.pathname.split("/");
+  if (parts[1] === "s" && parts[2]) return decodeURIComponent(parts[2]);
+
+  // 2) GitHub Pages SPA fallback: ?__path=/s/<slug>
+  const params = new URLSearchParams(window.location.search);
+  const p = params.get("__path");
+  if (p) {
+    const ps = p.split("/");
+    if (ps[1] === "s" && ps[2]) return decodeURIComponent(ps[2]);
+  }
+
+  // 3) Fallback (alt): #/s/<slug>
+  const h = (window.location.hash || "").trim();
   const m = h.match(/^#\/s\/([^/?#]+)/);
-  return m ? decodeURIComponent(m[1]) : '';
+  if (m) return decodeURIComponent(m[1]);
+
+  // 4) Optional: ?slug=<slug>
+  const q = params.get("slug") || params.get("storeSlug") || params.get("store_slug");
+  return q ? decodeURIComponent(q) : "";
 }
 
-let STORE_SLUG = getStoreSlugFromHash();
-
-
-// ✅ 1) slug aus ?slug=... (optional fallback)
-let STORE_SLUG = urlParams.get('slug') || urlParams.get('storeSlug') || urlParams.get('store_slug') || '';
-
-// ✅ 2) slug aus hash: #/s/<slug>
-function getSlugFromHash_(){
-  const h = (window.location.hash || '').trim();     // مثال: "#/s/amwnty-alhlwh"
-  const m = h.match(/^#\/s\/([^/?#]+)/);
-  return m ? decodeURIComponent(m[1]) : '';
-}
-
-if (!STORE_SLUG) STORE_SLUG = getSlugFromHash_();
-
+const STORE_SLUG = getStoreSlugFromPathOrFallback();
 
 /* =========================
    GLOBAL STATE
@@ -68,6 +71,26 @@ function escapeHtml(str){
     .replaceAll('>','&gt;')
     .replaceAll('"','&quot;')
     .replaceAll("'","&#039;");
+}
+
+function getStoreSlug() {
+  // Normalfall: /s/<slug>
+  const parts = window.location.pathname.split("/");
+  if (parts[1] === "s" && parts[2]) {
+    return decodeURIComponent(parts[2]);
+  }
+
+  // GitHub Pages SPA-Fallback: ?__path=/s/<slug>
+  const params = new URLSearchParams(window.location.search);
+  const p = params.get("__path");
+  if (p) {
+    const ps = p.split("/");
+    if (ps[1] === "s" && ps[2]) {
+      return decodeURIComponent(ps[2]);
+    }
+  }
+
+  return "";
 }
 
 function escapeAttr(str){
@@ -160,7 +183,7 @@ async function fetchJson(url, opts = {}){
 
 function getCdnBundleUrl(){
   // GitHub Pages same-origin
-  return `${CDN_DATA_BASE}/${encodeURIComponent(STORE_ID)}.json`;
+  return `${CDN_DATA_BASE}/${encodeURIComponent(STORE_SLUG)}.json`;
 }
 
 async function loadPublicBundleFromCDN(){
@@ -194,7 +217,7 @@ async function loadPublicBundleFromCDN(){
 ========================= */
 
 async function apiGet(type){
-  const url = `${API_URL}?type=${encodeURIComponent(type)}&storeId=${encodeURIComponent(STORE_ID)}&_ts=${Date.now()}`;
+  const url = `${API_URL}?type=${encodeURIComponent(type)}&slug=${encodeURIComponent(STORE_SLUG)}&_ts=${Date.now()}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const json = await res.json();
@@ -1204,7 +1227,7 @@ function checkout(){
 }
 
 function cartStorageKey(){
-  return `cart:${STORE_ID}`;
+  return `cart:${STORE_SLUG}`;
 }
 
 function loadCart(){
@@ -1455,7 +1478,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   if (!STORE_SLUG){
   const loadingEl = $('loading');
-  const msg = `⚠️ Bitte URL mit #/s/<slug> öffnen (z.B. #/s/madina-market)`;
+  const msg = `⚠️ يرجى فتح الرابط باستخدام /s/اسم المتجر (على سبيل المثال /s/aldeeb);
   if (loadingEl){
     loadingEl.innerHTML = `<div style="max-width:720px;margin:0 auto;background:#fff;border-radius:16px;padding:16px;border:1px solid rgba(16,24,40,.08);box-shadow:var(--shadow)">${msg}</div>`;
   } else {
