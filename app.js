@@ -28,37 +28,6 @@ function getStoreSlug() {
 
 let STORE_SLUG = "";
 
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    // 1) slug sauber setzen (arabisch -> slug wird intern gemappt)
-    STORE_SLUG = await initStoreSlug();
-
-    // 2) Basis-UI / Listener initialisieren (safe, auch ohne Daten)
-    try { initNavigation(); } catch(e){}
-    try { initCartModalClose(); } catch(e){}
-    try { loadCart(); } catch(e){}
-    try { updateCartCount(); } catch(e){}
-
-    // 3) Erst CDN bundle versuchen (wenn du /data/<slug>.json nutzt)
-    const bundle = await loadPublicBundleFromCDN();
-    if (bundle && applyBundle(bundle)) {
-      try { initUXEnhancements(); } catch(e){}
-      return;
-    }
-
-    // 4) Fallback: API calls (dein Google Script Format)
-    await loadWebsiteStatus();    // => { success:true, data:{ website_active, ... } }
-    await loadStoreMeta();        // => { success:true, data:{ store_name, phone, ... } }
-    await loadCustomerMessage();  // => { success:true, message:"..." }
-    await loadCategories();       // => { success:true, categories:[...] }
-    await loadProducts();         // => { success:true, products:[...] }
-
-    try { initUXEnhancements(); } catch(e){}
-  } catch (e) {
-    console.error(e);
-    alert("Store nicht gefunden");
-  }
-});
 
 
 
@@ -233,28 +202,52 @@ async function loadPublicBundleFromCDN(){
 /* =========================
    API LOADERS (fallback)
 ========================= */
-async function loadStoreMeta(){
-  try{
-    // WICHTIG: Public META läuft bei dir über REST:
-    // GET https://api.aldeebtech.de/v1/public/stores/<slug>/meta
-    const url = `https://api.aldeebtech.de/v1/public/stores/${encodeURIComponent(STORE_SLUG)}/meta?_ts=${Date.now()}`;
+async function loadPublicBundle(){
+  // local cache (10 Min)
+  const cached = cacheGet('publicBundle');
+  if (cached && typeof cached === 'object') return cached;
 
-    const res = await fetch(url, { headers: { Accept: "application/json" } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    const json = await res.json();
-    if (!json.success) throw new Error(json.error || "meta_failed");
-
-    STORE_DATA = json.data || {};
-    CURRENCY = (STORE_DATA.currency || '€').toString().trim() || '€';
-
-    applyStoreConfig(); // nutzt STORE_DATA
-    return json;
-  }catch(e){
-    console.error("loadStoreMeta failed:", e);
-    throw e;
-  }
+  const json = await apiGet('publicBundle'); // ✅ EIN Request
+  cacheSet('publicBundle', json);
+  return json;
 }
+
+function applyPublicBundle(bundleJson){
+  // bundleJson ist das JSON von publicBundle
+  const store = bundleJson.store || {};
+  const products = Array.isArray(bundleJson.products) ? bundleJson.products : [];
+  const categories = Array.isArray(bundleJson.categories) ? bundleJson.categories : [];
+  const msg = (bundleJson.customerMessage || "").toString().trim();
+
+  // website_active aus stores sheet
+  if (store.website_active === false){
+    applyStoreInactiveUI();
+    return true;
+  }
+  restoreStoreUIIfNeeded();
+
+  // Store config setzen
+  STORE_DATA = store;
+  CURRENCY = (STORE_DATA.currency || '€').toString().trim() || '€';
+  applyStoreConfig();
+
+  // Message
+  applyCustomerMessage(msg);
+
+  // Data setzen + Render
+  categoriesData = categories;    // wird evtl. in UI gebraucht
+  productsData = products;
+
+  const loadingEl = $('loading');
+  if (loadingEl) loadingEl.style.display = 'none';
+
+  renderCategories(productsData);
+  renderAllProducts(productsData);
+  renderOfferProducts();
+
+  return true;
+}
+
 
 async function apiGet(type){
   const url = `${API_URL}?type=${encodeURIComponent(type)}&slug=${encodeURIComponent(STORE_SLUG)}&_ts=${Date.now()}`;
@@ -1554,20 +1547,39 @@ window.addEventListener('DOMContentLoaded', async () => {
   const yearEl = $('current-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  if (!STORE_SLUG) {
-  const loadingEl = $('loading');
-  const msg = `⚠️ يرجى فتح الرابط باستخدام /s/اسم المتجر (على سبيل المثال /s/aldeeb)`;
+  try {
+    // 1) slug initialisieren
+    STORE_SLUG = await initStoreSlug();
 
-  if (loadingEl) {
-    loadingEl.innerHTML =
-      `<div style="max-width:720px;margin:0 auto;background:#fff;border-radius:16px;padding:16px;border:1px solid rgba(16,24,40,.08);box-shadow:var(--shadow)">
-        ${msg}
-      </div>`;
-  } else {
-    alert(msg);
+    // 2) Erst CDN bundle versuchen (falls du später /data/<slug>.json benutzt)
+    const cdnBundle = await loadPublicBundleFromCDN();
+    if (cdnBundle && applyBundle(cdnBundle)) {
+      initOfferTimer();
+      showPage(currentPage);
+      initUXEnhancements();
+      return;
+    }
+
+    // 3) EIN Request: publicBundle
+    const bundleJson = await loadPublicBundle();
+    applyPublicBundle(bundleJson);
+
+    initOfferTimer();
+    showPage(currentPage);
+    initUXEnhancements();
+  } catch (e) {
+    console.error(e);
+    const loadingEl = $('loading');
+    if (loadingEl) {
+      loadingEl.style.display = 'block';
+      loadingEl.innerHTML = `
+        <div style="max-width:720px;margin:0 auto;background:#fff;border-radius:16px;padding:16px;border:1px solid rgba(16,24,40,.08);box-shadow:var(--shadow)">
+          حدث خطأ. تأكد من رابط المتجر ثم أعد المحاولة.
+        </div>`;
+    }
   }
-  return;
-}
+});
+
 
 
 
