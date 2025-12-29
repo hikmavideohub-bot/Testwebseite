@@ -5,7 +5,7 @@
 const API_URL = "https://api.aldeebtech.de/exec";
 
 // GitHub Pages: /data/<storeId>.json
-const CDN_DATA_BASE = './data';
+const CDN_DATA_BASE = '/data';
 
 // Stale-Check (365 Tage)
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
