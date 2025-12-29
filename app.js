@@ -2,7 +2,7 @@
    CONFIG
 ========================= */
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbwmgIvz5tDvDZ-OhSAoF3TmzPa6FFWHFIXpWUwtBWn7kmdX20U0sXPV1GkHB1fgbDZ1xQ/exec';
+const API_URL = "https://api.aldeebtech.de/exec";
 
 // GitHub Pages: /data/<storeId>.json
 const CDN_DATA_BASE = './data';
@@ -18,7 +18,15 @@ const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Minuten (nur für API/Cache-Objekte)
 /* =========================
    STORE_ID from URL
 ========================= */
-const urlParams = new URLSearchParams(window.location.search);
+function getStoreSlugFromHash(){
+  const h = window.location.hash || '';
+  // erwartet: #/s/<slug>
+  const m = h.match(/^#\/s\/([^/?#]+)/);
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
+let STORE_SLUG = getStoreSlugFromHash();
+
 
 // ✅ 1) slug aus ?slug=... (optional fallback)
 let STORE_SLUG = urlParams.get('slug') || urlParams.get('storeSlug') || urlParams.get('store_slug') || '';
