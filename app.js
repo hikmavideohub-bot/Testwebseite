@@ -19,30 +19,14 @@ const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Minuten (nur für API/Cache-Objekte)
    STORE SLUG from URL (NO HASH)
 ========================= */
 
-function getStoreSlugFromPathOrFallback() {
-  // 1) Normal: /s/<slug>
+function getStoreSlug() {
   const parts = window.location.pathname.split("/");
   if (parts[1] === "s" && parts[2]) return decodeURIComponent(parts[2]);
-
-  // 2) GitHub Pages SPA fallback: ?__path=/s/<slug>
-  const params = new URLSearchParams(window.location.search);
-  const p = params.get("__path");
-  if (p) {
-    const ps = p.split("/");
-    if (ps[1] === "s" && ps[2]) return decodeURIComponent(ps[2]);
-  }
-
-  // 3) Fallback (alt): #/s/<slug>
-  const h = (window.location.hash || "").trim();
-  const m = h.match(/^#\/s\/([^/?#]+)/);
-  if (m) return decodeURIComponent(m[1]);
-
-  // 4) Optional: ?slug=<slug>
-  const q = params.get("slug") || params.get("storeSlug") || params.get("store_slug");
-  return q ? decodeURIComponent(q) : "";
+  return "";
 }
 
-const STORE_SLUG = getStoreSlugFromPathOrFallback();
+
+const STORE_SLUG = getStoreSlug();
 
 /* =========================
    GLOBAL STATE
