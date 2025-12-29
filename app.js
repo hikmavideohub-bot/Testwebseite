@@ -931,12 +931,13 @@ function renderGrid(containerId, products, isInactive){
   const list = Array.isArray(products) ? products : [];
 
   if (list.length === 0 && !isInactive){
-    grid.innerHTML = `
-      <div class="empty-state" style="text-align:center; padding:3rem; color:var(--muted); grid-column:1 / -1;">
-        <i class="fas fa-box-open" style="font-size:3rem;color:rgba(122,135,151,.25)"></i>
-        <h3 style="margin-top:1rem; font-weight:900;">لا توجد منتجات</h3>
-        <p>لا توجد منتجات نشطة في هذا القسم حالياً</p>
-      </div>`;
+    grid.innerHTML =
+  '<div class="empty-state" style="text-align:center; padding:3rem; color:var(--muted); grid-column:1 / -1;">' +
+    '<i class="fas fa-box-open" style="font-size:3rem;color:rgba(122,135,151,.25)"></i>' +
+    '<h3 style="margin-top:1rem; font-weight:900;">لا توجد منتجات</h3>' +
+    '<p>لا توجد منتجات نشطة في هذا القسم حالياً</p>' +
+  '</div>';
+
     return;
   }
 
