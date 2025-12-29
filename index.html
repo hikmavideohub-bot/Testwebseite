@@ -35,32 +35,21 @@
 
       <!-- Store Info & Cart -->
       <div class="store-info-header">
-  <!-- Kebab Menu Button -->
-  <div class="kebab-menu" id="kebabMenu">
-    <i class="fas fa-ellipsis-v"></i>
-  </div>
-  
-  <!-- Kebab Dropdown Menu -->
-  <div class="kebab-dropdown" id="kebabDropdown">
-    <div class="kebab-item" data-page="about">
-      <i class="fas fa-info-circle"></i>
-      <span>Über uns</span>
-    </div>
-    <div class="kebab-item" onclick="openCart()">
-      <i class="fas fa-shopping-cart"></i>
-      <span>Warenkorb</span>
-    </div>
-    <div class="kebab-item" onclick="shareStore()">
-      <i class="fas fa-share-alt"></i>
-      <span>Teilen</span>
-    </div>
-  </div>
+        <div class="contact-pill" title="الهاتف">
+          <i class="fas fa-phone"></i>
+          <span id="store-phone">...</span>
+        </div>
 
-  <div class="cart-icon" onclick="openCart()">
-    <i class="fas fa-shopping-cart"></i>
-    <span class="cart-badge" id="cart-badge">0</span>
-  </div>
-</div>
+        <div class="cart-icon" onclick="openCart()">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </div>
+
+        <button class="mobile-toggle" id="mobileToggle" aria-label="menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
   </header>
 
   <!-- Announcement Bar -->
@@ -344,5 +333,13 @@
   </footer>
 
   <script src="/app.js?v=20251229-1"></script>
+  <div id="about-overlay">
+  <div class="about-box">
+    <i class="fas fa-times close-about" onclick="closeMenu()"></i>
+    <h2>Über uns</h2>
+    <p>Willkommen in unserem Online-Shop 🌿</p>
+  </div>
+</div>
+
 </body>
 </html>
