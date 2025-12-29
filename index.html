@@ -35,21 +35,32 @@
 
       <!-- Store Info & Cart -->
       <div class="store-info-header">
-        <div class="contact-pill" title="الهاتف">
-          <i class="fas fa-phone"></i>
-          <span id="store-phone">...</span>
-        </div>
-
-        <div class="cart-icon" onclick="openCart()">
-          <i class="fas fa-shopping-cart"></i>
-          <span class="cart-badge" id="cart-badge">0</span>
-        </div>
-
-        <button class="mobile-toggle" id="mobileToggle" aria-label="menu">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
+  <!-- Kebab Menu Button -->
+  <div class="kebab-menu" id="kebabMenu">
+    <i class="fas fa-ellipsis-v"></i>
+  </div>
+  
+  <!-- Kebab Dropdown Menu -->
+  <div class="kebab-dropdown" id="kebabDropdown">
+    <div class="kebab-item" data-page="about">
+      <i class="fas fa-info-circle"></i>
+      <span>Über uns</span>
     </div>
+    <div class="kebab-item" onclick="openCart()">
+      <i class="fas fa-shopping-cart"></i>
+      <span>Warenkorb</span>
+    </div>
+    <div class="kebab-item" onclick="shareStore()">
+      <i class="fas fa-share-alt"></i>
+      <span>Teilen</span>
+    </div>
+  </div>
+
+  <div class="cart-icon" onclick="openCart()">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-badge" id="cart-badge">0</span>
+  </div>
+</div>
   </header>
 
   <!-- Announcement Bar -->
