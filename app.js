@@ -26,7 +26,22 @@ function getStoreSlug() {
 }
 
 
-const STORE_SLUG = getStoreSlug();
+let STORE_SLUG = "";
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    STORE_SLUG = await initStoreSlug();
+
+    // ab HIER wie gewohnt
+    // loadStoreConfig();
+    // loadCategories();
+    // loadProducts();
+  } catch (e) {
+    console.error(e);
+    alert("Store nicht gefunden");
+  }
+});
+
 
 /* =========================
    GLOBAL STATE
@@ -405,7 +420,7 @@ function applyStoreConfig(){
   setText('store-name', storeName);
   setText('footer-store-name', storeName);
   setText('footer-store-name-bottom', storeName);
-  document.title = storeName;
+  document.title = `${STORE_DATA.store_name || storeName} | متجر`;
 
   setText('footer-store-description', storeDesc);
 
@@ -445,6 +460,43 @@ function applyStoreConfig(){
 
   try { setupSocialLinks(); } catch {}
   try { applyMapsFromAddress(STORE_DATA.address || ''); } catch {}
+}
+
+function looksLikeLatinSlug(s) {
+  return /^[a-z0-9-]+$/i.test(s);
+}
+
+function getRawStoreSegment() {
+  const parts = window.location.pathname.split("/");
+  if (parts[1] === "s" && parts[2]) {
+    return decodeURIComponent(parts[2]);
+  }
+  return "";
+}
+
+async function initStoreSlug() {
+  const raw = getRawStoreSegment();
+  if (!raw) throw new Error("missing_slug");
+
+  // schon ein normaler Slug → direkt nutzen
+  if (looksLikeLatinSlug(raw)) {
+    return raw;
+  }
+
+  // arabischer Name → Backend fragen
+  const res = await fetch(
+    `${API_URL}?type=resolveSlug&name=${encodeURIComponent(raw)}`,
+    { headers: { Accept: "application/json" } }
+  );
+  const json = await res.json();
+
+  if (!json.success || !json.slug) {
+    throw new Error("store_not_found");
+  }
+
+  // URL kanonisch machen (ohne Reload!)
+  history.replaceState(null, "", `/s/${json.slug}`);
+  return json.slug;
 }
 
 /* =========================
