@@ -1402,16 +1402,6 @@ function calculateCartItemPrice(item){
   return qty * Number(item.originalPrice || 0);
 }
 
-function openMenu() {
-  const overlay = document.getElementById('about-overlay');
-  overlay.classList.add('active');
-}
-
-function closeMenu() {
-  const overlay = document.getElementById('about-overlay');
-  overlay.classList.remove('active');
-}
-
 function renderCartItems(){
   const container = $('cart-items');
   if (!container) return;
