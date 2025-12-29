@@ -279,14 +279,6 @@ async function loadWebsiteStatus(){
 
 
 
-async function loadStoreConfig(){
-  const cached = cacheGet('storeConfig');
-  if (cached && typeof cached === 'object'){
-    STORE_DATA = cached.data ? cached.data : cached;
-    applyStoreConfig();
-    return;
-  }
-
   const json = await apiGet('storeConfig');
   STORE_DATA = json.data || {};   // ✅ DEIN FORMAT
   cacheSet('storeConfig', STORE_DATA);
@@ -1608,7 +1600,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   const active = await loadWebsiteStatus();
   if (!active) return;
 
-  await loadStoreConfig();
   await loadCustomerMessage();
   await loadCategories();
   await fetchProducts();
