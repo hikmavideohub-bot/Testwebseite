@@ -1513,16 +1513,21 @@ window.addEventListener('DOMContentLoaded', async () => {
   const yearEl = $('current-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  if (!STORE_SLUG){
+  if (!STORE_SLUG) {
   const loadingEl = $('loading');
-  const msg = `⚠️ يرجى فتح الرابط باستخدام /s/اسم المتجر (على سبيل المثال /s/aldeeb);
-  if (loadingEl){
-    loadingEl.innerHTML = `<div style="max-width:720px;margin:0 auto;background:#fff;border-radius:16px;padding:16px;border:1px solid rgba(16,24,40,.08);box-shadow:var(--shadow)">${msg}</div>`;
+  const msg = `⚠️ يرجى فتح الرابط باستخدام /s/اسم المتجر (على سبيل المثال /s/aldeeb)`;
+
+  if (loadingEl) {
+    loadingEl.innerHTML =
+      `<div style="max-width:720px;margin:0 auto;background:#fff;border-radius:16px;padding:16px;border:1px solid rgba(16,24,40,.08);box-shadow:var(--shadow)">
+        ${msg}
+      </div>`;
   } else {
     alert(msg);
   }
   return;
 }
+
 
 
   loadCart();
