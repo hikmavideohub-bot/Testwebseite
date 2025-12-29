@@ -30,17 +30,36 @@ let STORE_SLUG = "";
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
+    // 1) slug sauber setzen (arabisch -> slug wird intern gemappt)
     STORE_SLUG = await initStoreSlug();
 
-    // ab HIER wie gewohnt
-    // loadStoreConfig();
-    // loadCategories();
-    // loadProducts();
+    // 2) Basis-UI / Listener initialisieren (safe, auch ohne Daten)
+    try { initNavigation(); } catch(e){}
+    try { initCartModalClose(); } catch(e){}
+    try { loadCart(); } catch(e){}
+    try { updateCartCount(); } catch(e){}
+
+    // 3) Erst CDN bundle versuchen (wenn du /data/<slug>.json nutzt)
+    const bundle = await loadPublicBundleFromCDN();
+    if (bundle && applyBundle(bundle)) {
+      try { initUXEnhancements(); } catch(e){}
+      return;
+    }
+
+    // 4) Fallback: API calls (dein Google Script Format)
+    await loadWebsiteStatus();    // => { success:true, data:{ website_active, ... } }
+    await loadStoreMeta();        // => { success:true, data:{ store_name, phone, ... } }
+    await loadCustomerMessage();  // => { success:true, message:"..." }
+    await loadCategories();       // => { success:true, categories:[...] }
+    await loadProducts();         // => { success:true, products:[...] }
+
+    try { initUXEnhancements(); } catch(e){}
   } catch (e) {
     console.error(e);
     alert("Store nicht gefunden");
   }
 });
+
 
 
 /* =========================
@@ -214,6 +233,28 @@ async function loadPublicBundleFromCDN(){
 /* =========================
    API LOADERS (fallback)
 ========================= */
+async function loadStoreMeta(){
+  try{
+    // WICHTIG: Public META läuft bei dir über REST:
+    // GET https://api.aldeebtech.de/v1/public/stores/<slug>/meta
+    const url = `https://api.aldeebtech.de/v1/public/stores/${encodeURIComponent(STORE_SLUG)}/meta?_ts=${Date.now()}`;
+
+    const res = await fetch(url, { headers: { Accept: "application/json" } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || "meta_failed");
+
+    STORE_DATA = json.data || {};
+    CURRENCY = (STORE_DATA.currency || '€').toString().trim() || '€';
+
+    applyStoreConfig(); // nutzt STORE_DATA
+    return json;
+  }catch(e){
+    console.error("loadStoreMeta failed:", e);
+    throw e;
+  }
+}
 
 async function apiGet(type){
   const url = `${API_URL}?type=${encodeURIComponent(type)}&slug=${encodeURIComponent(STORE_SLUG)}&_ts=${Date.now()}`;
