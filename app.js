@@ -2,7 +2,7 @@
    CONFIG
 ========================= */
 
-const API_URL = "https://api.aldeebtech.de/exec";   // nur /exec (storecontroller AUS)
+const API_URL = "https://api.aldeebtech.de/exec";   // nur /exec (storecontroller AUS
 const CDN_DATA_BASE = "/data";                      // optional: /data/<slug>.json (wenn du es später nutzt)
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
