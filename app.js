@@ -11,6 +11,10 @@ const CDN_BUNDLE_MAX_AGE_MS = 365 * ONE_DAY_MS;
 const CACHE_PREFIX = "store_cache_v2";
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
 
+// Kebab Menu Functionality
+const kebabMenu = document.getElementById('kebabMenu');
+const kebabDropdown = document.getElementById('kebabDropdown');
+
 /* =========================
    GLOBAL STATE
 ========================= */
@@ -24,7 +28,7 @@ let STORE_DATA = {};
 let CURRENCY = "€";
 
 let categoriesData = [];
-let productsData = [];
+let sData = [];
 
 let cart = [];
 
@@ -230,8 +234,8 @@ async function loadPublicBundle() {
 
 /**
  * Accepts either:
- *  - publicBundle format: { success:true, store, customerMessage, categories, products }
- *  - older bundle format (if you later add CDN JSON): { storeConfig, customerMessage, categories, products, websiteActive }
+ *  - publicBundle format: { success:true, store, customerMessage, categories, s }
+ *  - older bundle format (if you later add CDN JSON): { storeConfig, customerMessage, categories, s, websiteActive }
  */
 function applyAnyBundle(bundleJson) {
   if (!bundleJson || typeof bundleJson !== "object") return false;
@@ -785,6 +789,80 @@ function renderCategories(products) {
     nav.appendChild(mkBtn(cat, "fas fa-tag", activeCategory === cat, () => filterProducts(cat)));
   });
 }
+
+// Kebab Menu Functionality
+const kebabMenu = document.getElementById('kebabMenu');
+const kebabDropdown = document.getElementById('kebabDropdown');
+
+if (kebabMenu && kebabDropdown) {
+  kebabMenu.addEventListener('click', function(e) {
+    e.stopPropagation();
+    kebabDropdown.classList.toggle('active');
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function() {
+    kebabDropdown.classList.remove('active');
+  });
+
+  // Handle kebab menu item clicks
+  const kebabItems = kebabDropdown.querySelectorAll('.kebab-item');
+  kebabItems.forEach(item => {
+    if (item.dataset.page) {
+      item.addEventListener('click', function() {
+        navigateToPage(this.dataset.page);
+        kebabDropdown.classList.remove('active');
+      });
+    }
+  });
+}
+
+// Share store function
+function shareStore() {
+  if (navigator.share) {
+    navigator.share({
+      title: document.getElementById('store-name').textContent,
+      text: 'Schau dir diesen tollen Online-Shop an!',
+      url: window.location.href,
+    });
+  } else {
+    // Fallback: Copy to clipboard
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link wurde in die Zwischenablage kopiert!');
+  }
+  kebabDropdown.classList.remove('active');
+}
+
+// Add overlay add button to product cards
+function initializeProductCards() {
+  const productCards = document.querySelectorAll('.product-card:not(.inactive)');
+  
+  productCards.forEach(card => {
+    // Remove original add button
+    const originalBtn = card.querySelector('.add-btn');
+    if (originalBtn) originalBtn.style.display = 'none';
+    
+    // Add overlay button
+    const imageContainer = card.querySelector('.product-image-container');
+    if (imageContainer) {
+      const overlayBtn = document.createElement('button');
+      overlayBtn.className = 'add-btn-overlay';
+      overlayBtn.innerHTML = '<i class="fas fa-cart-plus"></i> Hinzufügen';
+      
+      // Get product data
+      const productId = card.dataset.productId;
+      overlayBtn.onclick = function(e) {
+        e.stopPropagation();
+        addToCart(productId);
+      };
+      
+      imageContainer.appendChild(overlayBtn);
+    }
+  });
+}
+
+// Call this after products are loaded
+// initializeProductCards();
 
 function filterProducts(category) {
   activeCategory = category;
