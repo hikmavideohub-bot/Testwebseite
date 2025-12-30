@@ -1,4 +1,4 @@
- console.log("APP VERSION: 20251230-2");
+ console.log("APP VERSION: 20251230-3");
 /* =========================
    ENHANCED TEXT & DISPLAY FUNCTIONS
 ========================= */
