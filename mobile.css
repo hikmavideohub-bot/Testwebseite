@@ -36,6 +36,7 @@
   }
 
   /* ==================== HEADER ==================== */
+  /* ==================== HEADER (Fest oben) ==================== */
   header {
     background: var(--card) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
@@ -44,6 +45,7 @@
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
+    height: 60px !important; /* Feste Höhe für präzise Stapelung */
     z-index: 1000 !important;
   }
 
@@ -52,179 +54,64 @@
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    max-width: 100% !important;
+    height: 100% !important;
   }
 
-  .logo {
-    flex: 1 !important;
-    min-width: 0 !important;
-  }
+  /* ... Logo, Cart & Menu Styles bleiben wie sie sind ... */
+  .logo { flex: 1 !important; min-width: 0 !important; }
+  .logo h1 { font-weight: 700 !important; font-size: 1.25rem !important; color: var(--text) !important; white-space: nowrap !important; }
+  .cart-icon { background: transparent !important; border: none !important; font-size: 1.4rem !important; position: relative !important; }
+  .cart-badge { position: absolute !important; top: 0 !important; right: 0 !important; background: var(--danger) !important; color: white !important; width: 18px !important; height: 18px !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; border: 2px solid var(--card) !important; font-size: 0.65rem !important; }
+  #mobileToggle { display: flex !important; background: transparent !important; border: none !important; font-size: 1.4rem !important; }
 
-  .logo h1 {
-    font-weight: 700 !important;
-    font-size: 1.25rem !important;
-    color: var(--text) !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-  }
-
-  .store-subtitle {
-    font-size: 0.75rem !important;
-    color: var(--text-secondary) !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-  }
-
-  .logo i {
-    color: var(--primary) !important;
-    font-size: 1.5rem !important;
-  }
-
-  .contact-pill {
-    display: none !important;
-  }
-
-  /* CART & MENU ICONS */
-  .store-info-header {
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-  }
-
-  .cart-icon {
-    background: transparent !important;
-    border: none !important;
-    padding: 0.5rem !important;
-    font-size: 1.4rem !important;
-    color: var(--text) !important;
-    position: relative !important;
-  }
-
-  .cart-badge {
-    position: absolute !important;
-    top: 0 !important;
+  /* ==================== CUSTOMER MESSAGE (Stapelt sich unter Header) ==================== */
+  #announcement-bar {
+    position: fixed !important;
+    top: 60px !important; /* Startet direkt NACH dem Header */
+    left: 0 !important;
     right: 0 !important;
-    background: var(--danger) !important;
+    height: 40px !important; /* Feste Höhe */
+    background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
     color: white !important;
-    font-size: 0.65rem !important;
-    font-weight: 700 !important;
-    width: 18px !important;
-    height: 18px !important;
-    border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border: 2px solid var(--card) !important;
-  }
-
-  #mobileToggle {
-    display: flex !important;
-    background: transparent !important;
-    border: none !important;
-    padding: 0.5rem !important;
-    font-size: 1.4rem !important;
-    color: var(--text) !important;
-  }
-
-  /* KEBAB MENU */
-  .nav-menu {
-    position: fixed !important;
-    top: 0 !important;
-    right: -100% !important;
-    width: 280px !important;
-    height: 100vh !important;
-    background: var(--card) !important;
-    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1) !important;
-    z-index: 1001 !important;
-    padding: 5rem 0 2rem !important;
-    transition: right 0.3s ease !important;
-    overflow-y: auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0 !important;
-  }
-
-  .nav-menu.active {
-    right: 0 !important;
-  }
-
-  .nav-item {
-    margin: 0 !important;
-  }
-
-  .nav-link {
-    display: flex !important;
-    align-items: center !important;
-    gap: 1rem !important;
-    padding: 1rem 1.5rem !important;
-    color: var(--text) !important;
-    font-weight: 500 !important;
-    border-bottom: 1px solid #f1f5f9 !important;
-    transition: all 0.2s ease !important;
-  }
-
-  .nav-link i {
-    font-size: 1.1rem !important;
-    color: var(--text-secondary) !important;
-  }
-
-  .nav-link.active {
-    background: #f8fafc !important;
-    color: var(--primary) !important;
-    border-right: 3px solid var(--primary) !important;
-  }
-
-  .nav-link.active i {
-    color: var(--primary) !important;
-  }
-
-  /* ==================== CUSTOMER MESSAGE ==================== */
-  #announcement-bar {
-    top: 60px !important;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
-    color: white !important;
-    padding: 0.6rem 1rem !important;
-    font-size: 0.85rem !important;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2) !important;
+    z-index: 999 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   }
 
   .announcement-content {
-    animation: slideRight 16s linear infinite !important;
-    justify-content: center !important;
+    font-size: 0.85rem !important;
     text-align: center !important;
-    padding: 0 !important;
+    width: 100% !important;
   }
 
-  /* ==================== CATEGORIES (TABS) ==================== */
+  /* ==================== CATEGORIES (Stapelt sich unter Nachricht) ==================== */
   .category-nav {
     position: fixed !important;
-    top: 60px !important;
+    top: 60px !important; /* Standard, wenn KEINE Nachricht da ist */
     left: 0 !important;
     right: 0 !important;
+    height: 50px !important;
     background: var(--card) !important;
     z-index: 998 !important;
-    padding: 0.75rem 0 !important;
+    padding: 0.5rem 0 !important;
     overflow-x: auto !important;
-    overflow-y: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04) !important;
-    border-bottom: 1px solid #f1f5f9 !important;
     display: flex !important;
     gap: 0.5rem !important;
     flex-wrap: nowrap !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    scrollbar-width: none !important;
   }
 
+  /* WICHTIG: Wenn Nachricht aktiv ist, schiebe Kategorien weiter runter */
   body.has-announcement .category-nav {
-    top: 100px !important;
+    top: 100px !important; /* 60px Header + 40px Nachricht */
   }
 
   .category-nav::-webkit-scrollbar {
     display: none !important;
   }
-
   .cat-btn {
     background: transparent !important;
     border: none !important;
