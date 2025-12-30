@@ -1303,16 +1303,21 @@ function renderGrid(containerId, products, isInactive) {
 
 
 
+var sizeValue = strTrim(p && p.sizevalue ? p.sizevalue : "");
+var sizeUnit  = strTrim(p && p.sizeunit ? p.sizeunit : "");
 
-    var sizeValue = strTrim(p && p.sizevalue ? p.sizevalue : "");
-    var sizeUnit = strTrim(p && p.sizeunit ? p.sizeunit : "");
-    var sizeDisplay =
-      (!isMobile && sizeValue && sizeUnit)
-        ? ('<div class="product-size"><i class="fas fa-weight-hanging"></i> الحجم: ' + escapeHtml(sizeValue) + " " + escapeHtml(sizeUnit) + "</div>")
-        : "";
+var sizeDisplay =
+  (sizeValue && sizeUnit)
+    ? (
+        isMobile
+          ? ('<div class="product-size">' + escapeHtml(sizeValue) + ' ' + escapeHtml(sizeUnit) + '</div>')
+          : ('<div class="product-size"><i class="fas fa-weight-hanging"></i> الحجم: ' + escapeHtml(sizeValue) + ' ' + escapeHtml(sizeUnit) + '</div>')
+      )
+    : "";
 
-    var bundleInfoHTML =
-  (!isMobile && pricing.hasBundle)
+
+   var bundleInfoHTML =
+  (pricing.hasBundle)
     ? ('<div class="bundle-info">عرض حزمة: ' + escapeHtml(pricing.offerLabelLong || pricing.offerLabelShort || "") + "</div>")
     : "";
 
