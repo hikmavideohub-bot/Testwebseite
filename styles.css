@@ -839,6 +839,18 @@
       color: rgba(255,255,255,.72);
       font-size: .92rem;
     }
+/* DESKTOP: Produktkarte kompakter machen */
+@media (min-width: 992px){
+  .product-content{
+    justify-content: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .price-container{
+    margin-top: 6px !important;
+  }
+}
+
 
     /* Responsive - IMPROVED MOBILE DISPLAY */
     
