@@ -376,6 +376,10 @@
     transform: scale(0.95) !important; /* Button wird 5% kleiner beim Tippen */
     transition: transform 0.1s ease !important;
 }
+ .add-btn.success {
+    background-color: #22c55e !important; /* Ein schönes Grün */
+    transform: scale(1.05) !important;
+}
 
   .add-btn:disabled {
     background: rgba(100, 116, 139, 0.7) !important;
@@ -676,11 +680,11 @@
     height: 40px !important;
     font-size: 1.1rem !important;
   }
-}
+
 
 /* ==================== EXTRA SMALL (up to 380px) ==================== */
 @media (max-width: 380px) {
   .products-grid {
     grid-template-columns: 1fr !important;
-  }
+  } 
 }
