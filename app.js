@@ -1674,7 +1674,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   const yearEl = $("current-year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // UI init that doesn't depend on data
+ console.log("APP VERSION: 20251230-1");
+   // UI init that doesn't depend on data
   try {
     initNavigation();
   } catch {}
