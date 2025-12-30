@@ -756,44 +756,70 @@ function isOfferActive(p) {
 function calculatePrice(p) {
   var price = Number((p && p.price) ? p.price : 0);
 
-  const hasDiscount =
+  var hasDiscount =
     hasOffer(p) &&
     (p.offer_type === "percent" || p.offer_type === "percentage") &&
     Number(p.percent) > 0;
 
-  const hasBundle =
+  var hasBundle =
     hasOffer(p) &&
     p.offer_type === "bundle" &&
     Number(p.bundle_qty) > 0 &&
     Number(p.bundle_price) > 0;
 
   if (hasDiscount) {
-    const percent = Math.max(0, Math.min(100, Number(p.percent)));
-    const finalPrice = price * (1 - percent / 100);
+    var percent = Math.max(0, Math.min(100, Number(p.percent)));
+    var finalPrice = price * (1 - percent / 100);
     return {
       originalPrice: price,
-      finalPrice,
+      finalPrice: finalPrice,
       hasDiscount: true,
       discountPercent: percent,
       hasBundle: false,
       bundleInfo: null,
       bundleText: "",
+      bundleBadge: ""
     };
   }
 
   if (hasBundle) {
-    const qty = Number(p.bundle_qty);
-    const bundlePrice = Number(p.bundle_price);
-    const unitPrice = bundlePrice / qty;
-    const text = `${qty} بـ ${bundlePrice.toFixed(2)} ${CURRENCY}`;
+    var qty = Number(p.bundle_qty);
+    var bundlePrice = Number(p.bundle_price);
+    var unitPrice = price;
+
+    var payQtyGuess = Math.round(bundlePrice / unitPrice);
+    var freeQty = qty - payQtyGuess;
+
+    // Default (kein "اشتر X واحصل على Y" erkennbar)
+    var bundleText = qty + " حبات بـ " + bundlePrice.toFixed(2) + " " + CURRENCY;
+    var bundleBadge = "سعر خاص";
+
+    // Wenn es wirklich "Pay X, get Y" ist
+    if (
+      payQtyGuess >= 1 &&
+      payQtyGuess < qty &&
+      Math.abs(bundlePrice - payQtyGuess * unitPrice) < 0.1
+    ) {
+      // Text: "3 + 1 مجاناً"
+      bundleText = payQtyGuess + " + " + freeQty + " مجاناً";
+
+      // Badge: "4 بسعر 3"
+      bundleBadge = qty + " بسعر " + payQtyGuess;
+    }
+
     return {
       originalPrice: price,
-      finalPrice: unitPrice,
+      finalPrice: unitPrice, // Preis pro Stück (normal)
       hasDiscount: false,
       discountPercent: 0,
       hasBundle: true,
-      bundleInfo: { qty, bundlePrice, unitPrice },
-      bundleText: text,
+      bundleInfo: {
+        qty: qty,
+        bundlePrice: bundlePrice,
+        unitPrice: bundlePrice / qty
+      },
+      bundleText: bundleText,
+      bundleBadge: bundleBadge
     };
   }
 
@@ -805,8 +831,10 @@ function calculatePrice(p) {
     hasBundle: false,
     bundleInfo: null,
     bundleText: "",
+    bundleBadge: ""
   };
 }
+
 
 /* =========================
    PRODUCT IMAGE
@@ -995,7 +1023,8 @@ for (let i = 0; i < list.length; i++) {
         <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
         <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
       </div>`;
-    badgeHTML = `<div class="bundle-badge">${isMobile ? pricing.bundleText.replace(" بـ ", "/") : pricing.bundleText}</div>`;
+     badgeHTML = '<div class="bundle-badge">' + (isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText) + '</div>';
+
   } else {
     priceHTML = `
       <div class="price-wrapper">
@@ -1074,18 +1103,25 @@ function toggleDescription(el) {
 ========================= */
 
 function renderOfferProducts() {
-  const offersGrid = $("offers-grid");
-  const noOffers = $("no-offers");
+  var offersGrid = $("offers-grid");
+  var noOffers = $("no-offers");
   if (!offersGrid || !noOffers) return;
 
-  const list = Array.isArray(productsData) ? productsData : [];
+  var list = Array.isArray(productsData) ? productsData : [];
   if (list.length === 0) {
     offersGrid.innerHTML = "";
     noOffers.style.display = "block";
     return;
   }
 
-  const offerProducts = list.filter((p) => isProductActive(p) && hasOffer(p) && isOfferActive(p));
+  var offerProducts = [];
+  for (var i = 0; i < list.length; i++) {
+    var p = list[i];
+    if (isProductActive(p) && hasOffer(p) && isOfferActive(p)) {
+      offerProducts.push(p);
+    }
+  }
+
   if (offerProducts.length === 0) {
     offersGrid.innerHTML = "";
     noOffers.style.display = "block";
@@ -1094,76 +1130,106 @@ function renderOfferProducts() {
 
   noOffers.style.display = "none";
 
-  const isMobile = window.innerWidth <= 992;
-  let html = "";
+  var isMobile = window.innerWidth <= 992;
+  var html = "";
 
-  for (const p of offerProducts) {
-    const pricing = calculatePrice(p);
+  for (var j = 0; j < offerProducts.length; j++) {
+    var p2 = offerProducts[j];
+    var pricing = calculatePrice(p2);
 
-    let priceHTML = "";
-    let badgeHTML = "";
+    var priceHTML = "";
+    var badgeHTML = "";
 
     if (pricing.hasDiscount) {
-      priceHTML = `
-        <div class="price-wrapper">
-          <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
-          <span class="price-new discount">${pricing.finalPrice.toFixed(2)} ${CURRENCY}</span>
-        </div>`;
-      badgeHTML = `<div class="discount-badge">${isMobile ? `${pricing.discountPercent}%` : `خصم ${pricing.discountPercent}%`}</div>`;
+      priceHTML =
+        '<div class="price-wrapper">' +
+        '<span class="price-old">' + pricing.originalPrice.toFixed(2) + ' ' + CURRENCY + '</span>' +
+        '<span class="price-new discount">' + pricing.finalPrice.toFixed(2) + ' ' + CURRENCY + '</span>' +
+        '</div>';
+
+      badgeHTML =
+        '<div class="discount-badge">' +
+        (isMobile
+          ? pricing.discountPercent + '%'
+          : 'خصم ' + pricing.discountPercent + '%') +
+        '</div>';
+
     } else if (pricing.hasBundle) {
-      priceHTML = `
-        <div class="price-wrapper">
-          <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
-          <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
-        </div>`;
-      badgeHTML = `<div class="bundle-badge">${isMobile ? pricing.bundleText.replace(" بـ ", "/") : pricing.bundleText}</div>`;
+      priceHTML =
+        '<div class="price-wrapper">' +
+        '<span class="price-old">' + pricing.originalPrice.toFixed(2) + ' ' + CURRENCY + '</span>' +
+        '<span class="price-new bundle">' + pricing.bundleInfo.unitPrice.toFixed(2) + ' ' + CURRENCY + '</span>' +
+        '</div>';
+
+      badgeHTML =
+        '<div class="bundle-badge">' +
+        (isMobile
+          ? (pricing.bundleBadge || pricing.bundleText)
+          : pricing.bundleText) +
+        '</div>';
+
     } else {
-      priceHTML = `<div class="price-wrapper"><span class="price-new">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span></div>`;
-      badgeHTML = `<div class="discount-badge">عرض</div>`;
+      priceHTML =
+        '<div class="price-wrapper">' +
+        '<span class="price-new">' + pricing.originalPrice.toFixed(2) + ' ' + CURRENCY + '</span>' +
+        '</div>';
+
+      badgeHTML = '<div class="neutral-badge">متوفر</div>';
     }
 
-    const sizeValue = (p.sizevalue || "").toString().trim();
-    const sizeUnit = (p.sizeunit || "").toString().trim();
-    const sizeDisplay =
-      !isMobile && sizeValue && sizeUnit
-        ? `<div class="product-size"><i class="fas fa-weight-hanging"></i> الحجم: ${escapeHtml(sizeValue)} ${escapeHtml(sizeUnit)}</div>`
-        : "";
+    var sizeValue = (p2.sizevalue || "").toString().trim();
+    var sizeUnit = (p2.sizeunit || "").toString().trim();
+    var sizeDisplay = "";
+    if (!isMobile && sizeValue && sizeUnit) {
+      sizeDisplay =
+        '<div class="product-size">' +
+        '<i class="fas fa-weight-hanging"></i> الحجم: ' +
+        escapeHtml(sizeValue) + ' ' + escapeHtml(sizeUnit) +
+        '</div>';
+    }
 
-    const bundleInfoHTML =
-      !isMobile && pricing.hasBundle ? `<div class="bundle-info">عرض حزمة: ${pricing.bundleText}</div>` : "";
+    var bundleInfoHTML = "";
+    if (!isMobile && pricing.hasBundle) {
+      bundleInfoHTML = '<div class="bundle-info">عرض حزمة: ' + pricing.bundleText + '</div>';
+    }
 
-    const descToggleHTML = !isMobile
-      ? `<span class="desc-toggle" onclick="toggleDescription(this)"><i class="fas fa-chevron-down"></i></span>`
-      : "";
+    var descToggleHTML = "";
+    if (!isMobile) {
+      descToggleHTML =
+        '<span class="desc-toggle" onclick="toggleDescription(this)">' +
+        '<i class="fas fa-chevron-down"></i>' +
+        '</span>';
+    }
 
-    html += `
-      <div class="product-card">
-        <div class="product-image-container">
-          ${productImageHTML(p)}
-          <div class="product-badges">${badgeHTML}</div>
-        </div>
+    html +=
+      '<div class="product-card" data-product-id="' + escapeAttr(p2.id) + '">' +
+        '<div class="product-image-container">' +
+          productImageHTML(p2) +
+          '<div class="product-badges">' + badgeHTML + '</div>' +
+        '</div>' +
 
-        <div class="product-info">
-          <h3 class="product-title">
-            ${escapeHtml(p.name || "")}
-            ${descToggleHTML}
-          </h3>
-          ${sizeDisplay}
-          <p class="product-desc">${escapeHtml(p.description || "")}</p>
-          ${bundleInfoHTML}
+        '<div class="product-info">' +
+          '<h3 class="product-title">' +
+            escapeHtml(p2.name || "") +
+            descToggleHTML +
+          '</h3>' +
+          sizeDisplay +
+          '<p class="product-desc">' + escapeHtml(p2.description || "") + '</p>' +
+          bundleInfoHTML +
 
-          <div class="price-container">
-            ${priceHTML}
-            <button class="add-btn" onclick="addToCart('${escapeAttr(p.id)}')">
-              <i class="fas fa-plus"></i> ${isMobile ? "أضف" : "أضف للسلة"}
-            </button>
-          </div>
-        </div>
-      </div>`;
+          '<div class="price-container">' +
+            priceHTML +
+            '<button class="add-btn" onclick="addToCartWithGoldEffect(\'' + escapeAttr(p2.id) + '\')">' +
+              '<i class="fas fa-plus"></i> ' + (isMobile ? 'أضف' : 'أضف للسلة') +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
   }
 
   offersGrid.innerHTML = html;
 }
+
 
 /* =========================
    OFFER TIMER
@@ -1230,10 +1296,10 @@ function cartStorageKey() {
 
 function loadCart() {
   try {
-    const raw = localStorage.getItem(cartStorageKey());
+    var raw = localStorage.getItem(cartStorageKey());
     cart = raw ? JSON.parse(raw) : [];
     if (!Array.isArray(cart)) cart = [];
-  } catch {
+  } catch (e) {
     cart = [];
   }
 }
@@ -1241,19 +1307,26 @@ function loadCart() {
 function saveCart() {
   try {
     localStorage.setItem(cartStorageKey(), JSON.stringify(cart));
-  } catch {}
+  } catch (e) {}
+
   updateCartCount();
   renderCartItems();
 }
 
 function updateCartCount() {
-  const totalItems = Array.isArray(cart) ? cart.reduce((sum, i) => sum + (Number(i.qty) || 0), 0) : 0;
+  var totalItems = 0;
 
-  const badge = $("cart-badge");
+  if (Array.isArray(cart)) {
+    for (var i = 0; i < cart.length; i++) {
+      totalItems += Number(cart[i] && cart[i].qty ? cart[i].qty : 0) || 0;
+    }
+  }
+
+  var badge = $("cart-badge");
   if (badge) badge.textContent = totalItems;
 
-  const empty = document.querySelector(".cart-empty");
-  const summary = $("cart-summary");
+  var empty = document.querySelector(".cart-empty");
+  var summary = $("cart-summary");
 
   if (totalItems === 0) {
     if (empty) empty.style.display = "flex";
