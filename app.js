@@ -1601,12 +1601,11 @@ function addToCart(productId) {
       hasDiscount: pricing.hasDiscount,
       hasBundle: pricing.hasBundle,
       bundleInfo: pricing.bundleInfo,
-      bundleText: pricing.bundleText
+      bundleText: pricing.offerLabelShort || pricing.offerLabelLong || ""
     });
   }
 
   saveCart();
-  openCart();
 }
 
 function removeFromCart(productId) {
