@@ -1299,7 +1299,8 @@ function renderGrid(containerId, products, isInactive) {
     var btnState = active ? "" : "disabled";
     var btnText = active ? (isMobile ? "أضف" : "أضف للسلة") : (isMobile ? "نفذ" : "نفذت الكمية");
     var btnIcon = active ? "fa-plus" : "fa-times";
-    var btnClick = active ? 'data-add="' + escapeAttr(p.id) + '"' : "";
+    var btnClick = active ? 'onclick="addToCartWithGoldEffect(\'' + escapeAttr(p.id) + '\')"': "";
+
 
 
 
