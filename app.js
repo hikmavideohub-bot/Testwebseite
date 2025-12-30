@@ -803,14 +803,15 @@ function isOfferActive(p) {
 
 function calculatePrice(p) {
   const price = Number(p?.price || 0);
+  const hasOfferValid = typeof hasOffer === 'function' ? hasOffer(p) : false;
 
   const hasDiscount =
-    hasOffer(p) &&
+    hasOfferValid &&
     (p.offer_type === "percent" || p.offer_type === "percentage") &&
     Number(p.percent) > 0;
 
   const hasBundle =
-    hasOffer(p) &&
+    hasOfferValid &&
     p.offer_type === "bundle" &&
     Number(p.bundle_qty) > 0 &&
     Number(p.bundle_price) > 0;
@@ -824,8 +825,6 @@ function calculatePrice(p) {
       hasDiscount: true,
       discountPercent: percent,
       hasBundle: false,
-      bundleInfo: null,
-      bundleText: "",
     };
   }
 
@@ -834,42 +833,28 @@ function calculatePrice(p) {
     const bundlePrice = Number(p.bundle_price); 
     const unitPrice = price; 
 
-    const payQtyGuess = Math.round(bundlePrice / unitPrice);
-    const freeQty = qty - payQtyGuess;
+    // حساب عدد القطع التي يدفع ثمنها فعلياً
+    const payQty = Math.round(bundlePrice / unitPrice);
+    const freeQty = qty - payQty;
 
-    // النصوص الافتراضية في حال لم يكن العرض "اشتر X واحصل على Y"
-    let bundleText = `${qty} حبات بـ ${bundlePrice.toFixed(2)} ${CURRENCY}`;
-    let bundleBadge = `سعر خاص`;
-
-    // إذا كان العرض عبارة عن قطع مجانية (مثل ادفع 3 وخذ 4)
-    // داخل جزء الـ hasBundle في الدالة
-if (payQtyGuess >= 1 && payQtyGuess < qty && Math.abs(bundlePrice - payQtyGuess * unitPrice) < 0.1) {
-  
-  const freeQty = qty - payQtyGuess;
-
-  // الخيار الأقوى: "قطعة مجانية" أو "+1 مجاناً"
-  if (freeQty === 1) {
-    bundleText = `+ قطعة مجانية`; // جذابة جداً وقصيرة
-    bundleBadge = `هدية مجانية`;
-  } else {
-    bundleText = `+ ${freeQty} مجاناً`; 
-    bundleBadge = `${freeQty} قطع مجانية`;
-  }
-}
+    // نص العرض المشجع
+    let bundleText = `ادفع ${payQty} وخذ ${qty}`;
+    if (freeQty === 1) bundleText = `ادفع ${payQty} + 1 مجاناً`;
 
     return {
       originalPrice: price,
-      finalPrice: unitPrice,
+      finalPrice: unitPrice, // السعر الفردي قبل الخصم
       hasDiscount: false,
-      discountPercent: 0,
       hasBundle: true,
       bundleInfo: {
         qty,
         bundlePrice,
-        unitPrice: bundlePrice / qty
+        unitPrice: bundlePrice / qty,
+        payQty,
+        freeQty
       },
       bundleText,
-      bundleBadge
+      bundleBadge: `${freeQty} مجاناً`
     };
   }
 
@@ -877,10 +862,7 @@ if (payQtyGuess >= 1 && payQtyGuess < qty && Math.abs(bundlePrice - payQtyGuess 
     originalPrice: price,
     finalPrice: price,
     hasDiscount: false,
-    discountPercent: 0,
     hasBundle: false,
-    bundleInfo: null,
-    bundleText: "",
   };
 }
 
@@ -1530,31 +1512,34 @@ function renderCartItems() {
   let priceDisplay = "";
 
   // 1. منطق العروض (الحزم / الباقات)
-  if (item.hasBundle && item.bundleInfo) {
-    const bundleQty = Number(item.bundleInfo.qty) || 0;
-    const qtyInCart = Number(qty) || 0;
-    const bundlesCount = Math.floor(qtyInCart / bundleQty);
+  // داخل حلقة for (const item of items)
+if (item.hasBundle && item.bundleInfo) {
+  const { qty: bundleQty, payQty, freeQty } = item.bundleInfo;
+  const qtyInCart = Number(qty) || 0;
+  const bundlesCount = Math.floor(qtyInCart / bundleQty);
 
-    if (bundlesCount > 0) {
-      // الحالة: العميل مستفيد من العرض (مثلاً معه 4 قطع والعرض يبدأ من 4)
-      priceDisplay = `
-        <div class="item-price">
-          <span class="old-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</span>
-          <span class="current-price">${Number(item.bundleInfo.unitPrice || 0).toFixed(2)} ${CURRENCY}</span>
-          <div class="bundle-note free-highlight">✨ شامل ${item.bundleText}</div>
-        </div>`;
-    } else {
-      // الحالة: تشجيع العميل (Upselling) - لم يصل للعدد المطلوب بعد
-      const remaining = bundleQty - qtyInCart;
-      priceDisplay = `
-        <div class="item-price">
-          <div class="current-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</div>
-          <div class="bundle-note upsell-text">
-             باقي <b>${remaining}</b> وتأخذ <b>واحدة مجاناً!</b> 🎁
-          </div>
-        </div>`;
-    }
-  } 
+  if (bundlesCount > 0) {
+    // العميل حصل على العرض
+    priceDisplay = `
+      <div class="item-price">
+        <span class="old-price">${Number(item.originalPrice || 0).toFixed(2)}</span>
+        <strong class="current-price text-success">${Number(item.bundleInfo.unitPrice || 0).toFixed(2)} ${CURRENCY}</strong>
+        <div class="bundle-active-badge">
+          ✅ عرض مستحق: ادفع لـ ${payQty * bundlesCount} واحصل على ${freeQty * bundlesCount} مجاناً
+        </div>
+      </div>`;
+  } else {
+    // تشجيع العميل (Upselling)
+    const remaining = bundleQty - qtyInCart;
+    priceDisplay = `
+      <div class="item-price">
+        <div class="current-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</div>
+        <div class="bundle-upsell-msg">
+           أضف <b>${remaining}</b> بعد وخذ <b>${freeQty} قطعة مجاناً</b> 🎁
+        </div>
+      </div>`;
+  }
+}
   // 2. منطق الخصم العادي (نسبة مئوية)
   else if (item.hasDiscount) {
     priceDisplay = `
