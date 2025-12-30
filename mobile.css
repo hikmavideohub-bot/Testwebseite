@@ -524,8 +524,8 @@
     left: 1.5rem !important;
     width: 56px !important;
     height: 56px !important;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
-    color: white !important;
+    background: #25D366 !important;
+    color: #fff !important;
     border-radius: 50% !important;
     box-shadow: 0 4px 12px rgba(99,102,241,0.3) !important;
     display: flex !important;
@@ -812,3 +812,14 @@
     text-decoration: none !important;
   }
   .whatsapp-fab:active{ transform: scale(0.95) !important; }
+
+#navMenu a {
+  font-size: 16px !important;
+  padding: 14px 18px !important;
+  line-height: 1.6 !important;
+}
+#navMenu {
+  width: 280px;
+}
+
+
