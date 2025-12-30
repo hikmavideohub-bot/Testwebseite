@@ -494,14 +494,11 @@ function applyPublicBundle(bundleJson) {
   }
   restoreStoreUIIfNeeded();
 
-  STORE_DATA = store || {};
-   
-  setMetaDescriptionFromStore(STORE_DATA);
-
-  CURRENCY = strTrim(STORE_DATA.currency || "€") || "€";
-  applyStoreConfig();
-
-  applyCustomerMessage(msg);
+STORE_DATA = store || {};
+setMetaDescriptionFromStore(STORE_DATA);
+CURRENCY = strTrim(STORE_DATA.currency || "€") || "€";
+applyStoreConfig();
+applyCustomerMessage(msg);
 
   categoriesData = categories;
   productsData = products;
@@ -1815,23 +1812,6 @@ function renderCartItems() {
   if (totalEl) totalEl.textContent = total.toFixed(2) + " " + CURRENCY;
 }
 
-function setMetaDescriptionFromBundle(bundle) {
-  var meta = document.getElementById("meta-description");
-  if (!meta) return;
-
-  // je nachdem wie dein bundle aufgebaut ist:
-  var desc = "";
-
-  // häufig: bundle.store.page_description
-  if (bundle && bundle.store && bundle.store.page_description) desc = String(bundle.store.page_description);
-
-  // alternative: bundle.page_description
-  else if (bundle && bundle.page_description) desc = String(bundle.page_description);
-
-  if (!desc) return;
-  meta.setAttribute("content", desc);
-}
-
 function buildOrderMessage() {
   var items = Array.isArray(cart) ? cart : [];
   if (items.length === 0) return "";
@@ -1958,8 +1938,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // 2) ONE call: publicBundle
         return loadPublicBundle().then(function (bundleJson) {
           applyPublicBundle(bundleJson);
-
-           setMetaDescriptionFromBundle(bundleJson);
            console.log("BUNDLE JSON:", bundleJson);
            
 
