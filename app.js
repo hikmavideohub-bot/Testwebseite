@@ -11,7 +11,8 @@ const CDN_BUNDLE_MAX_AGE_MS = 365 * ONE_DAY_MS;
 const CACHE_PREFIX = "store_cache_v2";
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
 
-const CLOUDINARY_CLOUD_NAME = ""; // optional: Cloudinary Cloud Name (leer lassen = Original-URLs)
+const CLOUDINARY_CLOUD_NAME = 'dt2strsjh';
+
 
 
 /* =========================
@@ -814,7 +815,15 @@ function productImageHTML(p, opts = {}) {
   const { priority = false, w = 720, h = 720 } = opts;
 
   const normalized = normalizeImageUrl(p?.image);
-  const safeUrl = sanitizeImgUrl(normalized);
+const safeUrl = sanitizeImgUrl(normalized);
+
+// HIER Cloudinary anwenden
+const optimizedUrl = toOptimizedImageUrl(
+  safeUrl,
+  window.innerWidth <= 992 ? 700 : 1100
+);
+
+
 
   if (!safeUrl) {
     return `
@@ -828,7 +837,7 @@ function productImageHTML(p, opts = {}) {
 
   return `
     <img
-      src="${escapeAttr(src)}"
+      src="${escapeAttr(optimizedUrl)}"
       class="product-image"
       alt="${escapeHtml(p?.name || "")}"
       width="${w}"
@@ -842,6 +851,13 @@ function productImageHTML(p, opts = {}) {
     <div class="placeholder-image" style="display:none">
       <div class="ph">Beispielbild<br><small>صورة توضيحية</small></div>
     </div>`;
+}
+
+
+function cloudinaryFetchUrl(sourceUrl, { w = 700 } = {}) {
+  if (!CLOUDINARY_CLOUD_NAME || !sourceUrl) return sourceUrl;
+  const encoded = encodeURIComponent(sourceUrl);
+  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch/f_auto,q_auto,w_${w}/${encoded}`;
 }
 
 
