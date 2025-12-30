@@ -1,3 +1,5 @@
+console.log("APP VERSION: 2025-01-07-1");
+
 /* =========================
    CONFIG
 ========================= */
@@ -9,8 +11,8 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const CDN_BUNDLE_MAX_AGE_MS = 365 * ONE_DAY_MS;
 
 const CACHE_PREFIX = "store_cache_v2";
-const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
-
+// const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
+const CACHE_TTL_MS = 0
 const CLOUDINARY_CLOUD_NAME = 'dt2strsjh';
 
 
@@ -754,14 +756,15 @@ function isOfferActive(p) {
 
 function calculatePrice(p) {
   const price = Number(p?.price || 0);
+  const hasOfferValid = typeof hasOffer === 'function' ? hasOffer(p) : false;
 
   const hasDiscount =
-    hasOffer(p) &&
+    hasOfferValid &&
     (p.offer_type === "percent" || p.offer_type === "percentage") &&
     Number(p.percent) > 0;
 
   const hasBundle =
-    hasOffer(p) &&
+    hasOfferValid &&
     p.offer_type === "bundle" &&
     Number(p.bundle_qty) > 0 &&
     Number(p.bundle_price) > 0;
@@ -775,24 +778,36 @@ function calculatePrice(p) {
       hasDiscount: true,
       discountPercent: percent,
       hasBundle: false,
-      bundleInfo: null,
-      bundleText: "",
     };
   }
 
   if (hasBundle) {
-    const qty = Number(p.bundle_qty);
-    const bundlePrice = Number(p.bundle_price);
-    const unitPrice = bundlePrice / qty;
-    const text = `${qty} بـ ${bundlePrice.toFixed(2)} ${CURRENCY}`;
+    const qty = Number(p.bundle_qty); 
+    const bundlePrice = Number(p.bundle_price); 
+    const unitPrice = price; 
+
+    // حساب عدد القطع التي يدفع ثمنها فعلياً
+    const payQty = Math.round(bundlePrice / unitPrice);
+    const freeQty = qty - payQty;
+
+    // نص العرض المشجع
+    let bundleText = `ادفع ${payQty} وخذ ${qty}`;
+    if (freeQty === 1) bundleText = `ادفع ${payQty} + 1 مجاناً`;
+
     return {
       originalPrice: price,
-      finalPrice: unitPrice,
+      finalPrice: unitPrice, // السعر الفردي قبل الخصم
       hasDiscount: false,
-      discountPercent: 0,
       hasBundle: true,
-      bundleInfo: { qty, bundlePrice, unitPrice },
-      bundleText: text,
+      bundleInfo: {
+        qty,
+        bundlePrice,
+        unitPrice: bundlePrice / qty,
+        payQty,
+        freeQty
+      },
+      bundleText,
+      bundleBadge: `${freeQty} مجاناً`
     };
   }
 
@@ -800,10 +815,7 @@ function calculatePrice(p) {
     originalPrice: price,
     finalPrice: price,
     hasDiscount: false,
-    discountPercent: 0,
     hasBundle: false,
-    bundleInfo: null,
-    bundleText: "",
   };
 }
 
@@ -815,29 +827,17 @@ function productImageHTML(p, opts = {}) {
   const { priority = false, w = 720, h = 720 } = opts;
 
   const normalized = normalizeImageUrl(p?.image);
-const safeUrl = sanitizeImgUrl(normalized);
+  const safeUrl = sanitizeImgUrl(normalized);
+  if (!safeUrl) return "";
 
-// HIER Cloudinary anwenden
-const optimizedUrl = toOptimizedImageUrl(
-  safeUrl,
-  window.innerWidth <= 992 ? 700 : 1100
-);
-
-
-
-  if (!safeUrl) {
-    return `
-      <div class="placeholder-image">
-        <div class="ph">Beispielbild<br><small>صورة توضيحية</small></div>
-      </div>`;
-  }
-
-  // ✅ src VOR dem return berechnen
-  const src = toOptimizedImageUrl(safeUrl, w);
+  const src = toOptimizedImageUrl(
+    safeUrl,
+    window.innerWidth <= 992 ? 700 : 1100
+  );
 
   return `
     <img
-      src="${escapeAttr(optimizedUrl)}"
+      src="${escapeAttr(src)}"
       class="product-image"
       alt="${escapeHtml(p?.name || "")}"
       width="${w}"
@@ -845,13 +845,9 @@ const optimizedUrl = toOptimizedImageUrl(
       loading="${priority ? "eager" : "lazy"}"
       fetchpriority="${priority ? "high" : "low"}"
       decoding="async"
-      referrerpolicy="no-referrer"
-      onerror="this.style.display='none'; if(this.nextElementSibling){this.nextElementSibling.style.display='flex';}"
-    />
-    <div class="placeholder-image" style="display:none">
-      <div class="ph">Beispielbild<br><small>صورة توضيحية</small></div>
-    </div>`;
+    />`;
 }
+
 
 
 function cloudinaryFetchUrl(sourceUrl, { w = 700 } = {}) {
@@ -991,7 +987,8 @@ for (let i = 0; i < list.length; i++) {
 
   // ✅ Die ersten 1–2 sichtbaren Karten bekommen Bild-Priorität (nicht lazy)
   // Wenn du ganz sicher gehen willst: nur bei "active" priorisieren
-  const priorityImg = !isInactive && i < 2;
+  const priorityImg = !isInactive && i === 0;
+
 
   let priceHTML = "";
   let badgeHTML = "";
@@ -1009,7 +1006,10 @@ for (let i = 0; i < list.length; i++) {
         <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
         <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
       </div>`;
-    badgeHTML = `<div class="bundle-badge">${isMobile ? pricing.bundleText.replace(" بـ ", "/") : pricing.bundleText}</div>`;
+    badgeHTML = `<div class="bundle-badge">
+  ${isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText}
+</div>`;
+
   } else {
     priceHTML = `
       <div class="price-wrapper">
@@ -1129,7 +1129,10 @@ function renderOfferProducts() {
           <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
           <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
         </div>`;
-      badgeHTML = `<div class="bundle-badge">${isMobile ? pricing.bundleText.replace(" بـ ", "/") : pricing.bundleText}</div>`;
+      badgeHTML = `<div class="bundle-badge">
+  ${isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText}
+</div>`;
+
     } else {
       priceHTML = `<div class="price-wrapper"><span class="price-new">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span></div>`;
       badgeHTML = `<div class="discount-badge">عرض</div>`;
@@ -1167,7 +1170,9 @@ function renderOfferProducts() {
 
           <div class="price-container">
             ${priceHTML}
-            <button class="add-btn" onclick="addToCart('${escapeAttr(p.id)}')">
+            <button
+               class="add-btn"
+                   onclick="addToCartWithGoldEffect('${escapeAttr(p.id)}')">
               <i class="fas fa-plus"></i> ${isMobile ? "أضف" : "أضف للسلة"}
             </button>
           </div>
@@ -1406,23 +1411,32 @@ function renderCartItems() {
     let priceDisplay = "";
 
     if (item.hasBundle && item.bundleInfo) {
-      const bundleQty = Number(item.bundleInfo.qty) || 0;
-      const bundles = bundleQty > 0 ? Math.floor(qty / bundleQty) : 0;
+  const bundleQty = Number(item.bundleInfo.qty) || 0;
+  const qtyInCart = Number(qty) || 0;
+  const bundlesCount = Math.floor(qtyInCart / bundleQty);
 
-      if (bundles > 0) {
-        priceDisplay = `
-          <div class="item-price">
-            <span class="old-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</span>
-            ${Number(item.bundleInfo.unitPrice || 0).toFixed(2)} ${CURRENCY}
-            <div class="bundle-note">(${escapeHtml(item.bundleText || "")})</div>
-          </div>`;
-      } else {
-        priceDisplay = `
-          <div class="item-price">
-            ${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}
-            <div class="bundle-note">(العرض يبدأ عند ${bundleQty || 0})</div>
-          </div>`;
-      }
+  if (bundlesCount > 0) {
+    // التعديل هنا: العميل حصل على العرض
+    priceDisplay = `
+      <div class="item-price">
+        <span class="old-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</span>
+        <span class="current-price">${Number(item.bundleInfo.unitPrice || 0).toFixed(2)} ${CURRENCY}</span>
+        <div class="bundle-note free-highlight">✨ شامل ${item.bundleText}</div>
+      </div>`;
+  } else {
+    // التعديل هنا: تشجيع العميل (Upselling)
+    const remaining = bundleQty - qtyInCart;
+    const freeQty = item.bundleInfo.freeQty || 1; // القطعة المجانية المنتظرة
+    
+    priceDisplay = `
+      <div class="item-price">
+        <div class="current-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</div>
+        <div class="bundle-note upsell-text">
+           باقي <b>${remaining}</b> وتأخذ <b>${freeQty === 1 ? 'واحدة' : freeQty} مجاناً!</b> 🎁
+        </div>
+      </div>`;
+  }
+}
     } else if (item.hasDiscount) {
       priceDisplay = `
         <div class="item-price">
