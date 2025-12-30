@@ -11,7 +11,7 @@ const CDN_BUNDLE_MAX_AGE_MS = 365 * ONE_DAY_MS;
 const CACHE_PREFIX = "store_cache_v2";
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
 
-const CLOUDINARY_CLOUD_NAME = "DEIN_CLOUD_NAME"; // <- eintragen
+const CLOUDINARY_CLOUD_NAME = ""; // optional: Cloudinary Cloud Name (leer lassen = Original-URLs)
 
 
 /* =========================
@@ -426,11 +426,9 @@ function applyStoreConfig() {
   const storeDesc = STORE_DATA.page_description || "متجر إلكتروني متكامل";
 
   setText("store-name", storeName);
-  setText("footer-store-name", storeName);
-  setText("footer-store-name-bottom", storeName);
-  document.title = `${storeName} | متجر`;
+    document.title = `${storeName} | متجر`;
 
-  setText("footer-store-description", storeDesc);
+  setText("store-subtitle", storeDesc);
 
   setText("store-phone", STORE_DATA.phone || "غير متوفر");
 
@@ -503,6 +501,8 @@ function applyCustomerMessage(msg) {
     bar.style.display = "none";
     text.textContent = "";
   }
+
+  try { document.body.classList.toggle('has-announcement', !!m); } catch {}
 }
 
 /* =========================
@@ -837,7 +837,7 @@ function productImageHTML(p, opts = {}) {
       fetchpriority="${priority ? "high" : "low"}"
       decoding="async"
       referrerpolicy="no-referrer"
-      onerror="this.replaceWith(this.nextElementSibling)"
+      onerror="this.style.display='none'; if(this.nextElementSibling){this.nextElementSibling.style.display='flex';}"
     />
     <div class="placeholder-image" style="display:none">
       <div class="ph">Beispielbild<br><small>صورة توضيحية</small></div>
@@ -848,7 +848,7 @@ function productImageHTML(p, opts = {}) {
 function toOptimizedImageUrl(remoteUrl, w = 720) {
   const u = sanitizeImgUrl(remoteUrl);
   if (!u) return "";
-  if (!CLOUDINARY_CLOUD_NAME) return u;
+  if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === "DEIN_CLOUD_NAME") return u;
 
   // f_auto/q_auto liefert WebP/AVIF + sinnvolle Kompression
   const base = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch`;
@@ -975,7 +975,7 @@ for (let i = 0; i < list.length; i++) {
 
   // ✅ Die ersten 1–2 sichtbaren Karten bekommen Bild-Priorität (nicht lazy)
   // Wenn du ganz sicher gehen willst: nur bei "active" priorisieren
-  const priorityImg = !isInactive && i === 0;
+  const priorityImg = !isInactive && i < 2;
 
   let priceHTML = "";
   let badgeHTML = "";
@@ -1031,7 +1031,7 @@ for (let i = 0; i < list.length; i++) {
     html += `
       <div class="${cardClass}">
         <div class="product-image-container">
-          $${productImageHTML(p, { priority: priorityImg })}
+          ${productImageHTML(p, { priority: priorityImg })}
           <div class="product-badges">
             ${badgeHTML}
             ${inactiveBadge}
@@ -1317,7 +1317,6 @@ function addToCart(productId) {
   }
 
   saveCart();
-  openCart();
 }
 
 function removeFromCart(productId) {
@@ -1493,6 +1492,17 @@ function buildOrderMessage() {
 شكراً لكم 🌟`;
 
   return `${header}\n\n${lines.join("\n\n")}\n${footer}`;
+}
+
+function openStoreWhatsApp() {
+  const waRaw = STORE_DATA?.whatsapp || STORE_DATA?.phone || "";
+  const waNumber = normalizePhoneForWhatsApp(waRaw);
+  if (!waNumber) {
+    alert("لا يوجد رقم واتساب/هاتف صحيح للمتجر");
+    return;
+  }
+  const url = `https://wa.me/${waNumber}`;
+  window.open(url, "_blank", "noopener,noreferrer");
 }
 
 function checkout() {
