@@ -98,7 +98,7 @@
       <div class="container">
         <div class="section-header">
           <h2>معلومات المتجر</h2>
-          <p>هذه البيانات يتم جلبها تلقائياً من Google Sheets</p>
+          <p>مرحبًا بكم في متجرنا، نسعد بخدمتكم دائمًا</p>
         </div>
 
         <div class="contact-container">
@@ -108,10 +108,6 @@
               <div class="contact-item">
                 <div class="contact-icon"><i class="fas fa-phone"></i></div>
                 <div class="contact-text"><h4>الهاتف</h4><p id="about-phone">...</p></div>
-              </div>
-              <div class="contact-item">
-                <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
-                <div class="contact-text"><h4>واتساب</h4><p id="about-whatsapp">...</p></div>
               </div>
               <div class="contact-item">
                 <div class="contact-icon"><i class="fas fa-envelope"></i></div>
@@ -188,7 +184,7 @@
           <p>نحن هنا لخدمتكم</p>
         </div>
 
-        <div class="contact-container">
+      <!--  <div class="contact-container">
           <div class="contact-info">
             <h3>معلومات التواصل</h3>
             <div class="contact-details">
@@ -239,7 +235,7 @@
 
       </div>
     </section>
-  </main>
+  </main> -->
 
   <!-- Cart Modal - COMPLETELY REVISED -->
   <div id="cartModal" class="modal">
@@ -279,7 +275,7 @@
             </div>
 
             <button class="checkout-btn" onclick="checkout()">
-              <i class="fab fa-whatsapp"></i> إرسال الطلب عبر واتساب
+              <i class="fab fa-whatsapp"></i> إتمام الطلب
             </button>
           </div>
         </details>
@@ -303,7 +299,13 @@
         <h4>معلومات التواصل</h4>
         <ul>
           <li><a><i class="fas fa-phone"></i> <span id="footer-phone">...</span></a></li>
-          <li><a><i class="fab fa-whatsapp"></i> <span id="footer-whatsapp">...</span></a></li>
+          <li>
+  <a href="#" onclick="openStoreWhatsApp(); return false;">
+    <i class="fab fa-whatsapp"></i>
+    <span id="footer-whatsapp">...</span>
+  </a>
+</li>
+
           <li><a><i class="fas fa-envelope"></i> <span id="footer-email">...</span></a></li>
           <li><a><i class="fas fa-map-marker-alt"></i> <span id="footer-address">...</span></a></li>
         </ul>
@@ -314,7 +316,6 @@
         <ul>
           <li><a><i class="fas fa-clock"></i> <span id="footer-hours">...</span></a></li>
           <li><a><i class="fas fa-shipping-fast"></i> <span id="footer-shipping">...</span></a></li>
-          <li><a><i class="fas fa-tag"></i> العملة: <span id="footer-currency">...</span></a></li>
         </ul>
       </div>
     </div>
