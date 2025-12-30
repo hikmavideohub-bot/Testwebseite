@@ -37,80 +37,59 @@
 
   /* ==================== HEADER ==================== */
   /* ==================== HEADER (Fest oben) ==================== */
+  /* ==================== STACKED NAVIGATION ==================== */
   header {
-    background: var(--card) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-    border-bottom: none !important;
+    height: 60px !important;
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
-    height: 60px !important; /* Feste Höhe für präzise Stapelung */
+    background: var(--card) !important;
     z-index: 1000 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
   }
 
-  .header-container {
-    padding: 0.75rem 1rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    height: 100% !important;
-  }
-
-  /* ... Logo, Cart & Menu Styles bleiben wie sie sind ... */
-  .logo { flex: 1 !important; min-width: 0 !important; }
-  .logo h1 { font-weight: 700 !important; font-size: 1.25rem !important; color: var(--text) !important; white-space: nowrap !important; }
-  .cart-icon { background: transparent !important; border: none !important; font-size: 1.4rem !important; position: relative !important; }
-  .cart-badge { position: absolute !important; top: 0 !important; right: 0 !important; background: var(--danger) !important; color: white !important; width: 18px !important; height: 18px !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; border: 2px solid var(--card) !important; font-size: 0.65rem !important; }
-  #mobileToggle { display: flex !important; background: transparent !important; border: none !important; font-size: 1.4rem !important; }
-
-  /* ==================== CUSTOMER MESSAGE (Stapelt sich unter Header) ==================== */
+  /* Die Nachricht (wird nur angezeigt, wenn aktiv) */
   #announcement-bar {
     position: fixed !important;
-    top: 60px !important; /* Startet direkt NACH dem Header */
+    top: 60px !important; /* Exakt unter Header */
     left: 0 !important;
     right: 0 !important;
-    height: 40px !important; /* Feste Höhe */
+    height: 40px !important;
+    z-index: 999 !important;
     background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
-    color: white !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    z-index: 999 !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   }
 
-  .announcement-content {
-    font-size: 0.85rem !important;
-    text-align: center !important;
-    width: 100% !important;
-  }
-
-  /* ==================== CATEGORIES (Stapelt sich unter Nachricht) ==================== */
+  /* Die Kategorien */
   .category-nav {
     position: fixed !important;
-    top: 60px !important; /* Standard, wenn KEINE Nachricht da ist */
+    top: 60px !important; /* Standard-Position */
     left: 0 !important;
     right: 0 !important;
     height: 50px !important;
     background: var(--card) !important;
     z-index: 998 !important;
-    padding: 0.5rem 0 !important;
-    overflow-x: auto !important;
     display: flex !important;
-    gap: 0.5rem !important;
-    flex-wrap: nowrap !important;
+    align-items: center !important;
+    padding: 0 5px !important;
     border-bottom: 1px solid #f1f5f9 !important;
-    scrollbar-width: none !important;
   }
 
-  /* WICHTIG: Wenn Nachricht aktiv ist, schiebe Kategorien weiter runter */
+  /* Wenn die Nachricht da ist, schiebe die Kategorien weiter runter */
   body.has-announcement .category-nav {
     top: 100px !important; /* 60px Header + 40px Nachricht */
   }
 
-  .category-nav::-webkit-scrollbar {
-    display: none !important;
+  /* Der Inhalt muss weit genug nach unten rücken */
+  body {
+    padding-top: 110px !important; /* Wenn keine Nachricht da ist (60+50) */
+  }
+
+  body.has-announcement {
+    padding-top: 150px !important; /* Wenn Nachricht da ist (60+40+50) */
   }
   .cat-btn {
     background: transparent !important;
@@ -167,8 +146,10 @@
     position: relative !important;
     display: flex !important;
     flex-direction: column !important;
-    height: auto !important;
     transition: all 0.2s ease !important;
+     display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important; /* Geändert von auto auf 100% */
   }
 
   .product-card:active {
@@ -287,6 +268,19 @@
 
   /* PRODUCT INFO */
   .product-info {
+  padding: 10px !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  /* gap: 8px !important; <-- Entfernen oder klein lassen */
+  justify-content: space-between !important; /* Drückt den Button nach ganz unten */
+  min-height: 140px !important; /* Optional: Stellt sicher, dass die Info-Box immer groß genug ist */
+}
+
+/* Falls du einen Container für Preis und Button hast, zwinge ihn ans Ende */
+.price-container, .product-action {
+  margin-top: auto !important; 
+} {
     padding: 10px !important;
     flex: 1 !important;
     display: flex !important;
