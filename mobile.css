@@ -787,6 +787,10 @@
   }
 
   .bundle-badge{
-    background: rgba(31,58,95,.90) !important; /* statt grün */
-  }
+  background: rgba(245,158,11,.14) !important;
+  border-color: rgba(245,158,11,.35) !important;
+  color: #92400e !important;
 }
+}
+
+
