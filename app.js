@@ -290,50 +290,7 @@ function addToCartWithGoldEffect(productId) {
   addToCart(productId);
 }
 
-function initializeOverlayButtons() {
-  var cards = qsa(".product-card");
-  forEachNodeList(cards, function (card) {
-    var productId = getDataAttr(card, "productId") || getDataAttr(card, "product-id") || card.getAttribute("data-product-id") || "";
-    var imageContainer = card.querySelector(".product-image-container");
 
-    if (imageContainer && !card.querySelector(".add-btn-overlay")) {
-      var overlayBtn = document.createElement("button");
-      overlayBtn.className = "add-btn-overlay";
-      overlayBtn.innerHTML = '<i class="fas fa-cart-plus"></i> Hinzufügen';
-      overlayBtn.onclick = function (e) {
-        if (e && e.stopPropagation) e.stopPropagation();
-        addToCartWithGoldEffect(productId);
-      };
-      imageContainer.appendChild(overlayBtn);
-    }
-  });
-}
-
-/* (Optional demo categories; keep if you want static categories)
-   If you use server categories, you can remove initializeCategories() entirely. */
-function initializeCategories() {
-  var categories = [
-    { id: "all", name: "Alle", icon: "fas fa-border-all" },
-    { id: "offers", name: "Angebote", icon: "fas fa-percentage" },
-    { id: "category1", name: "Elektronik", icon: "fas fa-laptop" },
-    { id: "category2", name: "Kleidung", icon: "fas fa-tshirt" },
-    { id: "category3", name: "Haushalt", icon: "fas fa-home" }
-  ];
-
-  var categoryNav = document.querySelector(".category-nav");
-  if (categoryNav) {
-    var html = "";
-    for (var i = 0; i < categories.length; i++) {
-      var cat = categories[i];
-      html +=
-        '<button class="cat-btn ' + (cat.id === "all" ? "active" : "") + '" data-category="' + escapeAttr(cat.id) + '">' +
-          '<i class="' + escapeAttr(cat.icon) + '"></i>' +
-          "<span>" + escapeHtml(cat.name) + "</span>" +
-        "</button>";
-    }
-    categoryNav.innerHTML = html;
-  }
-}
 
 /* alias for old calls */
 function filterProductsByCategory(category) {
