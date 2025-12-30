@@ -1645,15 +1645,19 @@ function findCartItemById(productId) {
 }
 
 function addToCart(productId) {
-  // --- NEU: Button-Animation starten ---
-  const btn = event.currentTarget; // Erkennt den Button, der geklickt wurde
-  const originalContent = btn.innerHTML; // Speichert "اضافة" und das Icon
-  
-  btn.innerHTML = '<i class="fas fa-check"></i> تم'; // Wechselt zu Häkchen + "تم"
-  btn.classList.add('success'); // Nutzt die grüne Farbe aus dem CSS
-  btn.style.pointerEvents = 'none'; // Verhindert Doppelklicks während der Animation
-  // -------------------------------------
+  // 1. Button-Animation starten
+  // Wir prüfen, ob event existiert, um Fehler zu vermeiden
+  const btn = window.event ? event.currentTarget : null;
+  let originalContent = "";
 
+  if (btn) {
+    originalContent = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> تم'; 
+    btn.classList.add('success');
+    btn.style.pointerEvents = 'none'; // Verhindert Mehrfachklicks
+  }
+
+  // 2. Produkt-Logik (Nur einmal!)
   var p = findProductById(productId);
   if (!p) return;
 
@@ -1678,41 +1682,17 @@ function addToCart(productId) {
     });
   }
 
+  // 3. Speichern
   saveCart();
 
-  // --- NEU: Button nach 1 Sekunde zurücksetzen ---
-  setTimeout(() => {
-    btn.innerHTML = originalContent;
-    btn.classList.remove('success');
-    btn.style.pointerEvents = 'auto';
-  }, 1000);
-  // ----------------------------------------------
-}
-  var p = findProductById(productId);
-  if (!p) return;
-
-  var pricing = calculatePrice(p);
-
-  var existing = findCartItemById(productId);
-  if (existing) {
-    existing.qty = (Number(existing.qty) || 0) + 1;
-  } else {
-    cart.push({
-      id: p.id,
-      name: p.name || "",
-      qty: 1,
-      sizeValue: p.sizevalue || "",
-      sizeUnit: p.sizeunit || "",
-      originalPrice: pricing.originalPrice,
-      finalPrice: pricing.finalPrice,
-      hasDiscount: pricing.hasDiscount,
-      hasBundle: pricing.hasBundle,
-      bundleInfo: pricing.bundleInfo,
-      bundleText: pricing.offerLabelShort || pricing.offerLabelLong || ""
-    });
+  // 4. Button nach 1 Sekunde zurücksetzen
+  if (btn) {
+    setTimeout(() => {
+      btn.innerHTML = originalContent;
+      btn.classList.remove('success');
+      btn.style.pointerEvents = 'auto';
+    }, 1000);
   }
-
-  saveCart();
 }
 
 function removeFromCart(productId) {
