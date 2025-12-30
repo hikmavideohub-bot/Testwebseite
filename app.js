@@ -830,20 +830,44 @@ function calculatePrice(p) {
   }
 
   if (hasBundle) {
-    const qty = Number(p.bundle_qty);
-    const bundlePrice = Number(p.bundle_price);
-    const unitPrice = bundlePrice / qty;
-    const text = `${qty} بـ ${bundlePrice.toFixed(2)} ${CURRENCY}`;
-    return {
-      originalPrice: price,
-      finalPrice: unitPrice,
-      hasDiscount: false,
-      discountPercent: 0,
-      hasBundle: true,
-      bundleInfo: { qty, bundlePrice, unitPrice },
-      bundleText: text,
-    };
+  const qty = Number(p.bundle_qty);           // z.B. 3
+  const bundlePrice = Number(p.bundle_price); // z.B. 6
+  const unitPrice = price;                    // Normalpreis pro Stück
+
+  // Wie viele Stück werden effektiv bezahlt? (z.B. 6 / 3 = 2)
+  const payQtyGuess = Math.round(bundlePrice / unitPrice);
+
+  // Fallback (klassisch, arabisch wie bei dir vorher)
+  let bundleText = `${qty} بـ ${bundlePrice.toFixed(2)} ${CURRENCY}`;
+  let bundleBadge = `${qty}/${bundlePrice.toFixed(0)}`;
+
+  // Wenn es "zum Preis von X" ist:
+  if (
+    payQtyGuess >= 1 &&
+    payQtyGuess < qty &&
+    Math.abs(bundlePrice - payQtyGuess * unitPrice) < 0.1
+  ) {
+    bundleText = `ادفع ${payQtyGuess} وخذ ${qty}`;        // "Pay X, get Y"
+    bundleBadge = `${qty} بسعر ${payQtyGuess}`;           // kurz fürs Badge
   }
+
+  return {
+    originalPrice: price,
+    finalPrice: unitPrice,
+    hasDiscount: false,
+    discountPercent: 0,
+    hasBundle: true,
+    bundleInfo: {
+      qty,
+      bundlePrice,
+      unitPrice: bundlePrice / qty
+    },
+    bundleText,
+    bundleBadge
+  };
+}
+
+
 
   return {
     originalPrice: price,
@@ -1175,7 +1199,10 @@ function renderOfferProducts() {
           <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
           <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
         </div>`;
-      badgeHTML = `<div class="bundle-badge">${isMobile ? pricing.bundleText.replace(" بـ ", "/") : pricing.bundleText}</div>`;
+      badgeHTML = `<div class="bundle-badge">
+       ${isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText}
+         </div>`;
+
     } else {
       priceHTML = `<div class="price-wrapper"><span class="price-new">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span></div>`;
       badgeHTML = `<div class="discount-badge">عرض</div>`;
