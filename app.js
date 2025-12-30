@@ -9,10 +9,9 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const CDN_BUNDLE_MAX_AGE_MS = 365 * ONE_DAY_MS;
 
 const CACHE_PREFIX = "store_cache_v2";
-const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
+const CACHE_TTL_MS = 60 * 1000; // 60 Sekunden
 
 const CLOUDINARY_CLOUD_NAME = 'dt2strsjh';
-
 
 
 /* =========================
@@ -310,8 +309,13 @@ async function apiGet(type) {
 ========================= */
 
 async function loadPublicBundle() {
-  const cached = cacheGet("publicBundle");
-  if (cached && typeof cached === "object") return cached;
+  const qs = new URLSearchParams(window.location.search);
+  const forceFresh = qs.has("fresh") || qs.has("nocache") || qs.get("fresh") === "1" || qs.get("nocache") === "1";
+
+  if (!forceFresh) {
+    const cached = cacheGet("publicBundle");
+    if (cached && typeof cached === "object") return cached;
+  }
 
   const json = await apiGet("publicBundle");
   cacheSet("publicBundle", json);
@@ -474,6 +478,41 @@ function applyStoreConfig() {
   setText("footer-shipping", shippingText);
   setText("footer-currency", CURRENCY);
 
+
+  // Click-to-call / mailto links (mobile friendly)
+  const setHref = (id, href) => {
+    const el = $(id);
+    if (!el) return;
+    if (href) {
+      el.setAttribute("href", href);
+      el.style.pointerEvents = "auto";
+    } else {
+      el.removeAttribute("href");
+    }
+  };
+
+  const phoneRaw = (STORE_DATA.phone || "").toString().trim();
+  const tel = normalizePhoneForTel(phoneRaw);
+  const emailRaw = (STORE_DATA.email || "").toString().trim();
+  const wa = normalizePhoneForWhatsApp(STORE_DATA.whatsapp || STORE_DATA.phone || "");
+
+  if (tel) {
+    setHref("store-phone-link", `tel:${tel}`);
+    setHref("about-phone-link", `tel:${tel}`);
+    setHref("contact-phone-link", `tel:${tel}`);
+    setHref("footer-phone-link", `tel:${tel}`);
+  }
+
+  if (emailRaw) {
+    setHref("about-email-link", `mailto:${emailRaw}`);
+    setHref("contact-email-link", `mailto:${emailRaw}`);
+    setHref("footer-email-link", `mailto:${emailRaw}`);
+  }
+
+  if (wa) {
+    setHref("footer-whatsapp-link", `https://wa.me/${wa}`);
+  }
+
   try {
     setupSocialLinks();
   } catch {}
@@ -482,6 +521,16 @@ function applyStoreConfig() {
     applyMapsFromAddress(STORE_DATA.address || "");
   } catch {}
 }
+
+
+function dedupeWhatsAppFab() {
+  const nodes = document.querySelectorAll(".whatsapp-fab");
+  nodes.forEach((n, idx) => {
+    if (idx > 0) n.remove();
+  });
+}
+window.addEventListener("pageshow", dedupeWhatsAppFab);
+
 
 /* =========================
    Announcement
@@ -811,19 +860,12 @@ function calculatePrice(p) {
    PRODUCT IMAGE
 ========================= */
 
+
 function productImageHTML(p, opts = {}) {
   const { priority = false, w = 720, h = 720 } = opts;
 
   const normalized = normalizeImageUrl(p?.image);
-const safeUrl = sanitizeImgUrl(normalized);
-
-// HIER Cloudinary anwenden
-const optimizedUrl = toOptimizedImageUrl(
-  safeUrl,
-  window.innerWidth <= 992 ? 700 : 1100
-);
-
-
+  const safeUrl = sanitizeImgUrl(normalized);
 
   if (!safeUrl) {
     return `
@@ -831,9 +873,15 @@ const optimizedUrl = toOptimizedImageUrl(
         <div class="ph">Beispielbild<br><small>صورة توضيحية</small></div>
       </div>`;
   }
+  // HIER Cloudinary anwenden
+    const optimizedUrl = toOptimizedImageUrl(
+    safeUrl,
+    window.innerWidth <= 992 ? 700 : 1100
+  );
+
 
   // ✅ src VOR dem return berechnen
-  const src = toOptimizedImageUrl(safeUrl, w, h);
+  const src = toOptimizedImageUrl(safeUrl, w);
 
   return `
     <img
@@ -853,23 +901,21 @@ const optimizedUrl = toOptimizedImageUrl(
     </div>`;
 }
 
-
 function cloudinaryFetchUrl(sourceUrl, { w = 700 } = {}) {
   if (!CLOUDINARY_CLOUD_NAME || !sourceUrl) return sourceUrl;
   const encoded = encodeURIComponent(sourceUrl);
   return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch/f_auto,q_auto,w_${w}/${encoded}`;
 }
 
-
-function toOptimizedImageUrl(remoteUrl, w = 720, h = 720) {
+function toOptimizedImageUrl(remoteUrl, w = 720) {
   const u = sanitizeImgUrl(remoteUrl);
   if (!u) return "";
-  if (!CLOUDINARY_CLOUD_NAME) return u;
+  if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === "DEIN_CLOUD_NAME") return u;
 
+  // f_auto/q_auto liefert WebP/AVIF + sinnvolle Kompression
   const base = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch`;
-  return `${base}/f_auto,q_auto,w_${w},h_${h},c_fill/${encodeURIComponent(u)}`;
+  return `${base}/f_auto,q_auto,w_${w},c_fill/${encodeURIComponent(u)}`;
 }
-
 
 /* =========================
    RENDER: Categories & Products
@@ -1028,7 +1074,7 @@ for (let i = 0; i < list.length; i++) {
     const btnState = active ? "" : "disabled";
     const btnText = active ? (isMobile ? "أضف" : "أضف للسلة") : isMobile ? "نفذ" : "نفذت الكمية";
     const btnIcon = active ? "fa-plus" : "fa-times";
-    const btnClick = active ? `onclick="addToCart('${escapeAttr(p.id)}')"` : "";
+    const btnClick = active ? `onclick="addToCart('${escapeAttr(p.id)}', this)"` : "";
 
     const sizeValue = (p.sizevalue || "").toString().trim();
     const sizeUnit = (p.sizeunit || "").toString().trim();
@@ -1167,7 +1213,7 @@ function renderOfferProducts() {
 
           <div class="price-container">
             ${priceHTML}
-            <button class="add-btn" onclick="addToCart('${escapeAttr(p.id)}')">
+            <button class="add-btn" onclick="addToCart('${escapeAttr(p.id)}', this)">
               <i class="fas fa-plus"></i> ${isMobile ? "أضف" : "أضف للسلة"}
             </button>
           </div>
@@ -1236,6 +1282,19 @@ function normalizePhoneForWhatsApp(input) {
   if (s.length < 8) return "";
   return s;
 }
+
+function normalizePhoneForTel(input) {
+  const raw = (input || "").toString().trim();
+  if (!raw) return "";
+  let s = raw.replace(/[^\d+]/g, "");
+  // keep only first '+'
+  s = s.replace(/(?!^)\+/g, "");
+  if (s.startsWith("00")) s = "+" + s.slice(2);
+  const digits = s.replace(/\D/g, "");
+  if (digits.length < 6) return "";
+  return s;
+}
+
 
 function cartStorageKey() {
   return `cart:${STORE_SLUG}`;
@@ -1307,7 +1366,32 @@ function initCartModalClose() {
   if (openBtn) openBtn.addEventListener("click", openCart);
 }
 
-function addToCart(productId) {
+
+function bumpCartBadge() {
+  const badge = $("cart-badge");
+  if (!badge) return;
+  badge.classList.remove("bump");
+  // force reflow to restart animation
+  void badge.offsetWidth;
+  badge.classList.add("bump");
+}
+
+function animateAddButton(btnEl) {
+  if (!btnEl) return;
+
+  const prev = btnEl.innerHTML;
+  btnEl.classList.add("added");
+  btnEl.innerHTML = '<i class="fas fa-check"></i> تمت';
+  btnEl.disabled = true;
+
+  window.setTimeout(() => {
+    btnEl.classList.remove("added");
+    btnEl.innerHTML = prev;
+    btnEl.disabled = false;
+  }, 650);
+}
+
+function addToCart(productId, btnEl) {
   const p = (Array.isArray(productsData) ? productsData : []).find((x) => String(x.id) === String(productId));
   if (!p) return;
 
@@ -1333,6 +1417,8 @@ function addToCart(productId) {
   }
 
   saveCart();
+  bumpCartBadge();
+  animateAddButton(btnEl);
 }
 
 function removeFromCart(productId) {
