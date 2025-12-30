@@ -436,6 +436,43 @@
     .add-btn:hover{transform: translateY(-2px); background: linear-gradient(135deg, var(--primary-light), var(--primary));}
     .add-btn:disabled{background: #a0a9b4; cursor:not-allowed; transform:none !important; box-shadow:none;}
 
+    /* Click-to-call / mail links look like normal text */
+    .contact-text a,
+    .footer-section a.contact-link,
+    #store-phone-link{
+      color: inherit;
+      text-decoration: none;
+      font-weight: 800;
+    }
+    .contact-text a:hover,
+    #store-phone-link:hover{
+      text-decoration: underline;
+    }
+
+    /* Add-to-cart feedback */
+    .cart-badge.bump{
+      animation: cartBump .35s ease;
+    }
+    @keyframes cartBump{
+      0%{transform:scale(1)}
+      30%{transform:scale(1.22)}
+      100%{transform:scale(1)}
+    }
+
+    .add-btn.added{
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      box-shadow: 0 16px 34px rgba(19,42,70,.22);
+    }
+    .add-btn.added i{
+      animation: addPop .35s ease;
+    }
+    @keyframes addPop{
+      0%{transform:scale(.75)}
+      55%{transform:scale(1.15)}
+      100%{transform:scale(1)}
+    }
+
+
     /* Inactive section */
     .inactive-section{
       background: rgba(255,255,255,.75);
@@ -756,7 +793,7 @@
     .checkout-btn:hover{transform: translateY(-2px); background: linear-gradient(135deg, var(--accent-dark), var(--accent));}
 
     /* FAB */
-    .fab{
+    .whatsapp-fab{
       position:fixed;
       bottom: 1.5rem;
       left: 1.5rem;
@@ -777,7 +814,7 @@
     }
     .whatsapp-fab:hover{transform: translateY(-2px); filter: brightness(0.95);}
 
-    .fab:hover{transform: translateY(-5px) scale(1.04);}
+    .whatsapp-fab:hover{transform: translateY(-5px) scale(1.04);}
 
     /* Footer */
     footer{
