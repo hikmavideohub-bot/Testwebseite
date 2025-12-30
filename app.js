@@ -1240,7 +1240,10 @@ function renderGrid(containerId, products, isInactive) {
     var btnState = active ? "" : "disabled";
     var btnText = active ? (isMobile ? "أضف" : "أضف للسلة") : (isMobile ? "نفذ" : "نفذت الكمية");
     var btnIcon = active ? "fa-plus" : "fa-times";
-    var btnClick = active ? ('onclick="addToCart(\'' + escapeAttr(p.id) + '\')"') : "";
+    var btnClick = active
+  ? ('onclick="event && event.stopPropagation && event.stopPropagation(); addToCart(\\'' + escapeAttr(p.id) + '\\');"')
+  : "";
+
 
     var sizeValue = strTrim(p && p.sizevalue ? p.sizevalue : "");
     var sizeUnit = strTrim(p && p.sizeunit ? p.sizeunit : "");
