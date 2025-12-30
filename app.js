@@ -842,17 +842,20 @@ function calculatePrice(p) {
     let bundleBadge = `سعر خاص`;
 
     // إذا كان العرض عبارة عن قطع مجانية (مثل ادفع 3 وخذ 4)
-    if (
-      payQtyGuess >= 1 &&
-      payQtyGuess < qty &&
-      Math.abs(bundlePrice - payQtyGuess * unitPrice) < 0.1
-    ) {
-      // الخيار 1: "3 + 1 مجاناً" (قوي جداً تسويقياً)
-      bundleText = `${payQtyGuess} + ${freeQty} مجاناً`; 
-      
-      // الخيار 2 (بديل): "4 بسعر 3"
-      bundleBadge = `${qty} بسعر ${payQtyGuess}`;
-    }
+    // داخل جزء الـ hasBundle في الدالة
+if (payQtyGuess >= 1 && payQtyGuess < qty && Math.abs(bundlePrice - payQtyGuess * unitPrice) < 0.1) {
+  
+  const freeQty = qty - payQtyGuess;
+
+  // الخيار الأقوى: "قطعة مجانية" أو "+1 مجاناً"
+  if (freeQty === 1) {
+    bundleText = `+ قطعة مجانية`; // جذابة جداً وقصيرة
+    bundleBadge = `هدية مجانية`;
+  } else {
+    bundleText = `+ ${freeQty} مجاناً`; 
+    bundleBadge = `${freeQty} قطع مجانية`;
+  }
+}
 
     return {
       originalPrice: price,
@@ -1520,39 +1523,50 @@ function renderCartItems() {
   let html = "";
 
   for (const item of items) {
-    const qty = Number(item.qty) || 0;
-    const itemTotal = calculateCartItemPrice(item);
-    subtotal += itemTotal;
+  const qty = Number(item.qty) || 0;
+  const itemTotal = calculateCartItemPrice(item);
+  subtotal += itemTotal;
 
-    let priceDisplay = "";
+  let priceDisplay = "";
 
-    if (item.hasBundle && item.bundleInfo) {
-      const bundleQty = Number(item.bundleInfo.qty) || 0;
-      const bundles = bundleQty > 0 ? Math.floor(qty / bundleQty) : 0;
+  // 1. منطق العروض (الحزم / الباقات)
+  if (item.hasBundle && item.bundleInfo) {
+    const bundleQty = Number(item.bundleInfo.qty) || 0;
+    const qtyInCart = Number(qty) || 0;
+    const bundlesCount = Math.floor(qtyInCart / bundleQty);
 
-      if (bundles > 0) {
-        priceDisplay = `
-          <div class="item-price">
-            <span class="old-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</span>
-            ${Number(item.bundleInfo.unitPrice || 0).toFixed(2)} ${CURRENCY}
-            <div class="bundle-note">(${escapeHtml(item.bundleText || "")})</div>
-          </div>`;
-      } else {
-        priceDisplay = `
-          <div class="item-price">
-            ${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}
-            <div class="bundle-note">(العرض يبدأ عند ${bundleQty || 0})</div>
-          </div>`;
-      }
-    } else if (item.hasDiscount) {
+    if (bundlesCount > 0) {
+      // الحالة: العميل مستفيد من العرض (مثلاً معه 4 قطع والعرض يبدأ من 4)
       priceDisplay = `
         <div class="item-price">
           <span class="old-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</span>
-          ${Number(item.finalPrice || 0).toFixed(2)} ${CURRENCY}
+          <span class="current-price">${Number(item.bundleInfo.unitPrice || 0).toFixed(2)} ${CURRENCY}</span>
+          <div class="bundle-note free-highlight">✨ شامل ${item.bundleText}</div>
         </div>`;
     } else {
-      priceDisplay = `<div class="item-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</div>`;
+      // الحالة: تشجيع العميل (Upselling) - لم يصل للعدد المطلوب بعد
+      const remaining = bundleQty - qtyInCart;
+      priceDisplay = `
+        <div class="item-price">
+          <div class="current-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</div>
+          <div class="bundle-note upsell-text">
+             باقي <b>${remaining}</b> وتأخذ <b>واحدة مجاناً!</b> 🎁
+          </div>
+        </div>`;
     }
+  } 
+  // 2. منطق الخصم العادي (نسبة مئوية)
+  else if (item.hasDiscount) {
+    priceDisplay = `
+      <div class="item-price">
+        <span class="old-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</span>
+        <span class="current-price">${Number(item.finalPrice || 0).toFixed(2)} ${CURRENCY}</span>
+      </div>`;
+  } 
+  // 3. السعر العادي
+  else {
+    priceDisplay = `<div class="item-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</div>`;
+  }
 
     const sizeInfo =
       item.sizeValue && item.sizeUnit
