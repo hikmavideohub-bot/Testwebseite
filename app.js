@@ -1196,20 +1196,24 @@ function renderOfferProducts() {
           <span class="price-new discount">${pricing.finalPrice.toFixed(2)} ${CURRENCY}</span>
         </div>`;
       badgeHTML = `<div class="discount-badge">${isMobile ? `${pricing.discountPercent}%` : `خصم ${pricing.discountPercent}%`}</div>`;
-    } else if (pricing.hasBundle) {
-      priceHTML = `
-        <div class="price-wrapper">
-          <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
-          <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
-        </div>`;
-      badgeHTML = `<div class="bundle-badge">
-       ${isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText}
-         </div>`;
+} else if (pricing.hasBundle) {
+  priceHTML = `
+    <div class="price-wrapper">
+      <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
+      <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
+    </div>`;
+  badgeHTML = `<div class="bundle-badge">
+    ${isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText}
+  </div>`;
 
-    } else {
-      priceHTML = `<div class="price-wrapper"><span class="price-new">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span></div>`;
-      badgeHTML = `<div class="discount-badge">عرض</div>`;
-    }
+} else {
+  priceHTML = `
+    <div class="price-wrapper">
+      <span class="price-new">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
+    </div>`;
+  badgeHTML = "";   // ✅ kein Angebot -> kein Badge
+}
+
 
     const sizeValue = (p.sizevalue || "").toString().trim();
     const sizeUnit = (p.sizeunit || "").toString().trim();
