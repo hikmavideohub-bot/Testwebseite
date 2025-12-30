@@ -704,28 +704,3 @@
     grid-template-columns: 1fr !important;
   } 
 }
-   /* Die Ankündigungsleiste richtig positionieren */
-#announcement-bar {
-  display: block !important;
-  position: relative !important; /* Wichtig: Verhindert das Überlagern */
-  width: 100% !important;
-  background-color: var(--primary) !important;
-  color: #ffffff !important;
-  padding: 10px 15px !important;
-  text-align: center !important;
-  z-index: 1002 !important; /* Über dem Header */
-  box-sizing: border-box !important;
-}
-
-#announcement-text {
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-  line-height: 1.4 !important;
-}
-
-/* Der Header/Kategorien muss unter der Bar bleiben */
-.category-nav {
-  position: sticky !important;
-  top: 0 !important; 
-  z-index: 1001 !important;
-}
