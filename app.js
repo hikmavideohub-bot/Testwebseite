@@ -1079,7 +1079,10 @@ for (let i = 0; i < list.length; i++) {
         <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
         <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
       </div>`;
-    badgeHTML = `<div class="bundle-badge">${isMobile ? pricing.bundleText.replace(" بـ ", "/") : pricing.bundleText}</div>`;
+    badgeHTML = `<div class="bundle-badge">
+     ${isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText}
+     </div>`;
+
   } else {
     priceHTML = `
       <div class="price-wrapper">
