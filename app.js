@@ -1,5 +1,3 @@
-console.log("APP VERSION: 2025-01-07-1");
-
 /* =========================
    CONFIG
 ========================= */
@@ -11,10 +9,9 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const CDN_BUNDLE_MAX_AGE_MS = 365 * ONE_DAY_MS;
 
 const CACHE_PREFIX = "store_cache_v2";
-// const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
-const CACHE_TTL_MS = 0
-const CLOUDINARY_CLOUD_NAME = 'dt2strsjh';
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
 
+const CLOUDINARY_CLOUD_NAME = "dt2strsjh"; // <- eintragen
 
 
 /* =========================
@@ -42,18 +39,25 @@ function $(id) {
   return document.getElementById(id);
 }
 
-function escapeHtml(str) {
-  return (str ?? "")
-    .toString()
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function pad2(n) {
+  n = String(n);
+  return n.length < 2 ? ("0" + n) : n;
 }
 
+function escapeHtml(str) {
+  // ES5-safe: avoid nullish coalescing and replaceAll
+  var s = (str === null || str === undefined) ? "" : String(str);
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
 function escapeAttr(str) {
-  return escapeHtml(str).replaceAll("`", "&#096;");
+  return escapeHtml(str).split("`").join("&#096;");
 }
 
 function sanitizeImgUrl(url) {
@@ -69,13 +73,13 @@ function normalizeImageUrl(rawUrl) {
   if (!(u.startsWith("http://") || u.startsWith("https://"))) return "";
 
   const m1 = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (m1?.[1]) return `https://drive.google.com/uc?export=view&id=${m1[1]}`;
+  if (m1 && m1[1]) return `https://drive.google.com/uc?export=view&id=${m1[1]}`;
 
   const m2 = u.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
-  if (m2?.[1]) return `https://drive.google.com/uc?export=view&id=${m2[1]}`;
+  if (m2 && m2[1]) return `https://drive.google.com/uc?export=view&id=${m2[1]}`;
 
   const mAny = u.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  if (mAny?.[1]) return `https://drive.google.com/uc?export=view&id=${mAny[1]}`;
+  if (mAny && mAny[1]) return `https://drive.google.com/uc?export=view&id=${mAny[1]}`;
 
   return u;
 }
@@ -233,7 +237,7 @@ function cacheGet(key) {
     const obj = JSON.parse(raw);
     if (!obj || !obj.ts) return null;
     if (Date.now() - obj.ts > CACHE_TTL_MS) return null;
-    return obj.value ?? null;
+    return (obj.value === undefined || obj.value === null) ? null : obj.value;
   } catch {
     return null;
   }
@@ -272,12 +276,7 @@ async function loadPublicBundleFromCDN() {
     if (!ok || !json) return null;
 
     // staleness check (optional)
-    const gen =
-      json?.meta?.generatedAt ||
-      json?.meta?.generated_at ||
-      json?.generatedAt ||
-      json?.generated_at ||
-      null;
+    var gen = ((json && json.meta && (json.meta.generatedAt || json.meta.generated_at)) || json && (json.generatedAt || json.generated_at) || null);
 
     if (gen) {
       const t = Date.parse(gen);
@@ -337,7 +336,7 @@ function applyAnyBundle(bundleJson) {
   const categories = Array.isArray(bundleJson.categories) ? bundleJson.categories : [];
   const msg = (bundleJson.customerMessage || bundleJson.customer_message || "").toString().trim();
 
-  const activeFlag = bundleJson.websiteActive ?? bundleJson.website_active ?? store.website_active ?? true;
+  var activeFlag = (bundleJson.websiteActive !== undefined && bundleJson.websiteActive !== null) ? bundleJson.websiteActive : ((bundleJson.website_active !== undefined && bundleJson.website_active !== null) ? bundleJson.website_active : ((store.website_active !== undefined && store.website_active !== null) ? store.website_active : true));
   if (activeFlag === false) {
     applyStoreInactiveUI();
     return true;
@@ -420,7 +419,7 @@ function restoreStoreUIIfNeeded() {
 function applyStoreConfig() {
   const setText = (id, val) => {
     const el = $(id);
-    if (el) el.textContent = (val ?? "").toString();
+    if (el) el.textContent = ((val === null || val === undefined) ? "" : String(val));
   };
 
   CURRENCY = (STORE_DATA.currency || "").toString().trim() || "€";
@@ -429,9 +428,11 @@ function applyStoreConfig() {
   const storeDesc = STORE_DATA.page_description || "متجر إلكتروني متكامل";
 
   setText("store-name", storeName);
-    document.title = `${storeName} | متجر`;
+  setText("footer-store-name", storeName);
+  setText("footer-store-name-bottom", storeName);
+  document.title = `${storeName} | متجر`;
 
-  setText("store-subtitle", storeDesc);
+  setText("footer-store-description", storeDesc);
 
   setText("store-phone", STORE_DATA.phone || "غير متوفر");
 
@@ -504,8 +505,6 @@ function applyCustomerMessage(msg) {
     bar.style.display = "none";
     text.textContent = "";
   }
-
-  try { document.body.classList.toggle('has-announcement', !!m); } catch {}
 }
 
 /* =========================
@@ -726,26 +725,26 @@ function enhanceProductImages() {
 ========================= */
 
 function isProductActive(p) {
-  const v = p?.product_active;
+  var v = p && p.product_active;
   if (v === false) return false;
   if (typeof v === "string") return v.toLowerCase() !== "false" && v !== "0";
   return true;
 }
 
 function hasOffer(p) {
-  const v = p?.has_offer;
+  var v = p && p.has_offer;
   if (v === true) return true;
   if (typeof v === "string") return v === "1" || v.toLowerCase() === "true";
   return false;
 }
 
 function isOfferActive(p) {
-  const v = p?.offer_aktive ?? p?.offer_active ?? true;
+  var v = (p && p.offer_aktive !== undefined && p.offer_aktive !== null) ? p.offer_aktive : ((p && p.offer_active !== undefined && p.offer_active !== null) ? p.offer_active : true);
   if (v === false) return false;
   if (typeof v === "string") return v !== "0" && v.toLowerCase() !== "false";
 
-  const start = p?.offer_start_date ? Date.parse(p.offer_start_date) : NaN;
-  const end = p?.offer_end_date ? Date.parse(p.offer_end_date) : NaN;
+  var start = (p && p.offer_start_date) ? Date.parse(p.offer_start_date) : NaN;
+  var end = (p && p.offer_end_date) ? Date.parse(p.offer_end_date) : NaN;
   const now = Date.now();
 
   if (!Number.isNaN(start) && now < start) return false;
@@ -755,16 +754,15 @@ function isOfferActive(p) {
 }
 
 function calculatePrice(p) {
-  const price = Number(p?.price || 0);
-  const hasOfferValid = typeof hasOffer === 'function' ? hasOffer(p) : false;
+  var price = Number((p && p.price) ? p.price : 0);
 
   const hasDiscount =
-    hasOfferValid &&
+    hasOffer(p) &&
     (p.offer_type === "percent" || p.offer_type === "percentage") &&
     Number(p.percent) > 0;
 
   const hasBundle =
-    hasOfferValid &&
+    hasOffer(p) &&
     p.offer_type === "bundle" &&
     Number(p.bundle_qty) > 0 &&
     Number(p.bundle_price) > 0;
@@ -778,36 +776,24 @@ function calculatePrice(p) {
       hasDiscount: true,
       discountPercent: percent,
       hasBundle: false,
+      bundleInfo: null,
+      bundleText: "",
     };
   }
 
   if (hasBundle) {
-    const qty = Number(p.bundle_qty); 
-    const bundlePrice = Number(p.bundle_price); 
-    const unitPrice = price; 
-
-    // حساب عدد القطع التي يدفع ثمنها فعلياً
-    const payQty = Math.round(bundlePrice / unitPrice);
-    const freeQty = qty - payQty;
-
-    // نص العرض المشجع
-    let bundleText = `ادفع ${payQty} وخذ ${qty}`;
-    if (freeQty === 1) bundleText = `ادفع ${payQty} + 1 مجاناً`;
-
+    const qty = Number(p.bundle_qty);
+    const bundlePrice = Number(p.bundle_price);
+    const unitPrice = bundlePrice / qty;
+    const text = `${qty} بـ ${bundlePrice.toFixed(2)} ${CURRENCY}`;
     return {
       originalPrice: price,
-      finalPrice: unitPrice, // السعر الفردي قبل الخصم
+      finalPrice: unitPrice,
       hasDiscount: false,
+      discountPercent: 0,
       hasBundle: true,
-      bundleInfo: {
-        qty,
-        bundlePrice,
-        unitPrice: bundlePrice / qty,
-        payQty,
-        freeQty
-      },
-      bundleText,
-      bundleBadge: `${freeQty} مجاناً`
+      bundleInfo: { qty, bundlePrice, unitPrice },
+      bundleText: text,
     };
   }
 
@@ -815,7 +801,10 @@ function calculatePrice(p) {
     originalPrice: price,
     finalPrice: price,
     hasDiscount: false,
+    discountPercent: 0,
     hasBundle: false,
+    bundleInfo: null,
+    bundleText: "",
   };
 }
 
@@ -826,41 +815,42 @@ function calculatePrice(p) {
 function productImageHTML(p, opts = {}) {
   const { priority = false, w = 720, h = 720 } = opts;
 
-  const normalized = normalizeImageUrl(p?.image);
+  var normalized = normalizeImageUrl(p && p.image);
   const safeUrl = sanitizeImgUrl(normalized);
-  if (!safeUrl) return "";
 
-  const src = toOptimizedImageUrl(
-    safeUrl,
-    window.innerWidth <= 992 ? 700 : 1100
-  );
+  if (!safeUrl) {
+    return `
+      <div class="placeholder-image">
+        <div class="ph">Beispielbild<br><small>صورة توضيحية</small></div>
+      </div>`;
+  }
+
+  // ✅ src VOR dem return berechnen
+  const src = toOptimizedImageUrl(safeUrl, w);
 
   return `
     <img
       src="${escapeAttr(src)}"
       class="product-image"
-      alt="${escapeHtml(p?.name || "")}"
+      alt="${escapeHtml((p && p.name) ? p.name : "")}"
       width="${w}"
       height="${h}"
       loading="${priority ? "eager" : "lazy"}"
       fetchpriority="${priority ? "high" : "low"}"
       decoding="async"
-    />`;
-}
-
-
-
-function cloudinaryFetchUrl(sourceUrl, { w = 700 } = {}) {
-  if (!CLOUDINARY_CLOUD_NAME || !sourceUrl) return sourceUrl;
-  const encoded = encodeURIComponent(sourceUrl);
-  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch/f_auto,q_auto,w_${w}/${encoded}`;
+      referrerpolicy="no-referrer"
+      onerror="this.replaceWith(this.nextElementSibling)"
+    />
+    <div class="placeholder-image" style="display:none">
+      <div class="ph">Beispielbild<br><small>صورة توضيحية</small></div>
+    </div>`;
 }
 
 
 function toOptimizedImageUrl(remoteUrl, w = 720) {
   const u = sanitizeImgUrl(remoteUrl);
   if (!u) return "";
-  if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === "DEIN_CLOUD_NAME") return u;
+  if (!CLOUDINARY_CLOUD_NAME) return u;
 
   // f_auto/q_auto liefert WebP/AVIF + sinnvolle Kompression
   const base = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch`;
@@ -989,7 +979,6 @@ for (let i = 0; i < list.length; i++) {
   // Wenn du ganz sicher gehen willst: nur bei "active" priorisieren
   const priorityImg = !isInactive && i === 0;
 
-
   let priceHTML = "";
   let badgeHTML = "";
 
@@ -1006,10 +995,7 @@ for (let i = 0; i < list.length; i++) {
         <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
         <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
       </div>`;
-    badgeHTML = `<div class="bundle-badge">
-  ${isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText}
-</div>`;
-
+    badgeHTML = `<div class="bundle-badge">${isMobile ? pricing.bundleText.replace(" بـ ", "/") : pricing.bundleText}</div>`;
   } else {
     priceHTML = `
       <div class="price-wrapper">
@@ -1047,7 +1033,7 @@ for (let i = 0; i < list.length; i++) {
     html += `
       <div class="${cardClass}">
         <div class="product-image-container">
-          ${productImageHTML(p, { priority: priorityImg })}
+          $${productImageHTML(p, { priority: priorityImg })}
           <div class="product-badges">
             ${badgeHTML}
             ${inactiveBadge}
@@ -1077,7 +1063,8 @@ for (let i = 0; i < list.length; i++) {
 }
 
 function toggleDescription(el) {
-  const card = el?.closest?.(".product-card");
+  var card = null;
+  if (el && el.closest) { card = el.closest(".product-card"); }
   if (!card) return;
   card.classList.toggle("desc-open");
 }
@@ -1129,10 +1116,7 @@ function renderOfferProducts() {
           <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
           <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
         </div>`;
-      badgeHTML = `<div class="bundle-badge">
-  ${isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText}
-</div>`;
-
+      badgeHTML = `<div class="bundle-badge">${isMobile ? pricing.bundleText.replace(" بـ ", "/") : pricing.bundleText}</div>`;
     } else {
       priceHTML = `<div class="price-wrapper"><span class="price-new">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span></div>`;
       badgeHTML = `<div class="discount-badge">عرض</div>`;
@@ -1170,9 +1154,7 @@ function renderOfferProducts() {
 
           <div class="price-container">
             ${priceHTML}
-            <button
-               class="add-btn"
-                   onclick="addToCartWithGoldEffect('${escapeAttr(p.id)}')">
+            <button class="add-btn" onclick="addToCart('${escapeAttr(p.id)}')">
               <i class="fas fa-plus"></i> ${isMobile ? "أضف" : "أضف للسلة"}
             </button>
           </div>
@@ -1213,13 +1195,13 @@ function initOfferTimer() {
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
     const d = $("days");
-    if (d) d.textContent = String(days).padStart(2, "0");
+    if (d) d.textContent = pad2(days);
     const h = $("hours");
-    if (h) h.textContent = String(hours).padStart(2, "0");
+    if (h) h.textContent = pad2(hours);
     const m = $("minutes");
-    if (m) m.textContent = String(minutes).padStart(2, "0");
+    if (m) m.textContent = pad2(minutes);
     const s = $("seconds");
-    if (s) s.textContent = String(seconds).padStart(2, "0");
+    if (s) s.textContent = pad2(seconds);
   }
 
   updateTimer();
@@ -1338,6 +1320,7 @@ function addToCart(productId) {
   }
 
   saveCart();
+  openCart();
 }
 
 function removeFromCart(productId) {
@@ -1411,32 +1394,23 @@ function renderCartItems() {
     let priceDisplay = "";
 
     if (item.hasBundle && item.bundleInfo) {
-  const bundleQty = Number(item.bundleInfo.qty) || 0;
-  const qtyInCart = Number(qty) || 0;
-  const bundlesCount = Math.floor(qtyInCart / bundleQty);
+      const bundleQty = Number(item.bundleInfo.qty) || 0;
+      const bundles = bundleQty > 0 ? Math.floor(qty / bundleQty) : 0;
 
-  if (bundlesCount > 0) {
-    // التعديل هنا: العميل حصل على العرض
-    priceDisplay = `
-      <div class="item-price">
-        <span class="old-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</span>
-        <span class="current-price">${Number(item.bundleInfo.unitPrice || 0).toFixed(2)} ${CURRENCY}</span>
-        <div class="bundle-note free-highlight">✨ شامل ${item.bundleText}</div>
-      </div>`;
-  } else {
-    // التعديل هنا: تشجيع العميل (Upselling)
-    const remaining = bundleQty - qtyInCart;
-    const freeQty = item.bundleInfo.freeQty || 1; // القطعة المجانية المنتظرة
-    
-    priceDisplay = `
-      <div class="item-price">
-        <div class="current-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</div>
-        <div class="bundle-note upsell-text">
-           باقي <b>${remaining}</b> وتأخذ <b>${freeQty === 1 ? 'واحدة' : freeQty} مجاناً!</b> 🎁
-        </div>
-      </div>`;
-  }
-}
+      if (bundles > 0) {
+        priceDisplay = `
+          <div class="item-price">
+            <span class="old-price">${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}</span>
+            ${Number(item.bundleInfo.unitPrice || 0).toFixed(2)} ${CURRENCY}
+            <div class="bundle-note">(${escapeHtml(item.bundleText || "")})</div>
+          </div>`;
+      } else {
+        priceDisplay = `
+          <div class="item-price">
+            ${Number(item.originalPrice || 0).toFixed(2)} ${CURRENCY}
+            <div class="bundle-note">(العرض يبدأ عند ${bundleQty || 0})</div>
+          </div>`;
+      }
     } else if (item.hasDiscount) {
       priceDisplay = `
         <div class="item-price">
@@ -1524,17 +1498,6 @@ function buildOrderMessage() {
   return `${header}\n\n${lines.join("\n\n")}\n${footer}`;
 }
 
-function openStoreWhatsApp() {
-  const waRaw = STORE_DATA?.whatsapp || STORE_DATA?.phone || "";
-  const waNumber = normalizePhoneForWhatsApp(waRaw);
-  if (!waNumber) {
-    alert("لا يوجد رقم واتساب/هاتف صحيح للمتجر");
-    return;
-  }
-  const url = `https://wa.me/${waNumber}`;
-  window.open(url, "_blank", "noopener,noreferrer");
-}
-
 function checkout() {
   const items = Array.isArray(cart) ? cart : [];
   if (items.length === 0) {
@@ -1548,7 +1511,7 @@ function checkout() {
     return;
   }
 
-  const waRaw = STORE_DATA?.whatsapp || STORE_DATA?.phone || "";
+  var waRaw = (STORE_DATA && STORE_DATA.whatsapp) || (STORE_DATA && STORE_DATA.phone) || "";
   const waNumber = normalizePhoneForWhatsApp(waRaw);
 
   if (!waNumber) {
