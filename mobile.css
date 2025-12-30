@@ -373,7 +373,9 @@
 
   .add-btn:active {
     background: var(--primary-dark) !important;
-  }
+    transform: scale(0.95) !important; /* Button wird 5% kleiner beim Tippen */
+    transition: transform 0.1s ease !important;
+}
 
   .add-btn:disabled {
     background: rgba(100, 116, 139, 0.7) !important;
