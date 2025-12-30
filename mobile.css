@@ -290,18 +290,21 @@
 
   /* BILD CONTAINER */
   .product-image-container {
-    height: 140px !important;
-    background: #f8fafc !important;
-    position: relative !important;
-    overflow: hidden !important;
-    flex-shrink: 0 !important;
-  }
-
+  height: 140px !important;
+  min-height: 140px !important;   /* CLS-Schutz */
+  background: #f8fafc !important;
+  position: relative !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  contain: layout paint;          /* verhindert Reflow */
+}
   .product-image {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-  }
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;      /* verhindert Inline-Gaps */
+}
+
 
   /* ANGEBOTS BADGE - OBEN RECHTS */
   .product-badges {
