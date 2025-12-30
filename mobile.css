@@ -425,7 +425,6 @@
 
   /* HIDE UNNECESSARY ELEMENTS */
   .product-desc,
-  .product-size,
   .bundle-info,
   .desc-toggle,
   .product-title::after {
