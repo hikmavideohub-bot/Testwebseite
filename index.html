@@ -38,10 +38,10 @@
 
       <!-- Store Info & Cart -->
       <div class="store-info-header">
-        <div class="contact-pill" title="الهاتف">
+        <a class="contact-pill" id="store-phone-link" href="#" title="الهاتف">
           <i class="fas fa-phone"></i>
           <span id="store-phone">...</span>
-        </div>
+        </a>
 
         <div class="cart-icon" onclick="openCart()">
           <i class="fas fa-shopping-cart"></i>
@@ -107,7 +107,7 @@
             <div class="contact-details">
               <div class="contact-item">
                 <div class="contact-icon"><i class="fas fa-phone"></i></div>
-                <div class="contact-text"><h4>الهاتف</h4><p id="about-phone">...</p></div>
+                <div class="contact-text"><h4>الهاتف</h4><a id="about-phone-link" href="#"><span id="about-phone">...</span></a></div>
               </div>
               <div class="contact-item">
                 <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
@@ -115,7 +115,7 @@
               </div>
               <div class="contact-item">
                 <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                <div class="contact-text"><h4>البريد الإلكتروني</h4><p id="about-email">...</p></div>
+                <div class="contact-text"><h4>البريد الإلكتروني</h4><a id="about-email-link" href="#"><span id="about-email">...</span></a></div>
               </div>
               <div class="contact-item">
                 <div class="contact-icon"><i class="fas fa-clock"></i></div>
@@ -194,7 +194,7 @@
             <div class="contact-details">
               <div class="contact-item">
                 <div class="contact-icon"><i class="fas fa-phone"></i></div>
-                <div class="contact-text"><h4 id="contact-phone-title">الهاتف</h4><p id="contact-phone-text">...</p></div>
+                <div class="contact-text"><h4 id="contact-phone-title">الهاتف</h4><a id="contact-phone-link" href="#"><span id="contact-phone-text">...</span></a></div>
               </div>
               <div class="contact-item">
                 <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
@@ -202,7 +202,7 @@
               </div>
               <div class="contact-item">
                 <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                <div class="contact-text"><h4 id="contact-email-title">البريد الإلكتروني</h4><p id="contact-email-text">...</p></div>
+                <div class="contact-text"><h4 id="contact-email-title">البريد الإلكتروني</h4><a id="contact-email-link" href="#"><span id="contact-email-text">...</span></a></div>
               </div>
               <div class="contact-item">
                 <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
@@ -288,7 +288,7 @@
   </div>
 
   <!-- Floating Cart Button -->
-  <div class="fab whatsapp-fab" onclick="openStoreWhatsApp()">
+  <div class="whatsapp-fab" id="whatsapp-fab" onclick="openStoreWhatsApp()">
     <i class="fab fa-whatsapp"></i>
   </div>
 
@@ -302,9 +302,9 @@
 <div class="footer-section">
         <h4>معلومات التواصل</h4>
         <ul>
-          <li><a><i class="fas fa-phone"></i> <span id="footer-phone">...</span></a></li>
-          <li><a><i class="fab fa-whatsapp"></i> <span id="footer-whatsapp">...</span></a></li>
-          <li><a><i class="fas fa-envelope"></i> <span id="footer-email">...</span></a></li>
+          <li><a id="footer-phone-link" href="#"><i class="fas fa-phone"></i> <span id="footer-phone">...</span></a></li>
+          <li><a id="footer-whatsapp-link" href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> <span id="footer-whatsapp">...</span></a></li>
+          <li><a id="footer-email-link" href="#"><i class="fas fa-envelope"></i> <span id="footer-email">...</span></a></li>
           <li><a><i class="fas fa-map-marker-alt"></i> <span id="footer-address">...</span></a></li>
         </ul>
       </div>
