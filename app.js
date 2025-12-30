@@ -1645,6 +1645,49 @@ function findCartItemById(productId) {
 }
 
 function addToCart(productId) {
+  // --- NEU: Button-Animation starten ---
+  const btn = event.currentTarget; // Erkennt den Button, der geklickt wurde
+  const originalContent = btn.innerHTML; // Speichert "اضافة" und das Icon
+  
+  btn.innerHTML = '<i class="fas fa-check"></i> تم'; // Wechselt zu Häkchen + "تم"
+  btn.classList.add('success'); // Nutzt die grüne Farbe aus dem CSS
+  btn.style.pointerEvents = 'none'; // Verhindert Doppelklicks während der Animation
+  // -------------------------------------
+
+  var p = findProductById(productId);
+  if (!p) return;
+
+  var pricing = calculatePrice(p);
+  var existing = findCartItemById(productId);
+
+  if (existing) {
+    existing.qty = (Number(existing.qty) || 0) + 1;
+  } else {
+    cart.push({
+      id: p.id,
+      name: p.name || "",
+      qty: 1,
+      sizeValue: p.sizevalue || "",
+      sizeUnit: p.sizeunit || "",
+      originalPrice: pricing.originalPrice,
+      finalPrice: pricing.finalPrice,
+      hasDiscount: pricing.hasDiscount,
+      hasBundle: pricing.hasBundle,
+      bundleInfo: pricing.bundleInfo,
+      bundleText: pricing.offerLabelShort || pricing.offerLabelLong || ""
+    });
+  }
+
+  saveCart();
+
+  // --- NEU: Button nach 1 Sekunde zurücksetzen ---
+  setTimeout(() => {
+    btn.innerHTML = originalContent;
+    btn.classList.remove('success');
+    btn.style.pointerEvents = 'auto';
+  }, 1000);
+  // ----------------------------------------------
+}
   var p = findProductById(productId);
   if (!p) return;
 
