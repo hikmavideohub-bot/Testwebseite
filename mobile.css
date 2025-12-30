@@ -518,7 +518,7 @@
   }
 
   /* ==================== FLOATING ACTION BUTTON ==================== */
-  .fab {
+  .floating-btn {
     position: fixed !important;
     bottom: 1.5rem !important;
     left: 1.5rem !important;
@@ -537,7 +537,7 @@
     transition: all 0.2s ease !important;
   }
 
-  .fab:active {
+ .floating-btn:active {
     transform: scale(0.95) !important;
   }
 
