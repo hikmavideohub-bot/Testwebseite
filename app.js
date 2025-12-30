@@ -11,6 +11,9 @@ const CDN_BUNDLE_MAX_AGE_MS = 365 * ONE_DAY_MS;
 const CACHE_PREFIX = "store_cache_v2";
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
 
+const CLOUDINARY_CLOUD_NAME = "DEIN_CLOUD_NAME"; // <- eintragen
+
+
 /* =========================
    GLOBAL STATE
 ========================= */
@@ -807,7 +810,9 @@ function calculatePrice(p) {
    PRODUCT IMAGE
 ========================= */
 
-function productImageHTML(p) {
+function productImageHTML(p, opts = {}) {
+  const { priority = false, w = 720, h = 720 } = opts;
+
   const normalized = normalizeImageUrl(p?.image);
   const safeUrl = sanitizeImgUrl(normalized);
 
@@ -818,12 +823,18 @@ function productImageHTML(p) {
       </div>`;
   }
 
+  // ✅ src VOR dem return berechnen
+  const src = toOptimizedImageUrl(safeUrl, w);
+
   return `
     <img
-      src="${escapeAttr(safeUrl)}"
+      src="${escapeAttr(src)}"
       class="product-image"
       alt="${escapeHtml(p?.name || "")}"
-      loading="lazy"
+      width="${w}"
+      height="${h}"
+      loading="${priority ? "eager" : "lazy"}"
+      fetchpriority="${priority ? "high" : "low"}"
       decoding="async"
       referrerpolicy="no-referrer"
       onerror="this.replaceWith(this.nextElementSibling)"
@@ -833,9 +844,22 @@ function productImageHTML(p) {
     </div>`;
 }
 
+
+function toOptimizedImageUrl(remoteUrl, w = 720) {
+  const u = sanitizeImgUrl(remoteUrl);
+  if (!u) return "";
+  if (!CLOUDINARY_CLOUD_NAME) return u;
+
+  // f_auto/q_auto liefert WebP/AVIF + sinnvolle Kompression
+  const base = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch`;
+  return `${base}/f_auto,q_auto,w_${w},c_fill/${encodeURIComponent(u)}`;
+}
+
 /* =========================
    RENDER: Categories & Products
 ========================= */
+
+
 
 function renderCategories(products) {
   const nav = $("category-nav");
@@ -940,34 +964,47 @@ function renderGrid(containerId, products, isInactive) {
 
   const isMobile = window.innerWidth <= 992;
   let html = "";
+// ALT:
+// for (const p of list) {
 
-  for (const p of list) {
-    const pricing = calculatePrice(p);
-    const active = isProductActive(p) && !isInactive;
+for (let i = 0; i < list.length; i++) {
+  const p = list[i];
 
-    let priceHTML = "";
-    let badgeHTML = "";
+  const pricing = calculatePrice(p);
+  const active = isProductActive(p) && !isInactive;
 
-    if (pricing.hasDiscount) {
-      priceHTML = `
-        <div class="price-wrapper">
-          <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
-          <span class="price-new discount">${pricing.finalPrice.toFixed(2)} ${CURRENCY}</span>
-        </div>`;
-      badgeHTML = `<div class="discount-badge">${isMobile ? `${pricing.discountPercent}%` : `خصم ${pricing.discountPercent}%`}</div>`;
-    } else if (pricing.hasBundle) {
-      priceHTML = `
-        <div class="price-wrapper">
-          <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
-          <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
-        </div>`;
-      badgeHTML = `<div class="bundle-badge">${isMobile ? pricing.bundleText.replace(" بـ ", "/") : pricing.bundleText}</div>`;
-    } else {
-      priceHTML = `
-        <div class="price-wrapper">
-          <span class="price-new">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
-        </div>`;
-    }
+  // ✅ Die ersten 1–2 sichtbaren Karten bekommen Bild-Priorität (nicht lazy)
+  // Wenn du ganz sicher gehen willst: nur bei "active" priorisieren
+  const priorityImg = !isInactive && i === 0;
+
+  let priceHTML = "";
+  let badgeHTML = "";
+
+  if (pricing.hasDiscount) {
+    priceHTML = `
+      <div class="price-wrapper">
+        <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
+        <span class="price-new discount">${pricing.finalPrice.toFixed(2)} ${CURRENCY}</span>
+      </div>`;
+    badgeHTML = `<div class="discount-badge">${isMobile ? `${pricing.discountPercent}%` : `خصم ${pricing.discountPercent}%`}</div>`;
+  } else if (pricing.hasBundle) {
+    priceHTML = `
+      <div class="price-wrapper">
+        <span class="price-old">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
+        <span class="price-new bundle">${pricing.bundleInfo.unitPrice.toFixed(2)} ${CURRENCY}</span>
+      </div>`;
+    badgeHTML = `<div class="bundle-badge">${isMobile ? pricing.bundleText.replace(" بـ ", "/") : pricing.bundleText}</div>`;
+  } else {
+    priceHTML = `
+      <div class="price-wrapper">
+        <span class="price-new">${pricing.originalPrice.toFixed(2)} ${CURRENCY}</span>
+      </div>`;
+  }
+
+  // ... dein restlicher Card-HTML bleibt gleich,
+  // nur beim Bild rufst du productImageHTML so auf:
+
+
 
     const cardClass = active ? "product-card" : "product-card inactive";
     const inactiveBadge = !active ? '<div class="inactive-badge">غير متوفر</div>' : "";
@@ -994,7 +1031,7 @@ function renderGrid(containerId, products, isInactive) {
     html += `
       <div class="${cardClass}">
         <div class="product-image-container">
-          ${productImageHTML(p)}
+          $${productImageHTML(p, { priority: priorityImg })}
           <div class="product-badges">
             ${badgeHTML}
             ${inactiveBadge}
