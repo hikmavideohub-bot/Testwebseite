@@ -833,7 +833,7 @@ const optimizedUrl = toOptimizedImageUrl(
   }
 
   // ✅ src VOR dem return berechnen
-  const src = toOptimizedImageUrl(safeUrl, w);
+  const src = toOptimizedImageUrl(safeUrl, w, h);
 
   return `
     <img
@@ -861,15 +861,15 @@ function cloudinaryFetchUrl(sourceUrl, { w = 700 } = {}) {
 }
 
 
-function toOptimizedImageUrl(remoteUrl, w = 720) {
+function toOptimizedImageUrl(remoteUrl, w = 720, h = 720) {
   const u = sanitizeImgUrl(remoteUrl);
   if (!u) return "";
-  if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === "DEIN_CLOUD_NAME") return u;
+  if (!CLOUDINARY_CLOUD_NAME) return u;
 
-  // f_auto/q_auto liefert WebP/AVIF + sinnvolle Kompression
   const base = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch`;
-  return `${base}/f_auto,q_auto,w_${w},c_fill/${encodeURIComponent(u)}`;
+  return `${base}/f_auto,q_auto,w_${w},h_${h},c_fill/${encodeURIComponent(u)}`;
 }
+
 
 /* =========================
    RENDER: Categories & Products
