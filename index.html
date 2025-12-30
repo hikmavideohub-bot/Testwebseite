@@ -22,7 +22,10 @@
     <div class="header-container">
       <div class="logo" onclick="navigateToPage('home')">
         <i class="fas fa-store"></i>
-        <h1 id="store-name">متجر</h1>
+        <div class="logo-text">
+          <h1 id="store-name">متجر</h1>
+          <div id="store-subtitle" class="store-subtitle"></div>
+        </div>
       </div>
 
       <!-- Navigation Menu -->
@@ -285,28 +288,18 @@
   </div>
 
   <!-- Floating Cart Button -->
-  <div class="fab" onclick="openCart()"><i class="fas fa-shopping-basket"></i></div>
+  <div class="fab whatsapp-fab" onclick="openStoreWhatsApp()">
+    <i class="fab fa-whatsapp"></i>
+  </div>
 
   <!-- Footer -->
   <footer>
     <div class="footer-container">
       <div class="footer-section">
-        <h4 id="footer-store-name">متجر</h4>
-        <p id="footer-store-description">...</p>
+        <h4>تابعنا</h4>
         <div class="social-links" id="footer-social-links"></div>
       </div>
-
-      <div class="footer-section">
-        <h4>روابط سريعة</h4>
-        <ul>
-          <li><a data-page="home"><i class="fas fa-chevron-left"></i> الرئيسية</a></li>
-          <li><a data-page="about"><i class="fas fa-chevron-left"></i> حولنا</a></li>
-          <li><a data-page="offers"><i class="fas fa-chevron-left"></i> العروض</a></li>
-          <li><a data-page="contact"><i class="fas fa-chevron-left"></i> اتصل بنا</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-section">
+<div class="footer-section">
         <h4>معلومات التواصل</h4>
         <ul>
           <li><a><i class="fas fa-phone"></i> <span id="footer-phone">...</span></a></li>
@@ -327,7 +320,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>© <span id="current-year"></span> جميع الحقوق محفوظة - <span id="footer-store-name-bottom">متجر</span></p>
+      <p>© <span id="current-year"></span> جميع الحقوق محفوظة</p>
       <p>تم التطوير بدقة من أجلكم</p>
     </div>
   </footer>
