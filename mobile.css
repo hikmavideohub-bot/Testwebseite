@@ -430,6 +430,14 @@
   .product-title::after {
     display: none !important;
   }
+   
+   .product-size {
+  display: block !important; /* Wieder anzeigen */
+  font-size: 0.75rem !important;
+  color: var(--text-secondary) !important;
+  margin-top: -4px !important; /* Zieht es näher an den Titel */
+  font-weight: 500 !important;
+}
 
   /* PRICE CONTAINER */
   .price-container {
