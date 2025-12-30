@@ -830,44 +830,45 @@ function calculatePrice(p) {
   }
 
   if (hasBundle) {
-  const qty = Number(p.bundle_qty);           // z.B. 3
-  const bundlePrice = Number(p.bundle_price); // z.B. 6
-  const unitPrice = price;                    // Normalpreis pro Stück
+    const qty = Number(p.bundle_qty); 
+    const bundlePrice = Number(p.bundle_price); 
+    const unitPrice = price; 
 
-  // Wie viele Stück werden effektiv bezahlt? (z.B. 6 / 3 = 2)
-  const payQtyGuess = Math.round(bundlePrice / unitPrice);
+    const payQtyGuess = Math.round(bundlePrice / unitPrice);
+    const freeQty = qty - payQtyGuess;
 
-  // Fallback (klassisch, arabisch wie bei dir vorher)
-  let bundleText = `${qty} بـ ${bundlePrice.toFixed(2)} ${CURRENCY}`;
-  let bundleBadge = `${qty}/${bundlePrice.toFixed(0)}`;
+    // النصوص الافتراضية في حال لم يكن العرض "اشتر X واحصل على Y"
+    let bundleText = `${qty} حبات بـ ${bundlePrice.toFixed(2)} ${CURRENCY}`;
+    let bundleBadge = `سعر خاص`;
 
-  // Wenn es "zum Preis von X" ist:
-  if (
-    payQtyGuess >= 1 &&
-    payQtyGuess < qty &&
-    Math.abs(bundlePrice - payQtyGuess * unitPrice) < 0.1
-  ) {
-    bundleText = `ادفع ${payQtyGuess} وخذ ${qty}`;        // "Pay X, get Y"
-    bundleBadge = `${qty} بسعر ${payQtyGuess}`;           // kurz fürs Badge
+    // إذا كان العرض عبارة عن قطع مجانية (مثل ادفع 3 وخذ 4)
+    if (
+      payQtyGuess >= 1 &&
+      payQtyGuess < qty &&
+      Math.abs(bundlePrice - payQtyGuess * unitPrice) < 0.1
+    ) {
+      // الخيار 1: "3 + 1 مجاناً" (قوي جداً تسويقياً)
+      bundleText = `${payQtyGuess} + ${freeQty} مجاناً`; 
+      
+      // الخيار 2 (بديل): "4 بسعر 3"
+      bundleBadge = `${qty} بسعر ${payQtyGuess}`;
+    }
+
+    return {
+      originalPrice: price,
+      finalPrice: unitPrice,
+      hasDiscount: false,
+      discountPercent: 0,
+      hasBundle: true,
+      bundleInfo: {
+        qty,
+        bundlePrice,
+        unitPrice: bundlePrice / qty
+      },
+      bundleText,
+      bundleBadge
+    };
   }
-
-  return {
-    originalPrice: price,
-    finalPrice: unitPrice,
-    hasDiscount: false,
-    discountPercent: 0,
-    hasBundle: true,
-    bundleInfo: {
-      qty,
-      bundlePrice,
-      unitPrice: bundlePrice / qty
-    },
-    bundleText,
-    bundleBadge
-  };
-}
-
-
 
   return {
     originalPrice: price,
@@ -1111,7 +1112,7 @@ for (let i = 0; i < list.length; i++) {
         : "";
 
     const bundleInfoHTML =
-      !isMobile && pricing.hasBundle ? `<div class="bundle-info">عرض حزمة: ${pricing.bundleText}</div>` : "";
+  !isMobile && pricing.hasBundle ? `<div class="bundle-info">🔥 عرض خاص: ${pricing.bundleText}</div>` : "";
 
     const descToggleHTML = !isMobile
       ? `<span class="desc-toggle" onclick="toggleDescription(this, '${escapeAttr(p.id)}')"><i class="fas fa-chevron-down"></i></span>`
@@ -1222,8 +1223,8 @@ function renderOfferProducts() {
         ? `<div class="product-size"><i class="fas fa-weight-hanging"></i> الحجم: ${escapeHtml(sizeValue)} ${escapeHtml(sizeUnit)}</div>`
         : "";
 
-    const bundleInfoHTML =
-      !isMobile && pricing.hasBundle ? `<div class="bundle-info">عرض حزمة: ${pricing.bundleText}</div>` : "";
+     const bundleInfoHTML =
+     !isMobile && pricing.hasBundle ? `<div class="bundle-info">🔥 عرض خاص: ${pricing.bundleText}</div>` : "";
 
     const descToggleHTML = !isMobile
       ? `<span class="desc-toggle" onclick="toggleDescription(this)"><i class="fas fa-chevron-down"></i></span>`
