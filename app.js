@@ -495,6 +495,9 @@ function applyPublicBundle(bundleJson) {
   restoreStoreUIIfNeeded();
 
   STORE_DATA = store || {};
+   
+  setMetaDescriptionFromStore(STORE_DATA);
+
   CURRENCY = strTrim(STORE_DATA.currency || "€") || "€";
   applyStoreConfig();
 
@@ -511,6 +514,16 @@ function applyPublicBundle(bundleJson) {
   renderOfferProducts();
 
   return true;
+}
+
+function setMetaDescriptionFromStore(store) {
+  var meta = document.querySelector('meta[name="description"]');
+  if (!meta) return;
+
+  var desc = strTrim(store && store.page_description ? store.page_description : "");
+  if (!desc) return;
+
+  meta.setAttribute("content", desc);
 }
 
 /* =========================
@@ -1012,6 +1025,27 @@ function calculatePrice(p) {
    PRODUCT IMAGE
 ========================= */
 
+function wireContactLinks() {
+  var phone = strTrim(STORE_DATA.phone || "");
+  var wa = strTrim(STORE_DATA.whatsapp || STORE_DATA.phone || "");
+  var email = strTrim(STORE_DATA.email || "");
+
+  var phoneLink = document.getElementById("footer-phone-link");
+  if (phoneLink && phone) phoneLink.setAttribute("href", "tel:" + phone.replace(/[^\d+]/g, ""));
+
+  var waLink = document.getElementById("footer-whatsapp-link");
+  if (waLink && wa) {
+    var waNum = normalizePhoneForWhatsApp(wa);
+    if (waNum) waLink.setAttribute("href", "https://wa.me/" + waNum);
+    waLink.setAttribute("target", "_blank");
+    waLink.setAttribute("rel", "noopener noreferrer");
+  }
+
+  var emailLink = document.getElementById("footer-email-link");
+  if (emailLink && email) emailLink.setAttribute("href", "mailto:" + email);
+}
+
+
 function productImageHTML(p, opts) {
   opts = opts || {};
   var priority = opts.priority === true;
@@ -1250,7 +1284,6 @@ function renderGrid(containerId, products, isInactive) {
     var btnState = active ? "" : "disabled";
     var btnText = active ? (isMobile ? "أضف" : "أضف للسلة") : (isMobile ? "نفذ" : "نفذت الكمية");
     var btnIcon = active ? "fa-plus" : "fa-times";
-    var btnClick = active
     var btnClick = active ? 'data-add="' + escapeAttr(p.id) + '"' : "";
 
 
