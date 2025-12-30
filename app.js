@@ -1241,8 +1241,8 @@ function renderGrid(containerId, products, isInactive) {
     var btnText = active ? (isMobile ? "أضف" : "أضف للسلة") : (isMobile ? "نفذ" : "نفذت الكمية");
     var btnIcon = active ? "fa-plus" : "fa-times";
     var btnClick = active
-  ? ('onclick="event && event.stopPropagation && event.stopPropagation(); addToCart(\\'' + escapeAttr(p.id) + '\\');"')
-  : "";
+    var btnClick = active ? 'data-add="' + escapeAttr(p.id) + '"' : "";
+
 
 
     var sizeValue = strTrim(p && p.sizevalue ? p.sizevalue : "");
