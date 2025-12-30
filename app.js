@@ -618,6 +618,24 @@ function applyStoreConfig() {
   try { applyMapsFromAddress(STORE_DATA.address || ""); } catch (e2) {}
 }
 
+function openStoreWhatsApp() {
+  if (!STORE_DATA) return;
+
+  var wa = STORE_DATA.whatsapp || STORE_DATA.phone || "";
+  wa = String(wa).replace(/\D/g, ""); // nur Zahlen
+
+  if (!wa) return;
+
+  var text = STORE_DATA.whatsapp_message || "";
+  var url = "https://wa.me/" + wa;
+
+  if (text) {
+    url += "?text=" + encodeURIComponent(text);
+  }
+
+  window.open(url, "_blank");
+}
+
 /* =========================
    Announcement
 ========================= */
