@@ -449,9 +449,9 @@
   }
 
   /* Preis-Add-Button verstecken (da auf Bild) */
-  .price-container .add-btn {
+ /* .price-container .add-btn {
     display: none !important;
-  }
+  }  */
 
   /* ==================== FOOTER MIT MAP ==================== */
   footer {
