@@ -9,8 +9,9 @@ var ONE_DAY_MS = 24 * 60 * 60 * 1000;
 var CDN_BUNDLE_MAX_AGE_MS = 365 * ONE_DAY_MS;
 
 var CACHE_PREFIX = "store_cache_v2";
-// var CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
+//var CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
 var CACHE_TTL_MS = 0
+
 var CLOUDINARY_CLOUD_NAME = "dt2strsjh"; // <- eintragen
 
 /* =========================
@@ -1214,16 +1215,17 @@ function renderGrid(containerId, products, isInactive) {
         "</div>";
 
     } else if (pricing.hasBundle) {
-      priceHTML =
-        '<div class="price-wrapper">' +
-          '<span class="price-old">' + pricing.originalPrice.toFixed(2) + " " + CURRENCY + "</span>" +
-          '<span class="price-new bundle">' + pricing.bundleInfo.unitPrice.toFixed(2) + " " + CURRENCY + "</span>" +
-        "</div>";
+  priceHTML =
+    '<div class="price-wrapper">' +
+      '<span class="price-old">' + pricing.originalPrice.toFixed(2) + " " + CURRENCY + "</span>" +
+      '<span class="price-new bundle">' + pricing.bundleInfo.unitPrice.toFixed(2) + " " + CURRENCY + "</span>" +
+    "</div>";
 
-      badgeHTML =
-        '<div class="bundle-badge">' +
-          (isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText) +
-        "</div>";
+  badgeHTML =
+    '<div class="bundle-badge">' +
+      (isMobile ? (pricing.offerLabelShort || pricing.badgeText || "عرض") : (pricing.offerLabelLong || pricing.offerLabelShort || "عرض")) +
+    "</div>";
+
 
     } else {
       priceHTML =
@@ -1248,7 +1250,11 @@ function renderGrid(containerId, products, isInactive) {
         : "";
 
     var bundleInfoHTML =
-      (!isMobile && pricing.hasBundle) ? ('<div class="bundle-info">عرض حزمة: ' + escapeHtml(pricing.bundleText) + "</div>") : "";
+  (!isMobile && pricing.hasBundle)
+    ? ('<div class="bundle-info">عرض حزمة: ' + escapeHtml(pricing.offerLabelLong || pricing.offerLabelShort || "") + "</div>")
+    : "";
+
+
 
     var descToggleHTML = !isMobile
       ? '<span class="desc-toggle" onclick="toggleDescription(this)"><i class="fas fa-chevron-down"></i></span>'
@@ -1348,16 +1354,17 @@ function renderOfferProducts() {
         "</div>";
 
     } else if (pricing.hasBundle) {
-      priceHTML =
-        '<div class="price-wrapper">' +
-          '<span class="price-old">' + pricing.originalPrice.toFixed(2) + " " + CURRENCY + "</span>" +
-          '<span class="price-new bundle">' + pricing.bundleInfo.unitPrice.toFixed(2) + " " + CURRENCY + "</span>" +
-        "</div>";
+  priceHTML =
+    '<div class="price-wrapper">' +
+      '<span class="price-old">' + pricing.originalPrice.toFixed(2) + " " + CURRENCY + "</span>" +
+      '<span class="price-new bundle">' + pricing.bundleInfo.unitPrice.toFixed(2) + " " + CURRENCY + "</span>" +
+    "</div>";
 
-      badgeHTML =
-        '<div class="bundle-badge">' +
-          (isMobile ? (pricing.bundleBadge || pricing.bundleText) : pricing.bundleText) +
-        "</div>";
+  badgeHTML =
+    '<div class="bundle-badge">' +
+      (isMobile ? (pricing.offerLabelShort || pricing.badgeText || "عرض") : (pricing.offerLabelLong || pricing.offerLabelShort || "عرض")) +
+    "</div>";
+
 
     } else {
       priceHTML =
