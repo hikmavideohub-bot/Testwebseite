@@ -63,6 +63,22 @@
       font-size:1.55rem; font-weight:800;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
+    .logo-text{
+      display:flex;
+      flex-direction:column;
+      line-height:1.05;
+      min-width:0;
+    }
+    .store-subtitle{
+      font-size:.9rem;
+      color: rgba(255,255,255,78);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 520px;
+      margin-top: .1rem;
+    }
+
 
     /* Nav */
     .nav-menu{
@@ -755,6 +771,12 @@
       z-index: 999;
       transition: var(--transition);
     }
+    .whatsapp-fab{
+      background:#25D366;
+      color:#fff;
+    }
+    .whatsapp-fab:hover{transform: translateY(-2px); filter: brightness(0.95);}
+
     .fab:hover{transform: translateY(-5px) scale(1.04);}
 
     /* Footer */
