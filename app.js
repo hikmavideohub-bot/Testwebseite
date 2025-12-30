@@ -9,8 +9,8 @@ var ONE_DAY_MS = 24 * 60 * 60 * 1000;
 var CDN_BUNDLE_MAX_AGE_MS = 365 * ONE_DAY_MS;
 
 var CACHE_PREFIX = "store_cache_v2";
-var CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
-
+// var CACHE_TTL_MS = 10 * 60 * 1000; // 10 Min
+var CACHE_TTL_MS = 0
 var CLOUDINARY_CLOUD_NAME = "dt2strsjh"; // <- eintragen
 
 /* =========================
