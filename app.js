@@ -872,79 +872,130 @@ function isOfferActive(p) {
 }
 
 function calculatePrice(p) {
-  var price = Number((p && p.price) ? p.price : 0);
+  var price = Number(p && p.price ? p.price : 0);
 
-  var hasDiscount =
+  var offerType = (p && p.offer_type ? p.offer_type : "").toLowerCase();
+  var percentRaw = Number(p && p.percent ? p.percent : 0);
+
+  var qty = Number(p && p.bundle_qty ? p.bundle_qty : 0);
+  var bundlePrice = Number(p && p.bundle_price ? p.bundle_price : 0);
+
+  var hasPercent =
     hasOffer(p) &&
-    (p.offer_type === "percent" || p.offer_type === "percentage") &&
-    Number(p.percent) > 0;
+    (offerType === "percent" || offerType === "percentage") &&
+    percentRaw > 0;
 
   var hasBundle =
     hasOffer(p) &&
-    p.offer_type === "bundle" &&
-    Number(p.bundle_qty) > 0 &&
-    Number(p.bundle_price) > 0;
+    offerType === "bundle" &&
+    qty > 0 &&
+    bundlePrice > 0 &&
+    price > 0;
 
-  if (hasDiscount) {
-    var percent = Math.max(0, Math.min(100, Number(p.percent)));
-    var finalPrice = price * (1 - percent / 100);
+  function clamp(v, min, max) {
+    return Math.max(min, Math.min(max, v));
+  }
+
+  function roundMoney(v) {
+    return Math.round((v + 0.0000001) * 100) / 100;
+  }
+
+  function money(v) {
+    return roundMoney(v).toFixed(2) + " " + CURRENCY;
+  }
+
+  /* Prozent-Angebot */
+  if (hasPercent) {
+    var percent = clamp(percentRaw, 0, 100);
+    var finalPrice = roundMoney(price * (1 - percent / 100));
+
     return {
       originalPrice: price,
       finalPrice: finalPrice,
+
       hasDiscount: true,
       discountPercent: percent,
+
       hasBundle: false,
       bundleInfo: null,
-      bundleText: "",
-      bundleBadge: ""
+
+      badgeText: "-" + percent + "%",
+      offerLabelShort: "خصم " + percent + "%",
+      offerLabelLong: "خصم " + percent + "% — بدلاً من " + money(price),
+      offerDetails: "السعر بعد الخصم: " + money(finalPrice)
     };
   }
 
+  /* Bundle-Angebot */
   if (hasBundle) {
-    var qty = Number(p.bundle_qty);
-    var bundlePrice = Number(p.bundle_price);
     var unitPrice = price;
+    var unitInBundle = bundlePrice / qty;
 
     var payQtyGuess = Math.round(bundlePrice / unitPrice);
-    var freeQty = qty - payQtyGuess;
+    var isPayGet =
+      payQtyGuess >= 1 &&
+      payQtyGuess < qty &&
+      Math.abs(bundlePrice - payQtyGuess * unitPrice) < 0.10;
 
-    // Default
-    var bundleText = qty + " حبات بـ " + bundlePrice.toFixed(2) + " " + CURRENCY;
-    var bundleBadge = "سعر خاص";
+    var badgeText = "عرض";
+    var offerLabelShort = qty + "× بـ " + money(bundlePrice);
+    var offerLabelLong =
+      qty + " حبات بـ " + money(bundlePrice) +
+      " (للقطعة: " + money(unitInBundle) + ")";
+    var offerDetails = "بدلاً من " + money(qty * unitPrice);
 
-    // "Pay X, get Y"
-    if (payQtyGuess >= 1 && payQtyGuess < qty && Math.abs(bundlePrice - payQtyGuess * unitPrice) < 0.1) {
-      bundleText = payQtyGuess + " + " + freeQty + " مجاناً";
-      bundleBadge = qty + " بسعر " + payQtyGuess;
+    if (isPayGet) {
+      var freeQty = qty - payQtyGuess;
+      badgeText = freeQty + " مجاناً";
+      offerLabelShort = payQtyGuess + " + " + freeQty + " مجاناً";
+      offerLabelLong =
+        "اشترِ " + payQtyGuess +
+        " واحصل على " + freeQty +
+        " مجاناً (المجموع " + qty + ")";
+      offerDetails = "تدفع سعر " + payQtyGuess + " فقط: " + money(bundlePrice);
+    } else {
+      badgeText = qty + "×";
     }
 
     return {
       originalPrice: price,
-      finalPrice: unitPrice, // Preis pro Stück
+      finalPrice: unitPrice,
+
       hasDiscount: false,
       discountPercent: 0,
+
       hasBundle: true,
       bundleInfo: {
         qty: qty,
         bundlePrice: bundlePrice,
-        unitPrice: bundlePrice / qty
+        unitPrice: unitInBundle
       },
-      bundleText: bundleText,
-      bundleBadge: bundleBadge
+
+      badgeText: badgeText,
+      offerLabelShort: offerLabelShort,
+      offerLabelLong: offerLabelLong,
+      offerDetails: offerDetails
     };
   }
 
+  /* Kein Angebot */
   return {
     originalPrice: price,
     finalPrice: price,
+
     hasDiscount: false,
     discountPercent: 0,
+
     hasBundle: false,
     bundleInfo: null,
-    bundleText: "",
-    bundleBadge: ""
+
+    badgeText: "",
+    offerLabelShort: "",
+    offerLabelLong: "",
+    offerDetails: ""
   };
 }
+
 
 /* =========================
    PRODUCT IMAGE
