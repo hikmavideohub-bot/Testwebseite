@@ -124,6 +124,92 @@ async function initStoreSlug() {
    CACHE (LocalStorage)
 ========================= */
 
+// Füge diese Funktionen zu deiner app.js hinzu:
+
+function addToCartWithGoldEffect(productId) {
+  const productCard = document.querySelector(`.product-card[data-product-id="${productId}"]`);
+  
+  if (productCard) {
+    // Goldener Glow-Effekt
+    productCard.classList.add('adding');
+    
+    // Nach der Animation zurücksetzen
+    setTimeout(() => {
+      productCard.classList.remove('adding');
+      productCard.classList.add('added');
+    }, 500);
+    
+    // Nach 2 Sekunden den "added"-Status entfernen
+    setTimeout(() => {
+      productCard.classList.remove('added');
+    }, 2000);
+  }
+  
+  // Originale addToCart Funktion aufrufen
+  addToCart(productId);
+}
+
+// Initialisiere Overlay Buttons
+function initializeOverlayButtons() {
+  document.querySelectorAll('.product-card').forEach(card => {
+    const productId = card.dataset.productId;
+    const imageContainer = card.querySelector('.product-image-container');
+    
+    if (imageContainer && !card.querySelector('.add-btn-overlay')) {
+      const overlayBtn = document.createElement('button');
+      overlayBtn.className = 'add-btn-overlay';
+      overlayBtn.innerHTML = '<i class="fas fa-cart-plus"></i> Hinzufügen';
+      overlayBtn.onclick = function(e) {
+        e.stopPropagation();
+        addToCartWithGoldEffect(productId);
+      };
+      
+      imageContainer.appendChild(overlayBtn);
+    }
+  });
+}
+
+// Verknüpfe die Kategorie-Filter
+function initializeCategories() {
+  // Dies ist ein Beispiel - passe es an deine Daten an
+  const categories = [
+    { id: 'all', name: 'Alle', icon: 'fas fa-border-all' },
+    { id: 'offers', name: 'Angebote', icon: 'fas fa-percentage' },
+    { id: 'category1', name: 'Elektronik', icon: 'fas fa-laptop' },
+    { id: 'category2', name: 'Kleidung', icon: 'fas fa-tshirt' },
+    { id: 'category3', name: 'Haushalt', icon: 'fas fa-home' }
+  ];
+  
+  const categoryNav = document.querySelector('.category-nav');
+  if (categoryNav) {
+    categoryNav.innerHTML = categories.map(cat => `
+      <button class="cat-btn ${cat.id === 'all' ? 'active' : ''}" 
+              data-category="${cat.id}">
+        <i class="${cat.icon}"></i>
+        <span>${cat.name}</span>
+      </button>
+    `).join('');
+  }
+}
+
+// Initialisiere alles nach dem Laden
+document.addEventListener('DOMContentLoaded', function() {
+  initializeCategories();
+  initializeOverlayButtons();
+  
+  // Kategorie Filter Event Listener
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const category = this.dataset.category;
+      filterProductsByCategory(category);
+      
+      // Aktiven Button markieren
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+});
+
 function cacheKey(key) {
   return `${CACHE_PREFIX}:${STORE_SLUG}:${key}`;
 }
