@@ -50,98 +50,78 @@ header {
   display: flex !important;
   align-items: center !important;
 }
-.header-container {
-  display: flex !important;
-  width: 100% !important;
-  height: 100% !important;
-  align-items: center !important;
-  justify-content: space-between !important; /* Drückt die Elemente nach außen */
-  padding: 0 15px !important;
-}
-   #mobileToggle {
-  flex: 0 0 40px !important;
-  display: flex !important;
-  justify-content: flex-start !important;
+header {
+  height: 50px !important;
+  background: #1f3a5f !important; /* Dein Dunkelblau */
+  position: fixed !important;
+  top: 0; left: 0; right: 0;
+  z-index: 2000 !important;
   color: white !important;
 }
-/* Icons und Logo wieder weiß machen */
-/* 2. Mittlere Seite (Dein Logo) */
-.logo {
-  flex: 1 !important; /* Nimmt den mittleren Platz ein */
+
+.header-container {
   display: flex !important;
-  justify-content: center !important; /* Zentriert das Logo in der Mitte */
+  justify-content: space-between !important;
   align-items: center !important;
-  max-width: 60% !important;
+  height: 100% !important;
+  padding: 0 15px !important;
+}
+
+.logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
 }
 
 .logo h1 {
-  font-size: 1.1rem !important;
-  color: white !important;
+  font-size: 1rem !important;
   margin: 0 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  color: white !important;
 }
-.contact-pill {
-    display: none !important;
-  }
 
+.store-info-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+/* Telefon auf Handy verstecken */
+@media (max-width: 768px) {
+  .contact-pill { display: none !important; }
+}
    
 .store-info-header {
-  flex: 0 0 80px !important; /* Reservierter Platz für Icons rechts */
   display: flex !important;
-  justify-content: flex-end !important;
   align-items: center !important;
-  gap: 15px !important;
+  gap: 12px !important; /* Abstand zwischen Warenkorb und 3-Punkte-Menü */
+  margin-left: auto !important; /* Drückt die Icons nach ganz rechts weg vom Logo */
+  flex-shrink: 0 !important; /* Verhindert, dass die Icons auf kleinen Handys schrumpfen */
 }
-   /* ==================== HEADER ICONS & LOGO TRENNUNG ==================== */
 
-/* Der Container, in dem Warenkorb und evtl. Home liegen */
-.store-info-header {
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important; /* Abstand zwischen den Icons rechts */
-  flex-shrink: 0 !important; /* Verhindert, dass die Icons gequetscht werden */
-  margin-left: auto !important; /* Drückt diesen ganzen Block nach ganz rechts */
+/* Sorgt dafür, dass alle Icons im Header weiß und gleich groß sind */
+.store-info-header i, 
+.more-menu-btn i {
+  color: #ffffff !important;
+  font-size: 1.2rem !important;
 }
 
 .cart-icon {
-  background: transparent !important;
-  border: none !important;
-  padding: 5px !important;
-  font-size: 1.4rem !important;
-  color: #ffffff !important; /* Weiß für dunklen Header */
   position: relative !important;
-  display: flex !important;
-  align-items: center !important;
+  font-size: 1.3rem !important;
+  cursor: pointer !important;
 }
 
-/* Die kleine rote Zahl am Warenkorb */
 .cart-badge {
   position: absolute !important;
-  top: -2px !important;
-  right: -2px !important;
-  background: #ef4444 !important; /* Kräftiges Rot */
-  color: white !important;
+  top: -5px; right: -8px;
+  background: #ef4444 !important; /* Rot */
   font-size: 0.65rem !important;
-  font-weight: 700 !important;
-  width: 18px !important;
-  height: 18px !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border: 2px solid #1f3a5f !important; /* Gleiche Farbe wie Header-Hintergrund */
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
 }
 
-/* Falls dein Home-Button ein Icon im Header ist, bekommt er hiermit Platz */
-.store-info-header i, 
-.store-info-header a {
-  color: #ffffff !important;
-  text-decoration: none !important;
-  font-size: 1.3rem !important;
-}
-/* ==================== 2. CUSTOMER MESSAGE (ANNOUNCEMENT) ==================== */
 /* ==================== ANNOUNCEMENT BAR (NEUE FARBE) ==================== */
 #announcement-bar {
   position: fixed !important;
@@ -171,55 +151,44 @@ header {
 
 /* ==================== 3. CATEGORIES (TABS) ==================== */
    /* Der Drei-Punkte-Button */
+/* Dropdown Menü Design */
+.menu-container { position: relative !important; }
+
 .more-menu-btn {
   background: transparent !important;
   border: none !important;
-  color: #ffffff !important;
-  font-size: 1.5rem !important;
-  cursor: pointer !important;
-  padding: 5px 10px !important;
-  display: flex !important;
-  align-items: center !important;
+  color: white !important;
+  font-size: 1.2rem !important;
+  padding: 5px !important;
 }
 
-/* Das versteckte Dropdown-Menü */
 .nav-dropdown {
   position: absolute !important;
-  top: 50px !important; /* Direkt unter dem flachen Header */
-  right: 10px !important;
-  background: #ffffff !important;
+  top: 45px !important;
+  right: 0 !important;
+  background: white !important;
+  min-width: 170px !important;
   border-radius: 12px !important;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
-  min-width: 160px !important;
-  display: none; /* Standardmäßig unsichtbar */
+  display: none; /* Per JS umschalten */
   flex-direction: column !important;
   overflow: hidden !important;
-  z-index: 3000 !important;
 }
 
-/* Zeigt das Menü an, wenn es die Klasse 'show' hat */
-.nav-dropdown.show {
-  display: flex !important;
-}
+.nav-dropdown.show { display: flex !important; }
 
-/* Die Links im Dropdown */
 .nav-dropdown a {
+  padding: 12px 15px !important;
   color: #333 !important;
-  padding: 12px 20px !important;
   text-decoration: none !important;
   font-size: 0.9rem !important;
-  font-weight: 500 !important;
   border-bottom: 1px solid #f1f5f9 !important;
-  transition: background 0.2s !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
 }
 
-.nav-dropdown a:last-child {
-  border-bottom: none !important;
-}
-
-.nav-dropdown a:hover {
-  background: #f8fafc !important;
-}
+.nav-dropdown a i { color: #1f3a5f !important; width: 20px; }
    
 .category-nav {
   display: flex !important;
