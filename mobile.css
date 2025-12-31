@@ -39,13 +39,45 @@
   /* ==================== HEADER (Fest oben) ==================== */
   /* ==================== STACKED NAVIGATION ==================== */
   /* ==================== 1. HEADER REPARATUR ==================== */
+/* Den Header kompakt halten */
 header {
-  height: 50px !important;
-  background: #1f3a5f !important; /* Dein Dunkelblau */
-  position: fixed !important;
-  top: 0; left: 0; right: 0;
-  z-index: 2000 !important;
-  color: white !important;
+  height: 60px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 15px !important;
+  background-color: #1f3a5f !important; /* Dein Blau */
+  border: none !important;
+}
+
+/* Die Kategorien direkt unter den Header kleben */
+.category-nav {
+  position: sticky !important;
+  top: 60px !important; /* Header-Höhe */
+  width: 100% !important;
+  background-color: #1f3a5f !important; /* Oder das Grün: #4CAF50 */
+  height: 48px !important;
+  margin: 0 !important; /* Entfernt den Abstand oben/unten */
+  border-radius: 0 !important; /* Entfernt die Rundung für den flachen Look */
+  display: flex !important;
+  align-items: center !important;
+  overflow-x: auto !important;
+  z-index: 1000 !important;
+}
+
+/* Der weiße Strich für den aktiven Tab (wie im Bild) */
+.cat-btn {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  border: none !important;
+  padding: 0 15px !important;
+  height: 100% !important;
+  font-weight: 600 !important;
+  border-bottom: 3px solid transparent !important;
+}
+
+.cat-btn.active {
+  color: #ffffff !important;
+  border-bottom: 3px solid #ffffff !important; /* Der Strich aus dem grünen Bild */
 }
 
 .header-container {
@@ -178,17 +210,6 @@ header {
 }
 
 .nav-dropdown a i { color: #1f3a5f !important; width: 20px; }
-   
-.category-nav {
-  display: flex !important;
-  gap: 5px !important;
-  overflow-x: auto !important;
-  scrollbar-width: none !important; /* Firefox */
-  padding: 0 10px !important;
-  height: 45px !important;
-  align-items: center !important;
-  background-color: var(--primary) !important; /* Deine Hauptfarbe */
-}
 /* DER WICHTIGSTE FIX: Wenn die Nachricht aktiv ist, schiebe Kategorien runter */
 body.has-announcement .category-nav {
   top: 90px !important; /* Exakt unter der Nachricht */
@@ -204,29 +225,8 @@ body:not(.has-announcement) .category-nav {
   display: none !important;
 }
 /* Die Buttons selbst */
-.cat-btn {
-  background: transparent !important;
-  border: none !important;
-  color: rgba(255, 255, 255, 0.7) !important; /* Leicht transparentes Weiß */
-  padding: 0 15px !important;
-  height: 100% !important;
-  font-weight: 600 !important;
-  font-size: 0.8rem !important;
-  text-transform: uppercase !important;
-  cursor: pointer !important;
-  white-space: nowrap !important;
-  display: flex !important;
-  align-items: center !important;
-  transition: all 0.2s ease !important;
-  border-bottom: 3px solid transparent !important; /* Platzhalter für den Strich */
-}
 
 /* Wenn der Button aktiv ist (wie in deinem Bild) */
-.cat-btn.active {
-  color: #ffffff !important;
-  border-bottom: 3px solid #ffffff !important; /* Der weiße Strich unten */
-  opacity: 1 !important;
-}
 
 /* Kleiner Effekt beim Drüberfahren (Desktop) */
 .cat-btn:hover {
