@@ -847,3 +847,34 @@ footer a{ cursor: pointer; }
     box-shadow: 0 10px 20px rgba(0,0,0,.18) !important;
   }
 }
+
+/* ===== FIX: blaue Linie / Focus-Artefakt in Kategorien ===== */
+
+/* Entfernt Browser-Focus & Tap-Highlight */
+.category-nav .cat-btn{
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Falls noch ein altes Underline existiert */
+.category-nav .cat-btn::after{
+  content: none !important;
+}
+
+/* Android / Chrome Focus */
+.category-nav .cat-btn:focus,
+.category-nav .cat-btn:focus-visible,
+.category-nav .cat-btn:active{
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: rgba(255,255,255,.18) !important;
+}
+
+/* Nur ACTIVE soll hervorstechen (weiß) */
+.category-nav .cat-btn.active{
+  background: #ffffff !important;
+  color: #1f3a5f !important;
+  border-color: #ffffff !important;
+}
+
