@@ -648,9 +648,13 @@ function applyCustomerMessage(msg) {
   if (m) {
     bar.style.display = "block";
     text.textContent = m;
+    // DIESE ZEILE HINZUFÜGEN:
+    document.body.classList.add("has-announcement"); 
   } else {
     bar.style.display = "none";
     text.textContent = "";
+    // DIESE ZEILE HINZUFÜGEN:
+    document.body.classList.remove("has-announcement");
   }
 }
 
