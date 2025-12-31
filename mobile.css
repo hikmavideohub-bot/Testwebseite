@@ -304,20 +304,20 @@
 .products-grid {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
-  gap: 8px !important; /* Sehr schmaler Spalt in der Mitte wie im Bild */
-  padding: 8px !important; /* Schmaler Rand zu den Bildschirmseiten */
-  background-color: #f5f5f5 !important; /* Hellgrauer Hintergrund lässt Karten strahlen */
+  gap: 6px !important; /* Minimaler Spalt für maximale Bildgröße */
+  padding: 6px !important;
+  background-color: #f4f4f4 !important;
 }
 
 /* Die einzelne Produktkarte */
 .product-card {
   background: #ffffff !important;
-  border-radius: 12px !important; /* Sanfte Rundung wie im Bild */
-  border: none !important;
+  border-radius: 8px !important; /* Etwas kleinere Rundung wirkt bei 5:4 eleganter */
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+  border: none !important;
 }
 
 .product-card:active {
@@ -327,17 +327,16 @@
 /* Der Bild-Container */
 .product-image-container {
   width: 100% !important;
-  aspect-ratio: 1 / 1 !important;
-  background: #f1f5f9 !important;
+  aspect-ratio: 5 / 4 !important; /* Dein Wunschformat: 5 breit, 4 hoch */
+  background: #f8f9fa !important;
   position: relative !important;
   overflow: hidden !important;
-  flex-shrink: 0 !important;
 }
 
 .product-image {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
+  object-fit: cover !important; /* Bild füllt den 5:4 Bereich komplett aus */
 }
 
 /* Badges (z.B. Rabatt-Prozent) */
