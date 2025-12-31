@@ -1,9 +1,6 @@
 /* =========================================================
    Mobile Responsive Styles - Optimized & Clean
    ========================================================= */
-/* =========================================================
-   Mobile Responsive Styles - Optimized & Clean
-   ========================================================= */
 
 @media (max-width: 992px) {
   /* ==================== VARIABLES ==================== */
@@ -110,7 +107,7 @@
     font-weight: 600 !important;
   }
 
-  /* ==================== CATEGORY NAV ==================== */
+  /* ==================== CATEGORY NAV - SCROLLBARES BAND ==================== */
   .category-nav {
     position: fixed !important;
     top: 60px !important;
@@ -125,18 +122,56 @@
     overflow-y: hidden !important;
     z-index: 1999 !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    
+    /* Smooth Scrolling für Touch-Geräte */
     -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    
+    /* Scroll-Snap für sanftes Scrollen */
+    scroll-snap-type: x proximity !important;
+    
+    /* Padding für besseres Scrollen */
+    padding: 0 10px !important;
+    gap: 5px !important;
   }
 
+  /* Scrollbar verstecken aber Funktion behalten */
   .category-nav::-webkit-scrollbar {
     display: none !important;
+  }
+  
+  .category-nav {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE/Edge */
+  }
+
+  /* Fade-Effekt an den Rändern */
+  .category-nav::before,
+  .category-nav::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 20px !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  .category-nav::before {
+    left: 0 !important;
+    background: linear-gradient(to right, #1f3a5f, transparent) !important;
+  }
+
+  .category-nav::after {
+    right: 0 !important;
+    background: linear-gradient(to left, #1f3a5f, transparent) !important;
   }
 
   .cat-btn {
     background: transparent !important;
     color: rgba(255, 255, 255, 0.7) !important;
     border: none !important;
-    padding: 0 18px !important;
+    padding: 0 20px !important;
     height: 100% !important;
     font-weight: 600 !important;
     font-size: 0.9rem !important;
@@ -144,15 +179,20 @@
     white-space: nowrap !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
+    flex-shrink: 0 !important; /* Verhindert Schrumpfen */
+    
+    /* Scroll-Snap für einzelne Buttons */
+    scroll-snap-align: start !important;
   }
 
   .cat-btn.active {
     color: #ffffff !important;
     border-bottom: 3px solid #ffffff !important;
+    background: rgba(255, 255, 255, 0.05) !important;
   }
 
-  .cat-btn:hover {
-    color: #ffffff !important;
+  .cat-btn:active {
+    background: rgba(255, 255, 255, 0.1) !important;
   }
 
   /* ==================== ANNOUNCEMENT BAR ==================== */
@@ -258,7 +298,6 @@
     margin-top: 110px !important;
   }
 }
-/* ==================== 5. PRODUCT CARDS (BUTTONS AUF EINER EBENE) ==================== */
 /* ==================== PRODUKT-GRID & KARTEN STYLING ==================== */
 
 /* Das Raster für die Produkte */
