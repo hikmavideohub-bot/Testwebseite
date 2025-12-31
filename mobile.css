@@ -171,45 +171,52 @@ header {
 
 /* ==================== 3. CATEGORIES (TABS) ==================== */
 .category-nav {
-  position: fixed !important;
-  top: 60px !important; /* Standard-Position, wenn keine Nachricht da ist */
-  left: 0 !important;
-  right: 0 !important;
-  height: 55px !important;
-  background: var(--card) !important;
-  z-index: 1998 !important;
   display: flex !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
+  gap: 5px !important;
   overflow-x: auto !important;
-  padding: 0 0.75rem !important;
-  border-bottom: 1px solid #f1f5f9 !important;
-  scrollbar-width: none !important;
+  scrollbar-width: none !important; /* Firefox */
+  padding: 0 10px !important;
+  height: 45px !important;
+  align-items: center !important;
+  background-color: var(--primary) !important; /* Deine Hauptfarbe */
 }
-
 /* DER WICHTIGSTE FIX: Wenn die Nachricht aktiv ist, schiebe Kategorien runter */
 body.has-announcement .category-nav {
   top: 100px !important; /* 60px Header + 40px Nachricht */
 }
 
+/* Chrome, Safari, Edge */
 .category-nav::-webkit-scrollbar {
   display: none !important;
 }
-
+/* Die Buttons selbst */
 .cat-btn {
   background: transparent !important;
   border: none !important;
-  color: var(--text-secondary) !important;
-  font-weight: 700 !important;
-  font-size: 0.85rem !important;
-  padding: 0.5rem 0.8rem !important;
+  color: rgba(255, 255, 255, 0.7) !important; /* Leicht transparentes Weiß */
+  padding: 0 15px !important;
+  height: 100% !important;
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
   white-space: nowrap !important;
-  border-bottom: 3px solid transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: all 0.2s ease !important;
+  border-bottom: 3px solid transparent !important; /* Platzhalter für den Strich */
 }
 
+/* Wenn der Button aktiv ist (wie in deinem Bild) */
 .cat-btn.active {
-  color: var(--primary) !important;
-  border-bottom-color: var(--primary) !important;
+  color: #ffffff !important;
+  border-bottom: 3px solid #ffffff !important; /* Der weiße Strich unten */
+  opacity: 1 !important;
+}
+
+/* Kleiner Effekt beim Drüberfahren (Desktop) */
+.cat-btn:hover {
+  color: #ffffff !important;
 }
 
 /* ==================== 4. MAIN CONTENT ABSTÄNDE ==================== */
@@ -230,23 +237,20 @@ body.has-announcement .main-content {
 .products-grid {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
-  gap: 10px !important; /* Etwas enger zusammen */
-  padding: 10px !important;
-  align-items: stretch !important;
+  gap: 8px !important; /* Sehr schmaler Spalt in der Mitte wie im Bild */
+  padding: 8px !important; /* Schmaler Rand zu den Bildschirmseiten */
+  background-color: #f5f5f5 !important; /* Hellgrauer Hintergrund lässt Karten strahlen */
 }
 
 /* Die einzelne Produktkarte */
 .product-card {
-  background: var(--card) !important;
-  border-radius: 14px !important;
-  border: 1px solid rgba(15, 23, 42, 0.08) !important;
-  box-shadow: var(--shadow) !important;
+  background: #ffffff !important;
+  border-radius: 12px !important; /* Sanfte Rundung wie im Bild */
+  border: none !important;
   overflow: hidden !important;
-  position: relative !important;
   display: flex !important;
   flex-direction: column !important;
-  height: 100% !important; /* Wichtig: Macht alle Karten in einer Reihe gleich hoch */
-  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
 }
 
 .product-card:active {
@@ -282,22 +286,24 @@ body.has-announcement .main-content {
 
 /* Der Info-Bereich (Titel, Preis, Button) */
 .product-info {
-  padding: 10px !important; /* Weniger Innenabstand */
-  flex: 1 !important;
+  padding: 10px !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: flex-start !important; /* Alles nach oben ziehen */
-  min-height: auto !important; /* Entfernt die erzwungene Länge */
+  gap: 4px !important; /* Kaum Platz zwischen Titel und Preis */
+}
+.price-container {
+  display: flex !important;
+  justify-content: space-between !important; /* Preis rechts, Sterne links */
+  align-items: center !important;
+  margin-top: 5px !important;
 }
 
 /* Titel des Produkts */
 .product-title {
-  font-weight: 600 !important;
   font-size: 0.9rem !important;
-  line-height: 1.2 !important;
-  margin-bottom: 2px !important; /* Minimaler Abstand nach unten */
-  height: 2.4em !important; /* Platz für genau 2 Zeilen */
-  overflow: hidden !important;
+  font-weight: 700 !important; /* Kräftigerer Titel */
+  color: #333 !important;
+  margin: 0 !important;
 }
 /* Untertitel / Mengenangabe (z.B. "kg 60") */
 .product-subtitle {
@@ -394,13 +400,6 @@ body.has-announcement .main-content {
 
 /* ==================== PREIS & BUTTON UNTEREINANDER ==================== */
 /* 1. Haupt-Container (Stapelt Preise oben, Button unten) */
-.price-container {
-  margin-top: 8px !important; /* Zieht den Preisbereich nah an den Text ran */
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 6px !important;
-}
-
 /* 2. Preis-Wrapper (Hält Alt- und Neu-Preis nebeneinander) */
 .price-wrapper {
   display: flex !important;
