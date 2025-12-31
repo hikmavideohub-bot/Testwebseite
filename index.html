@@ -29,7 +29,7 @@
     </div>
 
     <div class="store-info-header">
-      <div class="contact-pill" title="الهاتف">
+      <div class="contact-pill" title="الهاتف" onclick="openStorePhone()" role="button" tabindex="0">
         <i class="fas fa-phone"></i>
         <span id="store-phone">...</span>
       </div>
@@ -299,7 +299,7 @@
 <div class="footer-section">
         <h4>معلومات التواصل</h4>
         <ul>
-          <li><a><i class="fas fa-phone"></i> <span id="footer-phone">...</span></a></li>
+          <li><a href="#" onclick="openStorePhone(); return false;"><i class="fas fa-phone"></i> <span id="footer-phone">...</span></a></li>
           <li>
   <a href="#" onclick="openStoreWhatsApp(); return false;">
     <i class="fab fa-whatsapp"></i>
@@ -329,6 +329,33 @@
 <script>
   document.addEventListener("touchstart", function() {}, true);
 </script>
-  <script src="/app.js?v=20251229-1" defer></script>
+  <script>
+/* phone click helper (keeps existing IDs / logic) */
+(function(){
+  if (window.openStorePhone) return; // don't override if app.js already provides it
+  function sanitizePhone(raw){
+    return (raw || "").toString().trim().replace(/[^\d+]/g, "");
+  }
+  window.openStorePhone = function(){
+    const raw =
+      (document.getElementById("store-phone")?.textContent) ||
+      (document.getElementById("footer-phone")?.textContent) || "";
+    const phone = sanitizePhone(raw);
+    if (!phone || phone === "...") return;
+    window.location.href = "tel:" + phone;
+  };
+
+  // Make Enter key work on the header pill (accessibility)
+  document.addEventListener("keydown", function(e){
+    if (e.key !== "Enter") return;
+    const el = document.activeElement;
+    if (el && el.classList && el.classList.contains("contact-pill")) {
+      window.openStorePhone();
+    }
+  });
+})();
+</script>
+
+<script src="/app.js?v=20251229-1" defer></script>
 </body>
 </html>
