@@ -877,4 +877,57 @@ footer a{ cursor: pointer; }
   color: #1f3a5f !important;
   border-color: #ffffff !important;
 }
+/* ===== KATEGORIEN: Artefakt/Blauer Rand durch Überschreibungen FIX ===== */
+@media (max-width: 992px){
+
+  /* 1) ALLES zurücksetzen (nur in category-nav) */
+  .category-nav .cat-btn{
+    all: unset !important;            /* entfernt alte backgrounds/borders/shadows komplett */
+    box-sizing: border-box !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  /* 2) Neu definieren (sauber, ohne transparenten "blauen" Box-Look) */
+  .category-nav .cat-btn{
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+
+    height: 40px !important;
+    padding: 0 16px !important;
+
+    border-radius: 16px !important;          /* NICHT komplett rund */
+    background: rgba(255,255,255,.12) !important;
+    border: 1px solid rgba(255,255,255,.20) !important;
+
+    color: rgba(255,255,255,.92) !important;
+    font-weight: 800 !important;
+    font-size: .9rem !important;
+    white-space: nowrap !important;
+
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+
+    /* ganz wichtig: keine Schatten/Outlines mehr */
+    box-shadow: none !important;
+    outline: none !important;
+    background-clip: padding-box !important; /* verhindert "Rand-Artefakte" */
+  }
+
+  /* 3) Falls irgendwo pseudo-elemente Unterstriche erzeugen */
+  .category-nav .cat-btn::before,
+  .category-nav .cat-btn::after{
+    content: none !important;
+  }
+
+  /* 4) Active Zustand (weiß, clean) */
+  .category-nav .cat-btn.active{
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+    color: #1f3a5f !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,.18) !important;
+  }
+}
+
 
