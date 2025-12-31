@@ -182,7 +182,12 @@ header {
 }
 /* DER WICHTIGSTE FIX: Wenn die Nachricht aktiv ist, schiebe Kategorien runter */
 body.has-announcement .category-nav {
-  top: 100px !important; /* 60px Header + 40px Nachricht */
+  top: 90px !important; /* Exakt unter der Nachricht */
+}
+
+/* Falls keine Nachricht da ist, muss die Nav direkt unter den 50px Header */
+body:not(.has-announcement) .category-nav {
+  top: 50px !important; 
 }
 
 /* Chrome, Safari, Edge */
