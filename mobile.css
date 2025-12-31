@@ -229,8 +229,8 @@ body.has-announcement .main-content {
 /* Das Raster für die Produkte */
 .products-grid {
   display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important; /* 2 Spalten auf dem Handy */
-  gap: 12px !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 10px !important; /* Etwas enger zusammen */
   padding: 10px !important;
   align-items: stretch !important;
 }
@@ -282,33 +282,30 @@ body.has-announcement .main-content {
 
 /* Der Info-Bereich (Titel, Preis, Button) */
 .product-info {
-  padding: 12px !important;
-  flex: 1 !important; /* Füllt den Raum aus und drückt den Button nach unten */
+  padding: 10px !important; /* Weniger Innenabstand */
+  flex: 1 !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: space-between !important; /* Verteilt Titel oben und Button unten */
-  min-height: 150px !important; /* Einheitliche Basisgröße */
+  justify-content: flex-start !important; /* Alles nach oben ziehen */
+  min-height: auto !important; /* Entfernt die erzwungene Länge */
 }
 
 /* Titel des Produkts */
 .product-title {
   font-weight: 600 !important;
-  font-size: 0.95rem !important;
-  color: var(--text) !important;
-  margin-bottom: 4px !important;
-  line-height: 1.3 !important;
-  /* Erlaubt max 2 Zeilen für den Titel, bevor er abgeschnitten wird */
-  display: -webkit-box !important;
-  -webkit-line-clamp: 2 !important;
-  -webkit-box-orient: vertical !important;
+  font-size: 0.9rem !important;
+  line-height: 1.2 !important;
+  margin-bottom: 2px !important; /* Minimaler Abstand nach unten */
+  height: 2.4em !important; /* Platz für genau 2 Zeilen */
   overflow: hidden !important;
 }
-
 /* Untertitel / Mengenangabe (z.B. "kg 60") */
 .product-subtitle {
   font-size: 0.75rem !important;
   color: var(--text-secondary) !important;
-  margin-bottom: 8px !important;
+  margin: 0 !important; /* Entfernt die leere Zeile unter der Einheit */
+  padding: 0 !important;
+  line-height: 1 !important;
 }
 
 
@@ -398,12 +395,10 @@ body.has-announcement .main-content {
 /* ==================== PREIS & BUTTON UNTEREINANDER ==================== */
 /* 1. Haupt-Container (Stapelt Preise oben, Button unten) */
 .price-container {
-  margin-top: auto !important;
+  margin-top: 8px !important; /* Zieht den Preisbereich nah an den Text ran */
   display: flex !important;
-  flex-direction: column !important; 
-  gap: 10px !important;
-  width: 100% !important;
-  padding-top: 8px !important;
+  flex-direction: column !important;
+  gap: 6px !important;
 }
 
 /* 2. Preis-Wrapper (Hält Alt- und Neu-Preis nebeneinander) */
