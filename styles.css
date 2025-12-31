@@ -866,123 +866,213 @@
 
 
 /* =========================================================
-   HEADER / NAV FIX (DESKTOP & TABLET > 992px)
-   - keeps your existing HTML + JS logic (same IDs/classes)
-   - makes the menu clean on desktop (no vertical list)
+   PREMIUM HEADER + CENTER NAV (DESKTOP)
+   - keeps your existing HTML IDs + JS logic
+   - moves nav to the middle, actions left, logo right
+   - makes phone + cart fully clickable
    ========================================================= */
 
 :root{
-  --header-h: 78px;
-  --announce-h: 42px;
+  --header-h-desktop: 78px;
+  --announce-h-desktop: 42px;
+  --sticky-gap: 14px;
 }
 
-/* make the fixed header stack predictable */
-body{
-  padding-top: var(--header-h);
-}
-body.has-announcement{
-  padding-top: calc(var(--header-h) + var(--announce-h));
+/* Safer spacing: header is fixed */
+@media (min-width: 993px){
+  body{ padding-top: 108px; } /* keep your existing spacing */
+  body.has-announcement{ padding-top: calc(108px + var(--announce-h-desktop)); }
+
+  header{ height: var(--header-h-desktop); }
+  .header-container{
+    height: var(--header-h-desktop);
+    padding: 0 1.25rem;
+    position: relative;
+  }
+
+  /* clickable phone pill */
+  .contact-pill{
+    cursor:pointer;
+    border-radius: 14px;
+    transition: var(--transition);
+  }
+  .contact-pill:hover{
+    background: rgba(255,255,255,.16);
+    transform: translateY(-1px);
+  }
+
+  /* ensure badge click opens cart */
+  .cart-badge{ pointer-events:none; }
+
+  /* menu button visible on desktop (left of cart in RTL) */
+  .more-menu-btn{
+    display:flex;
+    width: 44px;
+    height: 44px;
+    align-items:center;
+    justify-content:center;
+    border-radius: 14px;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.16);
+    color:#fff;
+    cursor:pointer;
+    transition: var(--transition);
+  }
+  .more-menu-btn:hover{ background: rgba(255,255,255,.14); transform: translateY(-1px); }
+
+  /* IMPORTANT: allow centered absolute nav to position against header-container */
+  .menu-container{ position: static !important; }
+
+  /* CENTER NAV */
+  .nav-dropdown{
+    display:flex !important;
+    flex-direction: row !important;
+    align-items:center !important;
+    gap: 1.35rem !important;
+
+    position:absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+
+    /* if there are many links: allow horizontal scroll instead of breaking layout */
+    max-width: min(760px, 52vw);
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nav-dropdown::-webkit-scrollbar{ height: 0; }
+
+  .nav-dropdown .mobile-only-link{ display:none !important; }
+
+  /* Modern underline indicator like your screenshot */
+  .nav-dropdown .nav-link{
+    position: relative;
+    color: rgba(255,255,255,.92) !important;
+    font-weight: 800;
+    text-decoration:none;
+    padding: .35rem .2rem;
+    display:flex;
+    align-items:center;
+    gap:.55rem;
+    white-space: nowrap;
+    transition: var(--transition);
+  }
+  .nav-dropdown .nav-link i{ color: rgba(255,255,255,.92); }
+
+  .nav-dropdown .nav-link::after{
+    content:"";
+    position:absolute;
+    left: 0;
+    right: 0;
+    bottom: -12px;
+    height: 3px;
+    border-radius: 3px;
+    background: transparent;
+    transition: .2s ease;
+  }
+  .nav-dropdown .nav-link:hover{ color:#fff !important; transform: translateY(-1px); }
+  .nav-dropdown .nav-link:hover::after{ background: rgba(255,255,255,.35); }
+
+  .nav-dropdown .nav-link.active{
+    color:#fff !important;
+  }
+  .nav-dropdown .nav-link.active::after{
+    background: linear-gradient(90deg, var(--secondary), #22c55e);
+  }
+
+  /* Announcement bar sits under header */
+  #announcement-bar{
+    top: var(--header-h-desktop);
+    height: var(--announce-h-desktop);
+    padding: 0;
+    display:none;
+    align-items:center;
+  }
+  body.has-announcement #announcement-bar{ display:flex; }
+
+  /* Category bar sticky position (desktop) */
+  .category-nav{
+    top: calc(var(--header-h-desktop) + var(--sticky-gap));
+  }
+  body.has-announcement .category-nav{
+    top: calc(var(--header-h-desktop) + var(--announce-h-desktop) + var(--sticky-gap));
+  }
 }
 
-/* Header sizing */
-header{
-  height: var(--header-h);
-}
-.header-container{
-  height: 100%;
-  padding-block: 0; /* keep height stable */
-}
+/* =========================================================
+   CATEGORY BAND (ALL SIZES)
+   - horizontal scroll, no wrap
+   - tabs are NOT pill-rounded (like your example)
+   ========================================================= */
 
-/* Announcement under header (desktop) */
-#announcement-bar{
-  top: var(--header-h);
-  height: var(--announce-h);
-  padding: 0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
-body.has-announcement #announcement-bar{
-  display:flex;
-}
-
-/* Sticky category nav should sit right below fixed header (+ announcement when active) */
 .category-nav{
-  top: calc(var(--header-h) + 12px);
-}
-body.has-announcement .category-nav{
-  top: calc(var(--header-h) + var(--announce-h) + 12px);
-}
-
-/* ---------- Desktop navigation (uses your existing #navDropdown) ---------- */
-.menu-container{
-  position: relative;
   display:flex;
-  align-items:center;
-  gap: .6rem;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+
+  padding: .4rem .65rem !important;
+  gap: .25rem !important;
+}
+.category-nav::-webkit-scrollbar{ height: 0; }
+
+.category-nav::before,
+.category-nav::after{
+  content:"";
+  position: sticky;
+  top: 0;
+  width: 22px;
+  flex: 0 0 22px;
+  pointer-events: none;
+}
+.category-nav::before{
+  left: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,.85), rgba(255,255,255,0));
+}
+.category-nav::after{
+  right: 0;
+  background: linear-gradient(270deg, rgba(255,255,255,.85), rgba(255,255,255,0));
 }
 
-/* desktop: no 3-dots button */
-.more-menu-btn{
-  display:none;
-  background: transparent;
-  border: 0;
+/* category buttons = tab style with underline, not round pills */
+.cat-btn{
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 3px solid transparent !important;
+
+  padding: .85rem 1rem !important;
+  margin: 0 !important;
+
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  scroll-snap-align: start;
+  box-shadow: none !important;
+}
+.cat-btn:hover{
+  transform: none !important;
+  background: rgba(15,23,42,.06) !important;
+}
+.cat-btn.active{
+  background: transparent !important;
+  color: var(--text) !important;
+  border-bottom-color: var(--secondary) !important;
+  box-shadow: none !important;
 }
 
-/* show nav inline (prevents the vertical list in the header) */
-.nav-dropdown{
-  display:flex;
-  align-items:center;
-  gap: 1.1rem;
-  position: static;
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  min-width: 0;
-  box-shadow: none;
-  border-radius: 0;
-  flex-direction: row;
-}
 
-/* link style in header */
-.nav-dropdown .nav-link{
-  text-decoration:none;
-  color: rgba(255,255,255,.9);
-  font-weight: 800;
-  font-size: .98rem;
-  display:flex;
-  align-items:center;
-  gap: .55rem;
-  padding: .4rem .1rem;
-  border-bottom: 3px solid transparent;
-  transition: var(--transition);
-  white-space: nowrap;
-}
-.nav-dropdown .nav-link i{
-  color: rgba(255,255,255,.92);
-  font-size: 1rem;
-}
-.nav-dropdown .nav-link:hover{
-  color:#fff;
-  transform: translateY(-1px);
-}
-.nav-dropdown .nav-link.active{
-  color:#fff;
-  border-bottom-color: rgba(255,255,255,.92);
-}
-
-/* Telefon link should be mobile-only */
-.nav-dropdown .mobile-only-link{
-  display:none;
-}
-
-/* Reduce clutter on smaller desktops */
-@media (max-width: 1200px){
-  .store-subtitle{max-width: 320px;}
-}
-@media (max-width: 1100px){
-  .store-subtitle{display:none;}
-  .contact-pill{display:none;}
-  .nav-dropdown .nav-link{font-size:.95rem; gap:.45rem;}
-  .nav-dropdown{gap:.9rem;}
-}
+/* small tweak: category container less round */
+.category-nav{ border-radius: 14px !important; }
