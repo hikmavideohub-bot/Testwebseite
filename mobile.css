@@ -223,49 +223,26 @@ body.has-announcement .main-content {
 
 
 /* Der "Hinzufügen" Button */
+/* 3. Der Add-Button (Volle Breite) */
 .add-btn {
-  /* 1. GRÖSSE & FORM */
-  width: 100% !important;        /* Volle Breite für einfaches Klicken am Handy */
-  height: 40px !important;        /* Etwas höher für bessere Bedienbarkeit */
-  border-radius: 10px !important; /* Moderne, abgerundete Ecken */
-  
-  /* 2. FARBEN & SCHRIFT */
+  width: 100% !important;
+  height: 42px !important;
   background: var(--primary) !important;
   color: #ffffff !important;
   border: none !important;
-  font-weight: 700 !important;    /* Schön fett und lesbar */
+  border-radius: 10px !important;
+  font-weight: 800 !important;
   font-size: 0.85rem !important;
-  white-space: nowrap !important;
-  
-  /* 3. LAYOUT (Inhalt im Button) */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 0.5rem !important;         /* Abstand zwischen Icon und Text */
-  
-  /* 4. INTERAKTION */
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  position: relative !important;  /* static/relative ist hier egal, solange nicht fixed */
+  gap: 0.5rem !important;
+  transition: transform 0.1s ease !important;
 }
 
-/* Kleiner Effekt beim Draufdrücken */
 .add-btn:active {
-  transform: scale(0.96) !important;
-  filter: brightness(0.9) !important;
+  transform: scale(0.97) !important;
 }
-  .discount-badge,
-  .bundle-badge,
-  .inactive-badge {
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    border: 1px solid rgba(255, 255, 255, 0.25) !important;
-    font-size: 0.7rem !important;
-    font-weight: 700 !important;
-    padding: 0.25rem 0.5rem !important;
-    border-radius: 6px !important;
-    color: white !important;
-  }
 
   .discount-badge {
     background: rgba(239, 68, 68, 0.95) !important;
@@ -328,52 +305,46 @@ body.has-announcement .main-content {
   font-weight: 500 !important;
 }
 
-  /* PRICE CONTAINER */
+/* ==================== PREIS & BUTTON UNTEREINANDER ==================== */
+/* 1. Haupt-Container (Stapelt Preise oben, Button unten) */
 .price-container {
-  /* 1. POSITIONIERUNG: Ganz unten in der Karte */
-  margin-top: auto !important; 
-  padding-top: 10px !important;
-  
-  /* 2. LAYOUT: Preis und Button nebeneinander */
+  margin-top: auto !important;
   display: flex !important;
-  flex-direction: row !important; /* Elemente nebeneinander */
-  align-items: center !important; /* Mittig ausrichten */
-  justify-content: space-between !important; /* Preis links, Button rechts */
-  
-  /* 3. ABSTAND: Falls sie untereinander rutschen */
-  gap: 8px !important; 
+  flex-direction: column !important; 
+  gap: 10px !important;
   width: 100% !important;
+  padding-top: 8px !important;
 }
 
-  .price-wrapper {
-    display: flex !important;
-    align-items: baseline !important;
-    gap: 0.4rem !important;
-    flex-wrap: wrap !important;
-  }
+/* 2. Preis-Wrapper (Hält Alt- und Neu-Preis nebeneinander) */
+.price-wrapper {
+  display: flex !important;
+  flex-direction: row !important; 
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
 
-  .price-new {
-    color: var(--text) !important;
-    font-weight: 700 !important;
-    font-size: 1rem !important;
-    line-height: 1 !important;
-  }
+/* Standard Neuer Preis (Rabatt/Normal) */
+.price-new {
+  font-weight: 800 !important;
+  font-size: 1.1rem !important;
+  color: var(--primary) !important;
+}
 
-  .price-new.discount {
-    color: var(--danger) !important;
-  }
-
-  .price-new.bundle {
-    color: #059669 !important; /* Ein sattes, gut lesbares Smaragdgrün */
+/* DEINE NEUE BUNDLE-FARBE */
+.price-new.bundle {
+    color: #059669 !important; /* Smaragdgrün für Bundle-Vorteile */
     font-weight: 800 !important;
 }
 
-  .price-old {
-    color: var(--text-secondary) !important;
-    font-size: 0.75rem !important;
-    text-decoration: line-through !important;
-    font-weight: 400 !important;
-  }
+/* Alter gestrichener Preis */
+.price-old {
+  font-size: 0.85rem !important;
+  text-decoration: line-through !important;
+  color: #94a3b8 !important;
+  opacity: 0.8 !important;
+}
 
   /* ==================== FOOTER WITH MAP ==================== */
   footer {
