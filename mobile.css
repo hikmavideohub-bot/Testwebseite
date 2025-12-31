@@ -789,3 +789,116 @@
 
 /* Footer links clearly clickable */
 footer a{ cursor: pointer; }
+/* ===== FIX: großer Abstand + Premium Tab-Band Kategorien ===== */
+@media (max-width: 992px) {
+  :root{
+    --m-ann-h: 40px;
+    --m-header-h: 60px;
+    --m-cat-h: 56px;
+
+    --m-accent: #1f3a5f;  /* kannst du ändern */
+    --m-muted: #667085;
+    --m-border: #eef2f6;
+    --m-bg: #ffffff;
+  }
+
+  /* 1) Abstand-Fix: KEIN doppelter Offset */
+  body{
+    padding-top: var(--m-header-h) !important;          /* vorher 110px -> zu groß */
+  }
+  body.has-announcement{
+    padding-top: calc(var(--m-ann-h) + var(--m-header-h)) !important;
+  }
+
+  .main-content{
+    margin-top: 0 !important;                           /* vorher 155px -> verursacht Lücke */
+    padding-top: 0 !important;
+  }
+
+  /* 2) Header/Announcement sauber stapeln */
+  #announcement-bar{
+    top: 0 !important;
+    height: var(--m-ann-h) !important;
+  }
+  header{
+    top: 0 !important;
+    height: var(--m-header-h) !important;
+  }
+  body.has-announcement header{
+    top: var(--m-ann-h) !important;
+  }
+
+  /* 3) Kategorien als modernes Tab-Band (scrollbar, nicht rund) */
+  .category-nav{
+    position: sticky !important;                        /* sticky statt fixed -> weniger Layout-Probleme */
+    top: var(--m-header-h) !important;
+    width: 100% !important;
+
+    margin-top: 8px !important;                         /* kleiner Abstand, nicht riesig */
+    height: var(--m-cat-h) !important;
+
+    background: var(--m-bg) !important;
+    border-bottom: 1px solid var(--m-border) !important;
+
+    display: flex !important;
+    align-items: flex-end !important;
+    gap: 18px !important;
+    padding: 0 12px !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    scroll-behavior: smooth !important;
+    scroll-snap-type: x proximity !important;
+
+    z-index: 1999 !important;
+
+    /* dezenter Fade an den Seiten (optional, modern) */
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+  }
+  body.has-announcement .category-nav{
+    top: calc(var(--m-ann-h) + var(--m-header-h)) !important;
+  }
+  .category-nav::-webkit-scrollbar{ display:none !important; }
+
+  .cat-btn{
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;                        /* nicht rund! */
+
+    padding: 12px 2px 10px !important;
+    color: var(--m-muted) !important;
+    font-weight: 800 !important;
+    font-size: 0.9rem !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+
+    cursor: pointer !important;
+    position: relative !important;
+    scroll-snap-align: start !important;
+  }
+
+  .cat-btn::after{
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    height: 3px !important;
+    background: transparent !important;
+    border-radius: 2px !important;
+    transform: scaleX(.35) !important;
+    transform-origin: center !important;
+    transition: transform .2s ease, background .2s ease !important;
+  }
+
+  .cat-btn:hover{ color: var(--m-accent) !important; }
+  .cat-btn.active{ color: var(--m-accent) !important; }
+  .cat-btn.active::after{
+    background: var(--m-accent) !important;
+    transform: scaleX(1) !important;
+  }
+}
+
