@@ -84,15 +84,22 @@ header {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
-  height: 100% !important;
-  padding: 0 15px !important;
+  height: 50px !important;
+  padding: 0 10px !important;
 }
 
+/* Logo-Bereich fixieren */
 .logo {
+  flex-shrink: 0 !important;
+  margin-right: auto !important;
+}
+
+/* Rechter Bereich mit Warenkorb und 3-Punkten */
+.store-info-header {
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  cursor: pointer !important;
+  gap: 12px !important;
+  flex-shrink: 0 !important;
 }
 
 .logo h1 {
@@ -101,16 +108,11 @@ header {
   color: white !important;
 }
 
-.store-info-header {
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-}
-
 /* Telefon auf Handy verstecken */
-@media (max-width: 768px) {
-  .contact-pill { display: none !important; }
-}
+ .contact-pill {
+    display: none !important;
+  }
+
    
 .store-info-header {
   display: flex !important;
@@ -186,49 +188,48 @@ header {
   padding: 10px !important;
 }
 
+/* Das Menü als saubere Box positionieren */
 .nav-dropdown {
+  display: none; /* Standardmäßig aus */
   position: absolute !important;
-  top: 50px !important;
-  right: 0 !important;
-  z-index: 3001 !important;
-  display: none; 
+  top: 50px !important; /* Exakt unter der Header-Höhe */
+  right: 10px !important; /* Kleiner Abstand zum Rand */
+  background: white !important;
+  min-width: 180px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25) !important;
+  z-index: 10000 !important; /* Über alles andere legen */
+  flex-direction: column !important;
+  padding: 5px 0 !important;
+  overflow: hidden !important;
 }
 
+/* Anzeigen, wenn aktiv */
 .nav-dropdown.show {
-  display: flex !important; /* Zeigt es an wenn Klasse vorhanden */
+  display: flex !important;
 }
 
-/* Links im Dropdown-Menü */
+/* Die Links im Menü sauber stylen */
 .nav-dropdown a {
-  padding: 14px 18px !important; /* Etwas mehr Platz für die Finger */
+  padding: 12px 20px !important;
   color: #333 !important;
   text-decoration: none !important;
   font-size: 0.95rem !important;
-  border-bottom: 1px solid #f1f5f9 !important;
   display: flex !important;
   align-items: center !important;
   gap: 12px !important;
-  transition: background 0.2s ease !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  text-align: left !important;
 }
 
-/* Icons im Menü */
-.nav-dropdown a i { 
-  color: #1f3a5f !important; 
-  width: 22px !important; 
-  text-align: center !important;
-}
-
-/* Der aktive Menüpunkt (Highlight) */
-.nav-dropdown a.active {
-  background-color: #f8fafc !important; 
-  color: #1f3a5f !important; 
-  font-weight: 700 !important;
-  border-right: 4px solid #1f3a5f !important; /* Zeigt optisch an, wo man ist */
-}
-
-/* Letztes Element ohne Rahmen unten */
 .nav-dropdown a:last-child {
   border-bottom: none !important;
+}
+
+.nav-dropdown a i {
+  color: #1f3a5f !important;
+  width: 20px !important;
+  text-align: center !important;
 }
 
 /* FIX FÜR ANNOUNCEMENT-BAR */
