@@ -737,14 +737,22 @@ function applyMapsFromAddress(address) {
 
 function initNavigation() {
   var navLinks = qsa(".nav-link");
+  var dropdown = $("navDropdown");
+  var menuToggle = $("menuToggle"); // Die ID deiner drei Punkte
+
+  // 1. Klicks auf Nav-Links (Seitenwechsel & Menü schließen)
   forEachNodeList(navLinks, function (link) {
     link.addEventListener("click", function (e) {
       if (e && e.preventDefault) e.preventDefault();
       var page = this.getAttribute("data-page");
       if (page) navigateToPage(page);
+      
+      // Schließt das Dropdown nach dem Klick
+      if (dropdown) removeClass(dropdown, "show");
     });
   });
 
+  // 2. Klicks im Footer (bleibt gleich)
   var footerLinks = qsa("footer a[data-page]");
   forEachNodeList(footerLinks, function (link) {
     link.addEventListener("click", function (e) {
@@ -754,31 +762,26 @@ function initNavigation() {
     });
   });
 
-  var mobileToggle = $("mobileToggle");
-  var navMenu = $("navMenu");
-
-  if (mobileToggle && navMenu) {
-    mobileToggle.addEventListener("click", function (e) {
+  // 3. Logik für die Drei Punkte (Kebab Menu)
+  if (menuToggle && dropdown) {
+    menuToggle.addEventListener("click", function (e) {
       if (e && e.stopPropagation) e.stopPropagation();
-      toggleClass(navMenu, "active");
-      this.innerHTML = hasClass(navMenu, "active")
-        ? '<i class="fas fa-times"></i>'
-        : '<i class="fas fa-bars"></i>';
+      
+      // Wir nutzen toggleClass für "show", passend zu deinem CSS
+      if (hasClass(dropdown, "show")) {
+        removeClass(dropdown, "show");
+      } else {
+        addClass(dropdown, "show");
+      }
     });
 
-    forEachNodeList(navLinks, function (link) {
-      link.addEventListener("click", function () {
-        removeClass(navMenu, "active");
-        mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-      });
-    });
-
+    // Schließt das Menü, wenn man irgendwo anders hinklickt
     document.addEventListener("click", function (e) {
-      if (!hasClass(navMenu, "active")) return;
-      if (navMenu.contains(e.target)) return;
-      if (mobileToggle.contains(e.target)) return;
-      removeClass(navMenu, "active");
-      mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+      if (!hasClass(dropdown, "show")) return;
+      // Wenn der Klick nicht auf das Menü oder den Button war -> Schließen
+      if (!dropdown.contains(e.target) && !menuToggle.contains(e.target)) {
+        removeClass(dropdown, "show");
+      }
     });
   }
 }
@@ -1940,6 +1943,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // UI init that doesn't depend on data
   try { initNavigation(); } catch (e2) {}
+   // Menü-Steuerung (Drei Punkte)
+try {
+  var menuBtn = document.getElementById('menuToggle');
+  var dropdown = document.getElementById('navDropdown');
+
+  if (menuBtn && dropdown) {
+    menuBtn.addEventListener('click', function(e) {
+      e.stopPropagation(); // Verhindert, dass der Klick sofort wieder schließt
+      dropdown.classList.toggle('show');
+    });
+
+    // Schließt das Menü, wenn man irgendwo anders hinklickt
+    document.addEventListener('click', function() {
+      dropdown.classList.remove('show');
+    });
+  }
+} catch (e_menu) { console.error("Menu init error", e_menu); }
   try { initCartModalClose(); } catch (e3) {}
 
   try {
