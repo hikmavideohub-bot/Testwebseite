@@ -41,20 +41,102 @@
   /* ==================== 1. HEADER REPARATUR ==================== */
 header {
   height: 60px !important;
-  background: #1f3a5f !important; /* Dunkelblau für Sichtbarkeit der Icons */
+  background: #1f3a5f !important; /* Dein Dunkelblau */
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
   right: 0 !important;
   z-index: 2000 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  display: flex !important;
+  align-items: center !important;
 }
-
+.header-container {
+  display: flex !important;
+  width: 100% !important;
+  height: 100% !important;
+  align-items: center !important;
+  justify-content: space-between !important; /* Drückt die Elemente nach außen */
+  padding: 0 15px !important;
+}
+   #mobileToggle {
+  flex: 0 0 40px !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  color: white !important;
+}
 /* Icons und Logo wieder weiß machen */
-.logo h1, .logo i, .cart-icon, #mobileToggle, .store-subtitle {
-  color: #ffffff !important;
+/* 2. Mittlere Seite (Dein Logo) */
+.logo {
+  flex: 1 !important; /* Nimmt den mittleren Platz ein */
+  display: flex !important;
+  justify-content: center !important; /* Zentriert das Logo in der Mitte */
+  align-items: center !important;
+  max-width: 60% !important;
 }
 
+.logo h1 {
+  font-size: 1.1rem !important;
+  color: white !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+   
+.store-info-header {
+  flex: 0 0 80px !important; /* Reservierter Platz für Icons rechts */
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 15px !important;
+}
+   /* ==================== HEADER ICONS & LOGO TRENNUNG ==================== */
+
+/* Der Container, in dem Warenkorb und evtl. Home liegen */
+.store-info-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important; /* Abstand zwischen den Icons rechts */
+  flex-shrink: 0 !important; /* Verhindert, dass die Icons gequetscht werden */
+  margin-left: auto !important; /* Drückt diesen ganzen Block nach ganz rechts */
+}
+
+.cart-icon {
+  background: transparent !important;
+  border: none !important;
+  padding: 5px !important;
+  font-size: 1.4rem !important;
+  color: #ffffff !important; /* Weiß für dunklen Header */
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Die kleine rote Zahl am Warenkorb */
+.cart-badge {
+  position: absolute !important;
+  top: -2px !important;
+  right: -2px !important;
+  background: #ef4444 !important; /* Kräftiges Rot */
+  color: white !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 2px solid #1f3a5f !important; /* Gleiche Farbe wie Header-Hintergrund */
+}
+
+/* Falls dein Home-Button ein Icon im Header ist, bekommt er hiermit Platz */
+.store-info-header i, 
+.store-info-header a {
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 1.3rem !important;
+}
 /* ==================== 2. CUSTOMER MESSAGE (ANNOUNCEMENT) ==================== */
 #announcement-bar {
   position: fixed !important;
@@ -329,7 +411,7 @@ body.has-announcement .main-content {
 .price-new {
   font-weight: 800 !important;
   font-size: 1.1rem !important;
-  color: var(--primary) !important;
+  color: #e11d48 !important; /* Ein kräftiges, modernes Rot */
 }
 
 /* DEINE NEUE BUNDLE-FARBE */
