@@ -173,30 +173,30 @@ header {
 /* ==================== 3. CATEGORIES (TABS) ==================== */
    /* Der Drei-Punkte-Button */
 /* Dropdown Menü Design */
-.menu-container { position: relative !important; }
+.menu-container {
+  position: relative !important;
+  z-index: 3000 !important; /* Sehr hoch ansetzen */
+}
 
 .more-menu-btn {
+  cursor: pointer !important;
+  pointer-events: auto !important; /* Erzwingt Klickbarkeit */
   background: transparent !important;
   border: none !important;
-  color: white !important;
-  font-size: 1.2rem !important;
-  padding: 5px !important;
+  padding: 10px !important;
 }
 
 .nav-dropdown {
   position: absolute !important;
-  top: 45px !important;
+  top: 50px !important;
   right: 0 !important;
-  background: white !important;
-  min-width: 170px !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
-  display: none; /* Per JS umschalten */
-  flex-direction: column !important;
-  overflow: hidden !important;
+  z-index: 3001 !important;
+  display: none; 
 }
 
-.nav-dropdown.show { display: flex !important; }
+.nav-dropdown.show {
+  display: flex !important; /* Zeigt es an wenn Klasse vorhanden */
+}
 
 .nav-dropdown a {
   padding: 12px 15px !important;
