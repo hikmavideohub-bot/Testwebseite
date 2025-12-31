@@ -19,41 +19,42 @@
 <body>
 <!-- Header -->
   <header>
-    <div class="header-container">
-      <div class="logo" onclick="navigateToPage('home')">
-        <i class="fas fa-store"></i>
-        <div class="logo-text">
-          <h1 id="store-name">متجر</h1>
-          <div id="store-subtitle" class="store-subtitle"></div>
-        </div>
-      </div>
-
-      <!-- Navigation Menu -->
-      <nav class="nav-menu" id="navMenu">
-        <div class="nav-item"><a class="nav-link active" data-page="home"><i class="fas fa-home"></i><span>Home</span></a></div>
-        <div class="nav-item"><a class="nav-link" data-page="offers"><i class="fas fa-percentage"></i><span>Angebote</span></a></div>
-        <div class="nav-item"><a class="nav-link" data-page="about"><i class="fas fa-info-circle"></i><span>About</span></a></div>
-        <div class="nav-item"><a class="nav-link" data-page="contact"><i class="fas fa-address-book"></i><span>Kontakt</span></a></div>
-      </nav>
-
-      <!-- Store Info & Cart -->
-      <div class="store-info-header">
-        <div class="contact-pill" title="الهاتف">
-          <i class="fas fa-phone"></i>
-          <span id="store-phone">...</span>
-        </div>
-
-        <div class="cart-icon" onclick="openCart()">
-          <i class="fas fa-shopping-cart"></i>
-          <span class="cart-badge" id="cart-badge">0</span>
-        </div>
-
-        <button class="mobile-toggle" id="mobileToggle" aria-label="menu">
-          <i class="fas fa-bars"></i>
-        </button>
+  <div class="header-container">
+    <div class="logo" onclick="navigateToPage('home')">
+      <i class="fas fa-store"></i>
+      <div class="logo-text">
+        <h1 id="store-name">متجر</h1>
+        <div id="store-subtitle" class="store-subtitle"></div>
       </div>
     </div>
-  </header>
+
+    <div class="store-info-header">
+      <div class="contact-pill" title="الهاتف">
+        <i class="fas fa-phone"></i>
+        <span id="store-phone">...</span>
+      </div>
+
+      <div class="cart-icon" onclick="openCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-badge" id="cart-badge">0</span>
+      </div>
+
+      <div class="menu-container">
+        <button class="more-menu-btn" id="menuToggle" aria-label="menu">
+          <i class="fas fa-ellipsis-v"></i>
+        </button>
+        
+        <nav class="nav-dropdown" id="navDropdown">
+          <a class="nav-link active" data-page="home"><i class="fas fa-home"></i> Home</a>
+          <a class="nav-link" data-page="offers"><i class="fas fa-percentage"></i> Angebote</a>
+          <a class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> About</a>
+          <a class="nav-link" data-page="contact"><i class="fas fa-address-book"></i> Kontakt</a>
+          <a href="#" class="nav-link mobile-only-link"><i class="fas fa-phone"></i> Telefon</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
 
   <!-- Announcement Bar -->
   <div id="announcement-bar" style="display:none;">
