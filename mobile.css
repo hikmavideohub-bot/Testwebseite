@@ -770,282 +770,80 @@
 
 /* Footer links clearly clickable */
 footer a{ cursor: pointer; }
-
-
-
-/* =========================================================
-   PATCH v2 (Premium): Fix gap + Modern Category Tabs (scroll band)
-   - Removes double offset (body padding + main-content margin)
-   - Category bar: sticky tab/underline (NOT round pills)
-   - Keeps product cards untouched
-   ========================================================= */
-@media (max-width: 992px) {
-  :root{
-    --m-ann-h: 40px;
-    --m-header-h: 60px;
-    --m-cat-h: 56px;
-    --m-accent: #1f3a5f;
-    --m-muted: #667085;
-    --m-border: #eef2f6;
-    --m-bg: #ffffff;
-  }
-
-  /* FIX: previously body padding-top + main-content margin-top created a huge gap */
-  body{
-    padding-top: var(--m-header-h) !important;
-  }
-  body.has-announcement{
-    padding-top: calc(var(--m-ann-h) + var(--m-header-h)) !important;
-  }
-  .main-content{
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-  }
-
-  /* Announcement + header stacking */
-  #announcement-bar{
-    top: 0 !important;
-    height: var(--m-ann-h) !important;
-  }
-  header{
-    top: 0 !important;
-    height: var(--m-header-h) !important;
-  }
-  body.has-announcement header{
-    top: var(--m-ann-h) !important;
-  }
-
-  /* ==================== KATEGORIEN: MODERNES TAB-BAND (SCROLLBAR) ==================== */
-  .category-nav{
-    /* in-flow, sticks under the header while scrolling */
-    position: sticky !important;
-    top: var(--m-header-h) !important;
-    left: 0 !important;
-    width: 100% !important;
-
-    margin-top: 8px !important;     /* small breathing room only */
-    height: var(--m-cat-h) !important;
-
-    background: var(--m-bg) !important;
-    border-bottom: 1px solid var(--m-border) !important;
-
-    display: flex !important;
-    align-items: flex-end !important;
-
-    gap: 18px !important;
-    padding: 0 12px !important;
-
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    scroll-behavior: smooth !important;
-    scroll-snap-type: x proximity !important;
-
-    z-index: 1999 !important;
-
-    /* subtle edge fade (optional, modern) */
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
-            mask-image: linear-gradient(to right, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
-  }
-  body.has-announcement .category-nav{
-    top: calc(var(--m-ann-h) + var(--m-header-h)) !important;
-  }
-  .category-nav::-webkit-scrollbar{ display:none !important; }
-
-  .cat-btn{
-    background: transparent !important;
-    border: 0 !important;
-    border-radius: 0 !important; /* not round */
-    padding: 12px 2px 10px !important;
-
-    color: var(--m-muted) !important;
-    font-weight: 800 !important;
-    font-size: 0.9rem !important;
-
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-
-    cursor: pointer !important;
-    position: relative !important;
-    scroll-snap-align: start !important;
-  }
-
-  .cat-btn::after{
-    content: "" !important;
-    position: absolute !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    height: 3px !important;
-    background: transparent !important;
-    border-radius: 2px !important;
-    transform: scaleX(.35) !important;
-    transform-origin: center !important;
-    transition: transform .2s ease, background .2s ease !important;
-  }
-
-  .cat-btn:hover{
-    color: var(--m-accent) !important;
-  }
-  .cat-btn.active{
-    color: var(--m-accent) !important;
-  }
-  .cat-btn.active::after{
-    background: var(--m-accent) !important;
-    transform: scaleX(1) !important;
-  }
-}
-
-
-
-/* =========================================================
-   MOBILE: HEADER + KATEGORIEN ALS EIN BLOCK (wie Screenshot)
-   - gleiche Farbe wie Header
-   - dickes Kategorien-Band
-   - horizontal scrollbare Chips
-   - verhindert große Lücke zu den Produkten
-   ========================================================= */
+/* Footer links clearly clickable *//* Footer links clearly clickable *//* Footer links clearly clickable *//* Footer links clearly clickable *//* Footer links clearly clickable *//* Footer links clearly clickable */
 @media (max-width: 992px){
   :root{
     --m-ann-h: 40px;
-    --m-header-h: 60px;
-    --m-cat-h: 62px;
-    --m-stack-h: calc(var(--m-header-h) + var(--m-cat-h));
-
+    --m-header-top: 60px; /* obere Headerzeile (icons/logo) */
+    --m-cat-h: 62px;      /* Kategorienhöhe */
+    --m-header-h: calc(var(--m-header-top) + var(--m-cat-h));
     --m-blue: #1f3a5f;
     --m-blue2:#1a3352;
-    --m-chip-bg: rgba(255,255,255,.10);
-    --m-chip-bd: rgba(255,255,255,.18);
-    --m-chip-tx: rgba(255,255,255,.90);
   }
 
-  /* Kein doppelter Abstand */
-  body{
-    padding-top: var(--m-stack-h) !important;    /* Header + Kategorien */
-  }
+  /* Keine Doppel-Abstände */
+  body{ padding-top: var(--m-header-h) !important; }
   body.has-announcement{
-    padding-top: calc(var(--m-ann-h) + var(--m-stack-h)) !important;
+    padding-top: calc(var(--m-ann-h) + var(--m-header-h)) !important;
   }
-  .main-content{
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-  }
+  .main-content{ margin-top: 0 !important; padding-top: 0 !important; }
 
-  /* Announcement oben */
-  #announcement-bar{
-    top: 0 !important;
-    height: var(--m-ann-h) !important;
-  }
+  /* Announcement bleibt oben */
+  #announcement-bar{ top:0 !important; height: var(--m-ann-h) !important; }
 
-  /* Header oben (nur Top-Zeile) */
+  /* Header: jetzt enthält er auch die Kategoriezeile */
   header{
     height: var(--m-header-h) !important;
     top: 0 !important;
     background: linear-gradient(180deg, var(--m-blue), var(--m-blue2)) !important;
-    box-shadow: none !important; /* Schatten kommt unten am Kategorien-Band */
+    border-radius: 0 0 18px 18px !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,.16) !important;
+    overflow: hidden !important; /* damit die runde Kante sauber bleibt */
   }
-  body.has-announcement header{
-    top: var(--m-ann-h) !important;
+  body.has-announcement header{ top: var(--m-ann-h) !important; }
+
+  /* obere Zeile im Header */
+  .header-container{
+    height: var(--m-header-top) !important;
+    display:flex !important;
+    align-items:center !important;
   }
 
-  /* Kategorien direkt unter Header – gleiche Farbe => wirkt wie "ein Header" */
+  /* Kategorien sind Teil vom Header -> kein fixed/sticky mehr nötig */
   .category-nav{
-    position: fixed !important;
-    top: var(--m-header-h) !important;
-    left: 0 !important;
-    right: 0 !important;
-
     height: var(--m-cat-h) !important;
-    background: linear-gradient(180deg, var(--m-blue), var(--m-blue2)) !important;
-
-    margin-top: 0 !important;
+    background: transparent !important; /* nimmt den Header-Hintergrund */
     padding: 10px 12px 12px !important;
+    display:flex !important;
+    align-items:center !important;
     gap: 10px !important;
-
-    display: flex !important;
-    align-items: center !important;
 
     overflow-x: auto !important;
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
-
-    z-index: 1999 !important;
-
-    /* Ein gemeinsamer Look: runde Unterkante + Shadow */
-    border-bottom: 0 !important;
-    border-radius: 0 0 18px 18px !important;
-    box-shadow: 0 10px 24px rgba(0,0,0,.16) !important;
-
-    /* optional: Scroll-Snap */
-    scroll-snap-type: x proximity !important;
   }
-  body.has-announcement .category-nav{
-    top: calc(var(--m-ann-h) + var(--m-header-h)) !important;
-  }
-
   .category-nav::-webkit-scrollbar{ display:none !important; }
 
-  /* Fades links/rechts (zeigen, dass man scrollen kann) */
-  .category-nav::before,
-  .category-nav::after{
-    content:"" !important;
-    position: sticky !important;
-    top: 0 !important;
-    width: 22px !important;
-    height: 100% !important;
-    flex: 0 0 22px !important;
-    pointer-events: none !important;
-    z-index: 2 !important;
-  }
-  .category-nav::before{
-    left: 0 !important;
-    background: linear-gradient(to right, var(--m-blue), transparent) !important;
-  }
-  .category-nav::after{
-    right: 0 !important;
-    background: linear-gradient(to left, var(--m-blue), transparent) !important;
-  }
-
-  /* Chip-Buttons wie Screenshot */
+  /* Chips wie Screenshot */
   .cat-btn{
     height: 40px !important;
     padding: 0 16px !important;
-
-    background: var(--m-chip-bg) !important;
-    border: 1px solid var(--m-chip-bd) !important;
-    border-radius: 18px !important;  /* nicht 50 => weniger "voll rund" */
-
-    color: var(--m-chip-tx) !important;
+    border-radius: 18px !important;
+    background: rgba(255,255,255,.10) !important;
+    border: 1px solid rgba(255,255,255,.18) !important;
+    color: rgba(255,255,255,.92) !important;
     font-weight: 800 !important;
-    font-size: .9rem !important;
     white-space: nowrap !important;
-
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-
     flex-shrink: 0 !important;
-    scroll-snap-align: start !important;
-
-    transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    gap: 8px !important;
   }
-  .cat-btn:active{
-    transform: scale(.98) !important;
-  }
-  .cat-btn i{
-    font-size: .95rem !important;
-    opacity: .95 !important;
-  }
-
   .cat-btn.active{
-    background: #ffffff !important;
-    border-color: #ffffff !important;
+    background: #fff !important;
+    border-color: #fff !important;
     color: var(--m-blue) !important;
     box-shadow: 0 10px 20px rgba(0,0,0,.18) !important;
-  }
-  .cat-btn.active i{
-    color: var(--m-blue) !important;
   }
 }
