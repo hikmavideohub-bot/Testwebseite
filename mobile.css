@@ -796,7 +796,7 @@ footer a{ cursor: pointer; }
     height: var(--m-header-h) !important;
     top: 0 !important;
     background: linear-gradient(180deg, var(--m-blue), var(--m-blue2)) !important;
-    border-radius: 0 0 18px 18px !important;
+    border-radius: 0 !important;
     box-shadow: 0 10px 24px rgba(0,0,0,.16) !important;
     overflow: hidden !important; /* damit die runde Kante sauber bleibt */
   }
