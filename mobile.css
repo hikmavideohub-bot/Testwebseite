@@ -771,51 +771,74 @@
 /* Footer links clearly clickable */
 footer a{ cursor: pointer; }
 /* Footer links clearly clickable *//* Footer links clearly clickable *//* Footer links clearly clickable *//* Footer links clearly clickable *//* Footer links clearly clickable *//* Footer links clearly clickable */
+/* =========================================================
+   MOBILE FINAL – HEADER (2 ZEILEN) + GLASS-KATEGORIEN
+   - KEINE Duplikate mehr
+   - Kategorie-Leiste OHNE eigenen Hintergrund
+   - Glass-Chips (sauber, ohne blaue Ränder)
+   - spitze Ecken
+   - kein Abstand-Bug
+   ========================================================= */
 @media (max-width: 992px){
+
+  /* ===== VARIABLEN ===== */
   :root{
     --m-ann-h: 40px;
-    --m-header-top: 60px; /* obere Headerzeile (icons/logo) */
-    --m-cat-h: 62px;      /* Kategorienhöhe */
+    --m-header-top: 60px;
+    --m-cat-h: 62px;
     --m-header-h: calc(var(--m-header-top) + var(--m-cat-h));
+
     --m-blue: #1f3a5f;
     --m-blue2:#1a3352;
   }
 
-  /* Keine Doppel-Abstände */
-  body{ padding-top: var(--m-header-h) !important; }
+  /* ===== LAYOUT FIX ===== */
+  body{
+    padding-top: var(--m-header-h) !important;
+  }
   body.has-announcement{
     padding-top: calc(var(--m-ann-h) + var(--m-header-h)) !important;
   }
-  .main-content{ margin-top: 0 !important; padding-top: 0 !important; }
+  .main-content{
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
 
-  /* Announcement bleibt oben */
-  #announcement-bar{ top:0 !important; height: var(--m-ann-h) !important; }
+  /* ===== ANNOUNCEMENT ===== */
+  #announcement-bar{
+    top: 0 !important;
+    height: var(--m-ann-h) !important;
+  }
 
-  /* Header: jetzt enthält er auch die Kategoriezeile */
+  /* ===== HEADER (2 ZEILEN) ===== */
   header{
     height: var(--m-header-h) !important;
     top: 0 !important;
     background: linear-gradient(180deg, var(--m-blue), var(--m-blue2)) !important;
-    border-radius: 0 !important;
+    border-radius: 0 !important;          /* spitze Ecken */
     box-shadow: 0 10px 24px rgba(0,0,0,.16) !important;
-    overflow: hidden !important; /* damit die runde Kante sauber bleibt */
+    overflow: visible !important;         /* kein Clipping */
   }
-  body.has-announcement header{ top: var(--m-ann-h) !important; }
+  body.has-announcement header{
+    top: var(--m-ann-h) !important;
+  }
 
-  /* obere Zeile im Header */
   .header-container{
     height: var(--m-header-top) !important;
-    display:flex !important;
-    align-items:center !important;
+    display: flex !important;
+    align-items: center !important;
   }
 
-  /* Kategorien sind Teil vom Header -> kein fixed/sticky mehr nötig */
+  /* ===== KATEGORIEN-LEISTE (KEIN HINTERGRUND!) ===== */
   .category-nav{
     height: var(--m-cat-h) !important;
-    background: transparent !important; /* nimmt den Header-Hintergrund */
+    background: none !important;          /* WICHTIG */
+    border: 0 !important;
+    box-shadow: none !important;
+
     padding: 10px 12px 12px !important;
-    display:flex !important;
-    align-items:center !important;
+    display: flex !important;
+    align-items: center !important;
     gap: 10px !important;
 
     overflow-x: auto !important;
@@ -823,110 +846,59 @@ footer a{ cursor: pointer; }
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
   }
-  .category-nav::-webkit-scrollbar{ display:none !important; }
-
-  /* Chips wie Screenshot */
-  .cat-btn{
-    height: 40px !important;
-    padding: 0 16px !important;
-    border-radius: 18px !important;
-    background: rgba(255,255,255,.10) !important;
-    border: 1px solid rgba(255,255,255,.18) !important;
-    color: rgba(255,255,255,.92) !important;
-    font-weight: 800 !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    display:inline-flex !important;
-    align-items:center !important;
-    gap: 8px !important;
+  .category-nav::-webkit-scrollbar{
+    display: none !important;
   }
-  .cat-btn.active{
-    background: #fff !important;
-    border-color: #fff !important;
-    color: var(--m-blue) !important;
-    box-shadow: 0 10px 20px rgba(0,0,0,.18) !important;
-  }
-}
 
-/* ===== FIX: blaue Linie / Focus-Artefakt in Kategorien ===== */
-
-/* Entfernt Browser-Focus & Tap-Highlight */
-.category-nav .cat-btn{
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-tap-highlight-color: transparent !important;
-}
-
-/* Falls noch ein altes Underline existiert */
-.category-nav .cat-btn::after{
-  content: none !important;
-}
-
-/* Android / Chrome Focus */
-.category-nav .cat-btn:focus,
-.category-nav .cat-btn:focus-visible,
-.category-nav .cat-btn:active{
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: rgba(255,255,255,.18) !important;
-}
-
-/* Nur ACTIVE soll hervorstechen (weiß) */
-.category-nav .cat-btn.active{
-  background: #ffffff !important;
-  color: #1f3a5f !important;
-  border-color: #ffffff !important;
-}
-/* ===== KATEGORIEN: Artefakt/Blauer Rand durch Überschreibungen FIX ===== */
-@media (max-width: 992px){
-
-  /* 1) ALLES zurücksetzen (nur in category-nav) */
+  /* ===== GLASS-CHIPS (ARTEFAKT-FREI) ===== */
   .category-nav .cat-btn{
-    all: unset !important;            /* entfernt alte backgrounds/borders/shadows komplett */
+    /* kompletter Reset */
+    all: unset !important;
     box-sizing: border-box !important;
+    font-family: inherit !important;
+    line-height: 1 !important;
     -webkit-tap-highlight-color: transparent !important;
-  }
 
-  /* 2) Neu definieren (sauber, ohne transparenten "blauen" Box-Look) */
-  .category-nav .cat-btn{
+    /* Layout */
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
 
     height: 40px !important;
     padding: 0 16px !important;
 
-    border-radius: 16px !important;          /* NICHT komplett rund */
-    background: rgba(255,255,255,.12) !important;
-    border: 1px solid rgba(255,255,255,.20) !important;
+    /* Glass-Effekt (stabil) */
+    background: rgba(255,255,255,0.18) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
 
-    color: rgba(255,255,255,.92) !important;
+    border: 0 !important;                 /* KEIN Rand → kein blauer Artefakt */
+    border-radius: 16px !important;
+
+    color: rgba(255,255,255,0.95) !important;
     font-weight: 800 !important;
-    font-size: .9rem !important;
-    white-space: nowrap !important;
+    font-size: 0.9rem !important;
 
-    cursor: pointer !important;
-    flex-shrink: 0 !important;
-
-    /* ganz wichtig: keine Schatten/Outlines mehr */
-    box-shadow: none !important;
     outline: none !important;
-    background-clip: padding-box !important; /* verhindert "Rand-Artefakte" */
+    box-shadow: none !important;
+    background-clip: padding-box !important;
   }
 
-  /* 3) Falls irgendwo pseudo-elemente Unterstriche erzeugen */
+  /* ===== AKTIVE KATEGORIE ===== */
+  .category-nav .cat-btn.active{
+    background: #ffffff !important;
+    color: #1f3a5f !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,.18) !important;
+  }
+
+  /* ===== SICHER: KEINE PSEUDO-ELEMENTE ===== */
   .category-nav .cat-btn::before,
   .category-nav .cat-btn::after{
     content: none !important;
-  }
-
-  /* 4) Active Zustand (weiß, clean) */
-  .category-nav .cat-btn.active{
-    background: #ffffff !important;
-    border-color: #ffffff !important;
-    color: #1f3a5f !important;
-    box-shadow: 0 10px 20px rgba(0,0,0,.18) !important;
   }
 }
 
