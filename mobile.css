@@ -170,6 +170,57 @@ header {
 }
 
 /* ==================== 3. CATEGORIES (TABS) ==================== */
+   /* Der Drei-Punkte-Button */
+.more-menu-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 1.5rem !important;
+  cursor: pointer !important;
+  padding: 5px 10px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Das versteckte Dropdown-Menü */
+.nav-dropdown {
+  position: absolute !important;
+  top: 50px !important; /* Direkt unter dem flachen Header */
+  right: 10px !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
+  min-width: 160px !important;
+  display: none; /* Standardmäßig unsichtbar */
+  flex-direction: column !important;
+  overflow: hidden !important;
+  z-index: 3000 !important;
+}
+
+/* Zeigt das Menü an, wenn es die Klasse 'show' hat */
+.nav-dropdown.show {
+  display: flex !important;
+}
+
+/* Die Links im Dropdown */
+.nav-dropdown a {
+  color: #333 !important;
+  padding: 12px 20px !important;
+  text-decoration: none !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  transition: background 0.2s !important;
+}
+
+.nav-dropdown a:last-child {
+  border-bottom: none !important;
+}
+
+.nav-dropdown a:hover {
+  background: #f8fafc !important;
+}
+   
 .category-nav {
   display: flex !important;
   gap: 5px !important;
