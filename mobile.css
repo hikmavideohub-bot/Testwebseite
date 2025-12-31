@@ -108,62 +108,42 @@
   }
 
   /* ==================== CATEGORY NAV - SCROLLBARES BAND ==================== */
- /* ==================== MODERNES KATEGORIEN-BAND ==================== */
-.category-nav {
-    /* Den Margin-Top behalten wir für deine gewünschte Lücke */
-    margin-top: 15px !important;
-    position: sticky !important; /* Sticky ist oft stabiler als fixed bei Mobildesigns */
+  .category-nav {
+    position: fixed !important;
     top: 60px !important;
     left: 0 !important;
+    right: 0 !important;
     width: 100% !important;
-    
-    /* ÄNDERUNG: Weißer Hintergrund wirkt moderner */
-    background-color: #ffffff !important; 
-    height: 65px !important; /* Etwas höher für mehr Klickfläche */
-    
+    background-color: #1f3a5f !important;
+    height: 50px !important;
     display: flex !important;
     align-items: center !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
     z-index: 1999 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
     
-    /* Dezente Trennung statt harter Schatten */
-    border-bottom: 1px solid #f0f0f0 !important;
-    
-    padding: 0 12px !important;
-    gap: 10px !important;
-    
+    /* Smooth Scrolling für Touch-Geräte */
     -webkit-overflow-scrolling: touch !important;
     scroll-behavior: smooth !important;
-    scrollbar-width: none !important;
-}
+    
+    /* Scroll-Snap für sanftes Scrollen */
+    scroll-snap-type: x proximity !important;
+    
+    /* Padding für besseres Scrollen */
+    padding: 0 10px !important;
+    gap: 5px !important;
+  }
 
-/* Scrollbar unsichtbar machen */
-.category-nav::-webkit-scrollbar {
+  /* Scrollbar verstecken aber Funktion behalten */
+  .category-nav::-webkit-scrollbar {
     display: none !important;
-}
-
-/* ÄNDERUNG: Die Buttons als "Pillen" / Chips */
-.cat-btn {
-    background: #f2f4f7 !important; /* Hellgraue Pille */
-    color: #475467 !important; /* Grauer Text */
-    border: 1px solid #e4e7ec !important;
-    padding: 8px 18px !important;
-    border-radius: 50px !important; /* Volle Rundung */
-    font-weight: 600 !important;
-    font-size: 0.85rem !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    transition: all 0.2s ease !important;
-}
-
-/* Wenn eine Kategorie ausgewählt ist */
-.cat-btn.active {
-    background: #1f3a5f !important; /* Dein Dunkelblau */
-    color: #ffffff !important; /* Weißer Text */
-    border-color: #1f3a5f !important;
-    box-shadow: 0 4px 12px rgba(31, 58, 95, 0.15) !important;
-}
+  }
+  
+  .category-nav {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE/Edge */
+  }
 
   /* Fade-Effekt an den Rändern */
   .category-nav::before,
@@ -324,20 +304,20 @@
 .products-grid {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
-  gap: 6px !important; /* Minimaler Spalt für maximale Bildgröße */
-  padding: 6px !important;
-  background-color: #f4f4f4 !important;
+  gap: 8px !important; /* Sehr schmaler Spalt in der Mitte wie im Bild */
+  padding: 8px !important; /* Schmaler Rand zu den Bildschirmseiten */
+  background-color: #f5f5f5 !important; /* Hellgrauer Hintergrund lässt Karten strahlen */
 }
 
 /* Die einzelne Produktkarte */
 .product-card {
   background: #ffffff !important;
-  border-radius: 8px !important; /* Etwas kleinere Rundung wirkt bei 5:4 eleganter */
+  border-radius: 12px !important; /* Sanfte Rundung wie im Bild */
+  border: none !important;
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-  border: none !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
 }
 
 .product-card:active {
@@ -347,16 +327,17 @@
 /* Der Bild-Container */
 .product-image-container {
   width: 100% !important;
-  aspect-ratio: 5 / 4 !important; /* Dein Wunschformat: 5 breit, 4 hoch */
-  background: #f8f9fa !important;
+  aspect-ratio: 1 / 1 !important;
+  background: #f1f5f9 !important;
   position: relative !important;
   overflow: hidden !important;
+  flex-shrink: 0 !important;
 }
 
 .product-image {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important; /* Bild füllt den 5:4 Bereich komplett aus */
+  object-fit: cover !important;
 }
 
 /* Badges (z.B. Rabatt-Prozent) */
@@ -789,33 +770,39 @@
 
 /* Footer links clearly clickable */
 footer a{ cursor: pointer; }
-/* ===== FIX: großer Abstand + Premium Tab-Band Kategorien ===== */
+
+
+
+/* =========================================================
+   PATCH v2 (Premium): Fix gap + Modern Category Tabs (scroll band)
+   - Removes double offset (body padding + main-content margin)
+   - Category bar: sticky tab/underline (NOT round pills)
+   - Keeps product cards untouched
+   ========================================================= */
 @media (max-width: 992px) {
   :root{
     --m-ann-h: 40px;
     --m-header-h: 60px;
     --m-cat-h: 56px;
-
-    --m-accent: #1f3a5f;  /* kannst du ändern */
+    --m-accent: #1f3a5f;
     --m-muted: #667085;
     --m-border: #eef2f6;
     --m-bg: #ffffff;
   }
 
-  /* 1) Abstand-Fix: KEIN doppelter Offset */
+  /* FIX: previously body padding-top + main-content margin-top created a huge gap */
   body{
-    padding-top: var(--m-header-h) !important;          /* vorher 110px -> zu groß */
+    padding-top: var(--m-header-h) !important;
   }
   body.has-announcement{
     padding-top: calc(var(--m-ann-h) + var(--m-header-h)) !important;
   }
-
   .main-content{
-    margin-top: 0 !important;                           /* vorher 155px -> verursacht Lücke */
+    margin-top: 0 !important;
     padding-top: 0 !important;
   }
 
-  /* 2) Header/Announcement sauber stapeln */
+  /* Announcement + header stacking */
   #announcement-bar{
     top: 0 !important;
     height: var(--m-ann-h) !important;
@@ -828,13 +815,15 @@ footer a{ cursor: pointer; }
     top: var(--m-ann-h) !important;
   }
 
-  /* 3) Kategorien als modernes Tab-Band (scrollbar, nicht rund) */
+  /* ==================== KATEGORIEN: MODERNES TAB-BAND (SCROLLBAR) ==================== */
   .category-nav{
-    position: sticky !important;                        /* sticky statt fixed -> weniger Layout-Probleme */
+    /* in-flow, sticks under the header while scrolling */
+    position: sticky !important;
     top: var(--m-header-h) !important;
+    left: 0 !important;
     width: 100% !important;
 
-    margin-top: 8px !important;                         /* kleiner Abstand, nicht riesig */
+    margin-top: 8px !important;     /* small breathing room only */
     height: var(--m-cat-h) !important;
 
     background: var(--m-bg) !important;
@@ -842,6 +831,7 @@ footer a{ cursor: pointer; }
 
     display: flex !important;
     align-items: flex-end !important;
+
     gap: 18px !important;
     padding: 0 12px !important;
 
@@ -854,7 +844,7 @@ footer a{ cursor: pointer; }
 
     z-index: 1999 !important;
 
-    /* dezenter Fade an den Seiten (optional, modern) */
+    /* subtle edge fade (optional, modern) */
     -webkit-mask-image: linear-gradient(to right, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
             mask-image: linear-gradient(to right, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
   }
@@ -866,12 +856,13 @@ footer a{ cursor: pointer; }
   .cat-btn{
     background: transparent !important;
     border: 0 !important;
-    border-radius: 0 !important;                        /* nicht rund! */
-
+    border-radius: 0 !important; /* not round */
     padding: 12px 2px 10px !important;
+
     color: var(--m-muted) !important;
     font-weight: 800 !important;
     font-size: 0.9rem !important;
+
     white-space: nowrap !important;
     flex-shrink: 0 !important;
 
@@ -894,11 +885,167 @@ footer a{ cursor: pointer; }
     transition: transform .2s ease, background .2s ease !important;
   }
 
-  .cat-btn:hover{ color: var(--m-accent) !important; }
-  .cat-btn.active{ color: var(--m-accent) !important; }
+  .cat-btn:hover{
+    color: var(--m-accent) !important;
+  }
+  .cat-btn.active{
+    color: var(--m-accent) !important;
+  }
   .cat-btn.active::after{
     background: var(--m-accent) !important;
     transform: scaleX(1) !important;
   }
 }
 
+
+
+/* =========================================================
+   MOBILE: HEADER + KATEGORIEN ALS EIN BLOCK (wie Screenshot)
+   - gleiche Farbe wie Header
+   - dickes Kategorien-Band
+   - horizontal scrollbare Chips
+   - verhindert große Lücke zu den Produkten
+   ========================================================= */
+@media (max-width: 992px){
+  :root{
+    --m-ann-h: 40px;
+    --m-header-h: 60px;
+    --m-cat-h: 62px;
+    --m-stack-h: calc(var(--m-header-h) + var(--m-cat-h));
+
+    --m-blue: #1f3a5f;
+    --m-blue2:#1a3352;
+    --m-chip-bg: rgba(255,255,255,.10);
+    --m-chip-bd: rgba(255,255,255,.18);
+    --m-chip-tx: rgba(255,255,255,.90);
+  }
+
+  /* Kein doppelter Abstand */
+  body{
+    padding-top: var(--m-stack-h) !important;    /* Header + Kategorien */
+  }
+  body.has-announcement{
+    padding-top: calc(var(--m-ann-h) + var(--m-stack-h)) !important;
+  }
+  .main-content{
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Announcement oben */
+  #announcement-bar{
+    top: 0 !important;
+    height: var(--m-ann-h) !important;
+  }
+
+  /* Header oben (nur Top-Zeile) */
+  header{
+    height: var(--m-header-h) !important;
+    top: 0 !important;
+    background: linear-gradient(180deg, var(--m-blue), var(--m-blue2)) !important;
+    box-shadow: none !important; /* Schatten kommt unten am Kategorien-Band */
+  }
+  body.has-announcement header{
+    top: var(--m-ann-h) !important;
+  }
+
+  /* Kategorien direkt unter Header – gleiche Farbe => wirkt wie "ein Header" */
+  .category-nav{
+    position: fixed !important;
+    top: var(--m-header-h) !important;
+    left: 0 !important;
+    right: 0 !important;
+
+    height: var(--m-cat-h) !important;
+    background: linear-gradient(180deg, var(--m-blue), var(--m-blue2)) !important;
+
+    margin-top: 0 !important;
+    padding: 10px 12px 12px !important;
+    gap: 10px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+
+    z-index: 1999 !important;
+
+    /* Ein gemeinsamer Look: runde Unterkante + Shadow */
+    border-bottom: 0 !important;
+    border-radius: 0 0 18px 18px !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,.16) !important;
+
+    /* optional: Scroll-Snap */
+    scroll-snap-type: x proximity !important;
+  }
+  body.has-announcement .category-nav{
+    top: calc(var(--m-ann-h) + var(--m-header-h)) !important;
+  }
+
+  .category-nav::-webkit-scrollbar{ display:none !important; }
+
+  /* Fades links/rechts (zeigen, dass man scrollen kann) */
+  .category-nav::before,
+  .category-nav::after{
+    content:"" !important;
+    position: sticky !important;
+    top: 0 !important;
+    width: 22px !important;
+    height: 100% !important;
+    flex: 0 0 22px !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+  }
+  .category-nav::before{
+    left: 0 !important;
+    background: linear-gradient(to right, var(--m-blue), transparent) !important;
+  }
+  .category-nav::after{
+    right: 0 !important;
+    background: linear-gradient(to left, var(--m-blue), transparent) !important;
+  }
+
+  /* Chip-Buttons wie Screenshot */
+  .cat-btn{
+    height: 40px !important;
+    padding: 0 16px !important;
+
+    background: var(--m-chip-bg) !important;
+    border: 1px solid var(--m-chip-bd) !important;
+    border-radius: 18px !important;  /* nicht 50 => weniger "voll rund" */
+
+    color: var(--m-chip-tx) !important;
+    font-weight: 800 !important;
+    font-size: .9rem !important;
+    white-space: nowrap !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+
+    flex-shrink: 0 !important;
+    scroll-snap-align: start !important;
+
+    transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease !important;
+  }
+  .cat-btn:active{
+    transform: scale(.98) !important;
+  }
+  .cat-btn i{
+    font-size: .95rem !important;
+    opacity: .95 !important;
+  }
+
+  .cat-btn.active{
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+    color: var(--m-blue) !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,.18) !important;
+  }
+  .cat-btn.active i{
+    color: var(--m-blue) !important;
+  }
+}
