@@ -1943,23 +1943,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // UI init that doesn't depend on data
   try { initNavigation(); } catch (e2) {}
-   // Menü-Steuerung (Drei Punkte)
-try {
-  var menuBtn = document.getElementById('menuToggle');
-  var dropdown = document.getElementById('navDropdown');
-
-  if (menuBtn && dropdown) {
-    menuBtn.addEventListener('click', function(e) {
-      e.stopPropagation(); // Verhindert, dass der Klick sofort wieder schließt
-      dropdown.classList.toggle('show');
-    });
-
-    // Schließt das Menü, wenn man irgendwo anders hinklickt
-    document.addEventListener('click', function() {
-      dropdown.classList.remove('show');
-    });
-  }
-} catch (e_menu) { console.error("Menu init error", e_menu); }
   try { initCartModalClose(); } catch (e3) {}
 
   try {
