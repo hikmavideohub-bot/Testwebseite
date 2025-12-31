@@ -198,26 +198,47 @@ header {
   display: flex !important; /* Zeigt es an wenn Klasse vorhanden */
 }
 
+/* Links im Dropdown-Menü */
 .nav-dropdown a {
-  padding: 12px 15px !important;
+  padding: 14px 18px !important; /* Etwas mehr Platz für die Finger */
   color: #333 !important;
   text-decoration: none !important;
-  font-size: 0.9rem !important;
+  font-size: 0.95rem !important;
   border-bottom: 1px solid #f1f5f9 !important;
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
+  gap: 12px !important;
+  transition: background 0.2s ease !important;
 }
 
-.nav-dropdown a i { color: #1f3a5f !important; width: 20px; }
-/* DER WICHTIGSTE FIX: Wenn die Nachricht aktiv ist, schiebe Kategorien runter */
+/* Icons im Menü */
+.nav-dropdown a i { 
+  color: #1f3a5f !important; 
+  width: 22px !important; 
+  text-align: center !important;
+}
+
+/* Der aktive Menüpunkt (Highlight) */
+.nav-dropdown a.active {
+  background-color: #f8fafc !important; 
+  color: #1f3a5f !important; 
+  font-weight: 700 !important;
+  border-right: 4px solid #1f3a5f !important; /* Zeigt optisch an, wo man ist */
+}
+
+/* Letztes Element ohne Rahmen unten */
+.nav-dropdown a:last-child {
+  border-bottom: none !important;
+}
+
+/* FIX FÜR ANNOUNCEMENT-BAR */
+/* Wenn die orange/gelbe Nachricht oben aktiv ist, müssen Header UND Kategorien rutschen */
+body.has-announcement header {
+  top: 40px !important; /* Schiebt den Header unter die Nachricht */
+}
+
 body.has-announcement .category-nav {
-  top: 90px !important; /* Exakt unter der Nachricht */
-}
-
-/* Falls keine Nachricht da ist, muss die Nav direkt unter den 50px Header */
-body:not(.has-announcement) .category-nav {
-  top: 50px !important; 
+  top: 90px !important; /* Header (40px) + Nachricht (50px) */
 }
 
 /* Chrome, Safari, Edge */
